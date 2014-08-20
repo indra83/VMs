@@ -7,12 +7,14 @@ USING_NS_CC;
 //  a) hills are overlapping
 //  b) clouds and trees need not be continuous
 
+static const Color4B BLUEISH(173, 255, 250, 255);
+static const Color4B GRAYISH (70, 70, 70, 255);
 
 // due to lack of access to the PointObject class in ParallaxNode, replicate it here
 class PointObject : public Ref
 {
 public:
-    inline void setRation(Point ratio) {_ratio = ratio;}
+    inline void setRatio(Point ratio) {_ratio = ratio;}
     inline void setOffset(Point offset) {_offset = offset;}
     inline void setChild(Node *var) {_child = var;}
     inline Point getOffset() const {return _offset;}
@@ -24,13 +26,13 @@ private:
 };
 
 // N.B. assumes anchor points are in the left corner
-class InfiniteParallaxNode : public ParallaxNode
+class HorInfiniteParallaxNode : public ParallaxNode
 {
 public:
-    static InfiniteParallaxNode* create()
+    static HorInfiniteParallaxNode* create()
     {
         // Create an instance of InfiniteParallaxNode
-        InfiniteParallaxNode* node = new InfiniteParallaxNode();
+        HorInfiniteParallaxNode* node = new HorInfiniteParallaxNode();
         if (node) 
         {
             // Add it to autorelease pool
@@ -45,6 +47,11 @@ public:
         return node;
     }
 
+    float getScaledSizeX(Node * n)
+    {
+        return n->getContentSize().width * n->getScaleX();
+    }
+
     void addChild(std::function<Node * ()> cb, int zIndex, const Point& ratio, const Point& offset)
     {
         Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -54,7 +61,7 @@ public:
         {
             auto child = cb();
             ParallaxNode::addChild(child, zIndex, ratio, offsetIter);
-            totalSize += child->getContentSize().width * child->getScaleX();
+            totalSize += getScaledSizeX( child );
             offsetIter += Point(child->getContentSize().width * child->getScaleX(), 0);
         }
     }
@@ -70,10 +77,11 @@ public:
             auto node = _children.at(i);
 
             float whichSide = 0;
-            auto pointInWorld = convertToWorldSpace(node->getPosition());
+            auto pointInWorld = this->absolutePosition() + node->getPosition();
 
             // 2. We check whether it is out of the left side of the visible area
-            if (pointInWorld.x + node->getContentSize().width*node->getScaleX() < safeOffset)
+            // N.B. assumes anchor points are in the left corner
+            if (pointInWorld.x + getScaledSizeX(node) < safeOffset)
                 whichSide = 1;
             else if (pointInWorld.x > visibleSize.width - safeOffset)
                 whichSide = -1;
@@ -87,16 +95,16 @@ public:
                     // If yes increase its current offset on the value of visible width
                     if (po->getChild() == node)
                         po->setOffset(po->getOffset() +
-                                Point(visibleSize.width + node->getContentSize().width*node->getScaleX(), 0)*whichSide);
+                                Point(visibleSize.width + getScaledSizeX(node), 0)*whichSide);
                 }
             }
         }
     }
 
-    void visit(Renderer *renderer, const kmMat4 &parentTransform, bool parentTransformUpdated)
+    void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
     {
         updatePosition();
-        ParallaxNode::visit(renderer, parentTransform, parentTransformUpdated);
+        ParallaxNode::visit(renderer, parentTransform, parentFlags);
     }
 
 };
@@ -115,13 +123,13 @@ bool BackGroundLayer::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
-    auto parallaxNode = InfiniteParallaxNode::create();
+    auto parallaxNode = HorInfiniteParallaxNode::create();
 
     //////////////////////////////
     // add blue back layer
     parallaxNode->addChild(
             [&] () -> Node * { 
-                return LayerColor::create(Color4B(173, 255, 250, 255),
+                return LayerColor::create(BLUEISH,
                 		visibleSize.width,
                 		visibleSize.height);
             },
@@ -190,7 +198,7 @@ bool BackGroundLayer::init()
     //add gray ground layer
     parallaxNode->addChild(
             [&]() -> Node * { 
-                return LayerColor::create(Color4B(70, 70, 70, 255), visibleSize.width, visibleSize.height/3);
+                return LayerColor::create(GRAYISH, visibleSize.width, visibleSize.height/3);
             },
             zIndex,
             Point(1.0, 1.0),
@@ -210,10 +218,6 @@ bool BackGroundLayer::init()
             Point(1.0, 1.0),
             Point(0, visibleSize.height/3 + 15)
     );   
-
-    //////////////////////////////
-    //add physics ground to the background layer
-
 
     addChild(parallaxNode, 0);
     return true;
