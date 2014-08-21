@@ -101,7 +101,7 @@ public:
         }
     }
 
-    void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
+    void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override
     {
         updatePosition();
         ParallaxNode::visit(renderer, parentTransform, parentFlags);
