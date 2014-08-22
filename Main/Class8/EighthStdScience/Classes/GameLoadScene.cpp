@@ -1,15 +1,15 @@
-#include "GameLayerScene.h"
-#include "BackGroundLayer.h"
-#include "MenuLayer.h"
-#include "SpriteLayer.h"
+#include "GameLoadScene.h"
+//#include "BackGroundLayer.h"
+//#include "MenuLayer.h"
+//#include "SpriteLayer.h"
 
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
-#define MN_ZINDEX 2
+//#define MN_ZINDEX 2
 
 USING_NS_CC;
 
-Scene* GameLayer::createScene()
+Scene* GameLoad::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::createWithPhysics();
@@ -17,7 +17,7 @@ Scene* GameLayer::createScene()
     scene->getPhysicsWorld()->setGravity(Vect(0, -100));
     
     // 'layer' is an autorelease object
-    auto layer = GameLayer::create();
+    auto layer = GameLoad::create();
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
     scene->addChild(layer);
@@ -27,7 +27,7 @@ Scene* GameLayer::createScene()
 }
 
 // on "init" you need to initialize your instance
-bool GameLayer::init()
+bool GameLoad::init()
 {
     //////////////////////////////
     // 1. super init first
@@ -43,7 +43,7 @@ bool GameLayer::init()
 ///////////////////////////////////////////////////////////////////////////
 // created GameLayerScene (scene), add others as (layers) to this scene
 //////////////////////////////////////////////////////////////////////////
-
+/*
     /////////////////////////////
     // 2. add the background layer
     auto bgLayer = BackGroundLayer::create();
@@ -54,21 +54,23 @@ bool GameLayer::init()
     auto spriteLayer = SpriteLayer::create();
     spriteLayer->setBackGroundLayer(bgLayer);
     this->addChild(spriteLayer, SP_ZINDEX);
-
+*/
+// we dont need the menulayer because we wont have it in the load scene
+/*
     /////////////////////////////
     // 4. add the menu layer
     auto menuLayer = MenuLayer::create();
     menuLayer->setSpriteLayer(spriteLayer);
     this->addChild(menuLayer, MN_ZINDEX);
-
+*/
     // trigger to back button exit
-    setKeypadEnabled(true);
+    //this->setKeypadEnabled(true);
 
     return true;
 }
 
 
-void GameLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
-{
-	Director::getInstance()->end();
-}
+//void GameLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
+//{
+//	Director::getInstance()->end();
+//}
