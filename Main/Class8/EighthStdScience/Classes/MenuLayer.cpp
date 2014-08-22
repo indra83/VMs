@@ -53,6 +53,7 @@ bool MenuLayer::init()
     restart_scene = MenuItemImage::create("reset_normal.png" , "reset_normal.png" ,
     		CC_CALLBACK_1(MenuLayer::restartScene , this));
     restart_scene->setPosition(visibleSize.width/6 , visibleSize.height/6);
+    restart_scene->setScale(0.8);
 
     auto menu = Menu::create(restart_scene, NULL);
     menu->setPosition(Point::ZERO);
