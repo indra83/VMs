@@ -1,3 +1,4 @@
+#include "GameLayerScene.h"
 #include "MenuLayer.h"
 #include "BackGroundLayer.h"
 #include "SpriteLayer.h"
@@ -47,27 +48,14 @@ bool MenuLayer::init()
 
     //////////////////////////////
     // display controls
-    float displayLocY = 3*visibleSize.height/8 + 40;
-    float displayLocX = 3*visibleSize.width/4;
-    //float delta = 50;
 
-    // menu item for sum of forces only
-    auto title = LabelTTF::create("Sum of Forces" , "fonts/Marker Felt.ttf", 35);
-    title->setPosition(Vec2(8*visibleSize.width/9 , visibleSize.height/4 - 20));
-    this->addChild(title);
+    // menu item for resetting the scene
+    restart_scene = MenuItemImage::create("reset_normal.png" , "reset_normal.png" ,
+    		CC_CALLBACK_1(MenuLayer::restartScene , this));
+    restart_scene->setPosition(visibleSize.width/6 , visibleSize.height/6);
 
-
-#define enable false
-
-    MenuItemFont::setFontName("fonts/Marker Felt.ttf");
-    MenuItemFont::setFontSize(30);
-    auto sum_of_forces = MenuItemToggle::createWithCallback(CC_CALLBACK_1(MenuLayer::menuCallbackShowSumOfForces,this),\
-    		MenuItemFont::create("off"),\
-    		MenuItemFont::create("on"), NULL);
-    sum_of_forces->setSelectedIndex(enable);
-
-    auto menu = Menu::create(sum_of_forces, NULL);
-    menu->setPosition(5*visibleSize.width/6 , visibleSize.height/6 - 20);
+    auto menu = Menu::create(restart_scene, NULL);
+    menu->setPosition(Point::ZERO);
     this->addChild(menu);
 
  
@@ -135,44 +123,18 @@ bool MenuLayer::init()
     return true;
 }
     
-
-void MenuLayer::menuCallbackShowSumOfForces(Ref* pSender)
+void MenuLayer::restartScene(cocos2d::Ref* pSender)
 {
-    MenuItemToggle* pLabel = (MenuItemToggle *)pSender;
-    _spriteLayer->showSumOfForces(pLabel->getSelectedIndex());
-}
-/*
-void MenuLayer::menuCallbackShowValues(Ref* pSender)
-{
-    MenuItemToggle * pLabel = (MenuItemToggle *)pSender; 
-    _spriteLayer->showForceValues(pLabel->getSelectedIndex());
+	auto newScene = GameLayer::createScene();
+	Director::getInstance()->replaceScene(newScene);
 }
 
-void MenuLayer::menuCallbackShowForces(Ref* pSender)
-{
-    MenuItemToggle * pLabel = (MenuItemToggle *)pSender; 
-    _spriteLayer->showForces(pLabel->getSelectedIndex());
-    _item2->setEnabled(pLabel->getSelectedIndex());
-    _item3->setEnabled(pLabel->getSelectedIndex()); 
-    if (!pLabel->getSelectedIndex()) 
-    {
-        _item2->setSelectedIndex(0);
-        _item3->setSelectedIndex(0);
-    }
-}
+//void MenuLayer::menuCallbackShowSumOfForces(Ref* pSender)
+//{
+//    MenuItemToggle* pLabel = (MenuItemToggle *)pSender;
+//    _spriteLayer->showSumOfForces(pLabel->getSelectedIndex());
+//}
 
-void MenuLayer::menuCallbackShowMasses(Ref* pSender)
-{
-    MenuItemToggle * pLabel = (MenuItemToggle *)pSender; 
-    _spriteLayer->showMasses(pLabel->getSelectedIndex());
-}
-
-void MenuLayer::menuCallbackShowSpeed(Ref* pSender)
-{
-    MenuItemToggle * pLabel = (MenuItemToggle *)pSender; 
-    _spriteLayer->showSpeeds(pLabel->getSelectedIndex());
-}
-*/
 void MenuLayer::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 {
     ControlSlider* pSlider = (ControlSlider*)sender;

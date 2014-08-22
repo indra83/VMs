@@ -167,8 +167,16 @@ bool SpriteLayer::init()
     _crate->addAltNode(node);
 
     ///////////////////////////////////////////////////////////////////////////////////////
-    // issue block to always set mass to true
 
+    // issue block to always set sum of forces to true
+    _sumOfForces = ValueArrow::create("arrow.png");
+	_sumOfForces->setScaleY(0.25);
+	_sumOfForces->setPosition(Point(origin.x + visibleSize.width/2,
+										origin.y + visibleSize.height/2 /*+ 5*_forceFriction->getContentSize().height / 4*/));
+	_sumOfForces->retain();
+	addChild(_sumOfForces, 0);
+
+    // issue block to always set mass to true
     _massLabel = MenuItemLabel::create(getMassLabel());
 	_massLabel->setColor(Color3B(0, 0, 0));
 	_massLabel->setAnchorPoint(Point(0.0, 0.0));
@@ -179,7 +187,7 @@ bool SpriteLayer::init()
 	addChild(_massLabel, 1);
 
     // issue block to always set show friction values to true
-    _forceFriction = ValueArrow::create("arrow-fr.png"); // TODO: make it red
+    _forceFriction = ValueArrow::create("arrow-fr.png");
 	_forceFriction->setAnchorPoint(Point(0.0f, 0.0f));
 	_forceFriction->setScaleY(0.25);
 	_forceFriction->setPosition(Point(origin.x + visibleSize.width/2,
@@ -197,8 +205,6 @@ bool SpriteLayer::init()
 	addChild(_forceExternal, 2);
 
 	// issue block to always set speed value to true
-
-
 	_speedLabel = MenuItemLabel::create(getSpeedLabel());
 	_speedLabel->setColor(Color3B(0, 0, 0));
 	_speedLabel->setAnchorPoint(Point(1.0, 0.0));
@@ -302,27 +308,6 @@ LabelTTF * SpriteLayer::getMassLabel()
     auto labelTTF = LabelTTF::create(sstr.str().c_str(), "fonts/Marker Felt.ttf", 30);
     labelTTF->setHorizontalAlignment(TextHAlignment::LEFT);
     return labelTTF;
-}
-
-void SpriteLayer::showSumOfForces(bool enable)
-{
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
-    if (enable)
-    {
-        if (_sumOfForces == nullptr)
-        {
-            _sumOfForces = ValueArrow::create("arrow.png"); // TODO: make it red
-            _sumOfForces->setScaleY(0.25);
-            _sumOfForces->setPosition(Point(origin.x + visibleSize.width/2, 
-                                                origin.y + visibleSize.height/2 /*+ 5*_forceFriction->getContentSize().height / 4*/));
-            _sumOfForces->retain();
-        }
-        addChild(_sumOfForces, 2);
-     
-    }
-    else if (_sumOfForces)
-        removeChild(_sumOfForces);
 }
 
 // TODO : get it through the api

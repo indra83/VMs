@@ -13,6 +13,7 @@ private :
     SpriteLayer * _spriteLayer;
 
     cocos2d::MenuItemToggle *_sof;
+    cocos2d::MenuItemImage *restart_scene;
 public :  
     MenuLayer() 
         : _spriteLayer(nullptr), 
@@ -20,6 +21,7 @@ public :
     {}
     virtual bool init();  
 
+    void restartScene(cocos2d:: Ref* pSender);
     void menuLeftCallback(cocos2d::Ref* pSender);
     void menuRightCallback(cocos2d::Ref* pSender);
 

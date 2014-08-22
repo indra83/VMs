@@ -37,7 +37,7 @@ public :
     void setPhysicsWorld(cocos2d::PhysicsWorld * world) { _world = world; }
     void setBackGroundLayer(Layer *layer);
     //void showMasses(bool enable);
-    void showSumOfForces(bool enable);
+    //void showSumOfForces(bool enable);
     //void showForceValues(bool enable);
     //void showSpeeds(bool enable);
     //void showForces(bool enable);
