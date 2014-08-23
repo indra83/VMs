@@ -18,11 +18,11 @@ public:
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 private:
-    cocos2d::PhysicsWorld *m_world;
+    bool onContactPreSolve(cocos2d::PhysicsContact &contact, cocos2d::PhysicsContactPreSolve &solve);
+    void onContactPostSolve(cocos2d::PhysicsContact &contact, const cocos2d::PhysicsContactPostSolve &solve);
 
-    void SetPhysicsWorld(cocos2d::PhysicsWorld *world){m_world = world;}
-
-    bool onContactBegin(cocos2d::PhysicsContact &contact);
+    float _current_res;
+    ssize_t _vibration_length;
 };
 
 #endif // __GAMELOAD_SCENE_H__
