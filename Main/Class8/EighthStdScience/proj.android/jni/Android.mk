@@ -10,7 +10,8 @@ LOCAL_MODULE := cocos2dcpp_shared
 
 LOCAL_MODULE_FILENAME := libcocos2dcpp
 
-LOCAL_SRC_FILES := hellocpp/main.cpp \
+LOCAL_SRC_FILES := eighthstdscience/main.cpp \
+                   eighthstdscience/NativeHelper.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/GameLoadScene.cpp \
                    ../../Classes/GameLayerScene.cpp \
