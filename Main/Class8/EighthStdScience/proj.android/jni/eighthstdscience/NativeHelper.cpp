@@ -3,7 +3,7 @@
 #include "base/ccMacros.h" // CCAssert
 #include "base/CCPlatformMacros.h" // USING_NS_CC
 
-#define NATIVE_HELPER_CLASS "org/cocos2dx/cpp"
+#define NATIVE_HELPER_CLASS "org/cocos2dx/cpp/NativeHelper"
 
 USING_NS_CC;
 
@@ -35,6 +35,7 @@ void NativeHelper::vibrate(std::vector<ssize_t> milliseconds, int repeat)
     CCAssert(JniHelper::getStaticMethodInfo(minfo, NATIVE_HELPER_CLASS, "vibrate", "([JI)V"), "Function doesn't exist");
     minfo.env->CallStaticVoidMethod(minfo.classID, minfo.methodID, arr, (jint)repeat);
     minfo.env->DeleteLocalRef(minfo.classID);
+    delete[] fill;
 }
 
 bool NativeHelper::canVibrate()

@@ -28,12 +28,26 @@ public class NativeHelper
         return mainActivity;
     }
 
-    public static void vibrate(int milliseconds)
+    public static void vibrate(long milliseconds)
     {
         Vibrator v = (Vibrator) getMainActivity().getSystemService(Context.VIBRATOR_SERVICE);
         if (v.hasVibrator())
         {
             v.vibrate(milliseconds);
+        }
+        else
+        {
+            final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+            tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+        }
+    }
+
+    public static void vibrate(long[] milliseconds, int repeat)
+    {
+        Vibrator v = (Vibrator) getMainActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        if (v.hasVibrator())
+        {
+            v.vibrate(milliseconds, repeat);
         }
         else
         {
