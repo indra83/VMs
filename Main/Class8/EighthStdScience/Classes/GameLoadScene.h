@@ -16,7 +16,13 @@ public:
     CREATE_FUNC(GameLoad);
 
     // back button exit
-    //void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
+    void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
+private:
+    cocos2d::PhysicsWorld *m_world;
+
+    void SetPhysicsWorld(cocos2d::PhysicsWorld *world){m_world = world;}
+
+    bool onContactBegin(cocos2d::PhysicsContact &contact);
 };
 
 #endif // __GAMELOAD_SCENE_H__
