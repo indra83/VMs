@@ -96,11 +96,13 @@ void GameLoad::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::
 
 bool GameLoad::onContactPreSolve(cocos2d::PhysicsContact &contact, cocos2d::PhysicsContactPreSolve &solve)
 {
-    if (_current_res > 0.0 )
+    if (_current_res > 0.0)
     {
         solve.setRestitution(_current_res);
         _current_res -= DELTA_RESTITUTION;
     }
+    else
+        solve.setRestitution(0.0);
     return true;
 }
 
@@ -110,12 +112,14 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     {
         //CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(BOUNCE_SOUND);
         // TODO: this should ideally have been based on the current impulse
-        NativeHelper::vibrate(_vibration_length);
-        _vibration_length -= DELTA_VIBRATION;
+        if(_vibration_length > 0)
+        {
+            NativeHelper::vibrate(_vibration_length);
+            _vibration_length -= DELTA_VIBRATION;
+        }
     }
     else
     {
         // TODO: go to the challenges screen
-        // should be asynchrounous? generate an event, add a handler outside
     }
 }
