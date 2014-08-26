@@ -89,7 +89,6 @@ bool Challenge::init()
    	this->addChild(scrollview);
 
     return true;
-
 }
 
 void Challenge::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)

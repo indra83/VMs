@@ -1,16 +1,21 @@
 #include "GameLoadScene.h"
 #include "BackGroundLayer.h"
-//#include "SimpleAudioEngine.h"
+#include "SimpleAudioEngine.h"
 #include "ChallengeScene.h"
 #include "NativeHelper.h"
 
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
 
-#define BOUNCE_SOUND "audio/crash.mp3"
 #define ALTITUDE 150
+
+#define BOUNCE_SOUND "audio/crash.mp3"
+#define INITIAL_VOLUME 1.0
+#define DELTA_VOLUME 0.2
+
 #define INITIAL_RESTITUTION 0.8
 #define DELTA_RESTITUTION 0.2
+
 #define INITIAL_VIBRATION 1000
 #define DELTA_VIBRATION 200
 
@@ -43,8 +48,9 @@ bool GameLoad::init()
         return false;
     }
     
-    _current_res = INITIAL_RESTITUTION;
+    _current_restitution = INITIAL_RESTITUTION;
     _vibration_length = INITIAL_VIBRATION;
+    _effects_volume = INITIAL_VOLUME;
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
@@ -81,7 +87,7 @@ bool GameLoad::init()
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     // preloading sound effects
-    //CocosDenshion::SimpleAudioEngine::getInstance()->preloadBackgroundMusic(BOUNCE_SOUND);
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(BOUNCE_SOUND);
 
     this->setKeypadEnabled(true);
 
@@ -96,10 +102,10 @@ void GameLoad::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::
 
 bool GameLoad::onContactPreSolve(cocos2d::PhysicsContact &contact, cocos2d::PhysicsContactPreSolve &solve)
 {
-    if (_current_res > 0.0)
+    if (_current_restitution > 0.0)
     {
-        solve.setRestitution(_current_res);
-        _current_res -= DELTA_RESTITUTION;
+        solve.setRestitution(_current_restitution);
+        _current_restitution -= DELTA_RESTITUTION;
     }
     else
         solve.setRestitution(0.0);
@@ -110,9 +116,12 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
 {
     if (solve.getRestitution() > 0.0)
     {
-        //CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic(BOUNCE_SOUND);
+        CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(_effects_volume);
+        _effects_volume -= DELTA_VOLUME;
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(BOUNCE_SOUND);
+
         // TODO: this should ideally have been based on the current impulse
-        if(_vibration_length > 0)
+        if (_vibration_length > 0)
         {
 //            NativeHelper::vibrate(_vibration_length);
 //            _vibration_length -= DELTA_VIBRATION;
