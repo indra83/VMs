@@ -114,12 +114,16 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
         // TODO: this should ideally have been based on the current impulse
         if(_vibration_length > 0)
         {
-            NativeHelper::vibrate(_vibration_length);
-            _vibration_length -= DELTA_VIBRATION;
+//            NativeHelper::vibrate(_vibration_length);
+//            _vibration_length -= DELTA_VIBRATION;
         }
     }
     else
     {
         // TODO: go to the challenges screen
+    	auto scene = Challenge::createScene();
+    	auto transition = TransitionMoveInT::create(1 , scene);
+		Director::getInstance()->pushScene(transition);
     }
 }
+

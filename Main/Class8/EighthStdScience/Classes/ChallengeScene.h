@@ -14,6 +14,9 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(Challenge);
+
+    // back button previous scene
+    void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 };
 
 #endif // __CHALLENGE_SCENE_H__
