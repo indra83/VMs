@@ -43,16 +43,13 @@ public :
     }
 };
 
-Scene* Challenge::createScene(bool wasPushed)
+Scene* Challenge::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
 
     // 'layer' is an autorelease object
     auto layer = Challenge::create();
-
-    // some funny comment about humpty-dumpty goes here
-    layer->_wasPushed = wasPushed;
 
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
@@ -72,8 +69,6 @@ bool Challenge::init()
         return false;
     }
 
-    _wasPushed = false;
-    
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
@@ -126,9 +121,6 @@ bool Challenge::init()
 
 void Challenge::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
-    if (_wasPushed)
-        Director::getInstance()->end();
-    else
         Director::getInstance()->popScene();
 }
 

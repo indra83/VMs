@@ -129,7 +129,7 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     }
     else
     {
-        auto scene = Challenge::createScene(/*wasPushed=*/false);
+        auto scene = Challenge::createScene();
         auto transition = TransitionMoveInT::create(1 , scene);
         Director::getInstance()->replaceScene(transition);
     }
