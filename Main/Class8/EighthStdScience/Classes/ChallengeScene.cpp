@@ -88,6 +88,8 @@ bool Challenge::init()
 
    	this->addChild(scrollview);
 
+    this->setKeypadEnabled(true);
+
     return true;
 }
 
