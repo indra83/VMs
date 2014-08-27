@@ -4,7 +4,7 @@
 #include "SpriteLayer.h"
 
 USING_NS_CC;
-using namespace cocos2d::extension;
+USING_NS_CC_EXT;
 
 class ControlSliderRollBack : public ControlSlider
 {

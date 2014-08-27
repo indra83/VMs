@@ -1,5 +1,6 @@
 #include "Challenge1.h"
 #include "BackGroundLayer.h"
+#include "MenuLayer.h"
 
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
@@ -39,7 +40,7 @@ bool Challenge1::init()
     auto bgLayer = BackGroundLayer::create();
     this->addChild(bgLayer, BG_ZINDEX);
 
-    // crate with physics properties
+    // crate
     auto crate = Sprite::create("crate.png");
     crate->setAnchorPoint(Point(0.0, 0.0));
     crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/3));
@@ -50,8 +51,7 @@ bool Challenge1::init()
     return true;
 }
 
-
 void Challenge1::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
-	Director::getInstance()->end();
+	Director::getInstance()->replaceScene(Challenge::createScene());
 }
