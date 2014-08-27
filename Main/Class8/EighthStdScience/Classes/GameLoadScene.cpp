@@ -7,7 +7,7 @@
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
 
-#define ALTITUDE 150
+//#define ALTITUDE 150
 
 #define BOUNCE_SOUND "audio/cratefall.mp3"
 #define INITIAL_VOLUME 1.0
@@ -63,7 +63,7 @@ bool GameLoad::init()
 
     // crate with physics properties
     auto crate = Sprite::create("crate.png");
-    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2 + ALTITUDE));
+    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height + crate->getContentSize().height/2));
 
     auto crate_body = PhysicsBody::createBox(crate->getContentSize(), PhysicsMaterial(0.5, INITIAL_RESTITUTION, 0.5));
     crate_body->setContactTestBitmask(0x1); // enable callbacks
