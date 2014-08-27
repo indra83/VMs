@@ -8,25 +8,6 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-class ScrollViewWithTouchableItems: public ScrollView
-{
-public :
-    static ScrollViewWithTouchableItems* create(Size size, Node* container)
-    {
-        ScrollViewWithTouchableItems* pRet = new ScrollViewWithTouchableItems();
-        if (pRet && pRet->initWithViewSize(size, container))
-        {
-            pRet->_touchListener->setSwallowTouches(false);
-            pRet->autorelease();
-        }
-        else
-        {
-            CC_SAFE_DELETE(pRet);
-        }
-        return pRet;
-    }
-};
-
 Scene* Challenge::createScene()
 {
     // 'scene' is an autorelease object
@@ -92,7 +73,7 @@ bool Challenge::init()
     addChallenge("chalbox.9.png", 4);
 
     // scroll view
-    auto scrollview = ScrollViewWithTouchableItems::create(visibleSize, scrollContainer);
+    auto scrollview = ScrollView::create(visibleSize, scrollContainer);
     scrollview->setDirection(ScrollView::Direction::VERTICAL);
     scrollview->setPosition(Vec2::ZERO);
 
