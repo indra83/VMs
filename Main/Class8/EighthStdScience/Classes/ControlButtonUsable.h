@@ -7,10 +7,11 @@
 class ControlButtonUsable: public cocos2d::extension::ControlButton
 {
 public :
-    static ControlButtonUsable* create(cocos2d::extension::Scale9Sprite* sprite)
+    static ControlButtonUsable* create(const std::string &labelText, cocos2d::extension::Scale9Sprite* sprite)
     {
         ControlButtonUsable *pRet = new ControlButtonUsable();
-        pRet->initWithBackgroundSprite(sprite);
+        cocos2d::Label *label = cocos2d::Label::createWithSystemFont(labelText, "Arial", 30);//
+        pRet->initWithLabelAndBackgroundSprite(label, sprite);
         pRet->autorelease();
         return pRet;
     }

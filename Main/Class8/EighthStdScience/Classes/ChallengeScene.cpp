@@ -53,7 +53,7 @@ bool Challenge::init()
     [&](std::string fileName, int id) -> void
     {
         auto chal_sprite = Scale9Sprite::create(fileName);
-        auto chal = ControlButtonUsable::create(chal_sprite);
+        auto chal = ControlButtonUsable::create("Play", chal_sprite);
         chal->setTag(id);
         chal->setTouchDownHandler(this, cccontrol_selector(Challenge::touchDownAction));
         chal->setPosition(wd/5, (5 - id) * ht/5);
