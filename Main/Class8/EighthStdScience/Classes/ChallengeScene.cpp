@@ -1,6 +1,7 @@
 #include "ChallengeScene.h"
 #include "GameLoadScene.h"
 #include "Challenge1.h"
+#include "ControlButtonUsable.h"
 
 #include "extensions/cocos-ext.h"
 
@@ -23,23 +24,6 @@ public :
             CC_SAFE_DELETE(pRet);
         }
         return pRet;
-    }
-};
-
-class ControlButtonUsable: public ControlButton
-{
-public :
-    static ControlButtonUsable* create(Scale9Sprite* sprite)
-    {
-        ControlButtonUsable *pRet = new ControlButtonUsable();
-        pRet->initWithBackgroundSprite(sprite);
-        pRet->autorelease();
-        return pRet;
-    }
-
-    void setTouchDownHandler(Ref* target, Handler action)
-    {
-        addTargetWithActionForControlEvent(target, action, Control::EventType::TOUCH_DOWN);
     }
 };
 
