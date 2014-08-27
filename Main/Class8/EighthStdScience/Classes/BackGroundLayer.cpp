@@ -123,6 +123,8 @@ bool BackGroundLayer::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
+    float lower_boundary = visibleSize.height/3;
+
     auto parallaxNode = HorInfiniteParallaxNode::create();
 
     //////////////////////////////
@@ -138,13 +140,25 @@ bool BackGroundLayer::init()
             Point(0 , 0)
     );   
 
+    //////////////////////////////
+    //add gray ground layer
+    parallaxNode->addChild(
+            [&]() -> Node * {
+                auto layer = LayerColor::create(GRAYISH, visibleSize.width, lower_boundary);
+                layer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+                return layer;
+            },
+            ++zIndex,
+            Point(1.0, 1.0),
+            Point(0, 0)
+    );
 
     //////////////////////////////
     // add clouds
     parallaxNode->addChild(
             [&] () -> Node * {
                 auto clouds = Sprite::create("cloud1.png");
-                clouds->setAnchorPoint(Point(0.0, 1.0));
+                clouds->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
                 clouds->setScale(0.5);
                 return clouds; 
             },
@@ -158,13 +172,13 @@ bool BackGroundLayer::init()
     parallaxNode->addChild(
             [] () -> Node * {
                 auto mountains = Sprite::create("mountains.png");
-                mountains->setAnchorPoint(Point(0.0, 0.0));
+                mountains->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
                 mountains->setScale(1.3);
                 return mountains;
             },
             ++zIndex,
             Point(0.05, 1.0),
-            Point(0, visibleSize.height/3)
+            Point(0, lower_boundary)
     );   
 
     //////////////////////////////
@@ -172,13 +186,13 @@ bool BackGroundLayer::init()
     parallaxNode->addChild(
             [] () -> Node * {
                 auto tree = Sprite::create("tree.png");
-                tree->setAnchorPoint(Point(0.0, 0.0));
+                tree->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
                 tree->setScale(1.7);
                 return tree;
             },
             ++zIndex,
             Point(0.75, 1.0),
-            Point(0, visibleSize.height/3)
+            Point(0, lower_boundary)
     );   
 
     //////////////////////////////
@@ -186,23 +200,12 @@ bool BackGroundLayer::init()
     parallaxNode->addChild(
             [] () -> Node * {
                 auto grass = Sprite::create("grass.png");
-                grass->setAnchorPoint(Point(0.0, 1.0));
+                grass->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
                 return grass;
             },
             ++zIndex,
             Point(1.0, 1.0),
-            Point(0, visibleSize.height/3)
-    );   
-
-    //////////////////////////////
-    //add gray ground layer
-    parallaxNode->addChild(
-            [&]() -> Node * { 
-                return LayerColor::create(GRAYISH, visibleSize.width, visibleSize.height/3);
-            },
-            zIndex,
-            Point(1.0, 1.0),
-            Point(0, 0)
+            Point(0, lower_boundary)
     );   
 
     //////////////////////////////
@@ -210,13 +213,13 @@ bool BackGroundLayer::init()
     parallaxNode->addChild(
             [] () -> Node * {
                 auto bricks = Sprite::create("brick-tile.png");
-                bricks->setAnchorPoint(Point(0.0, 1.0));
+                bricks->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
                 bricks->setScale(0.3);
                 return bricks;
             },
             ++zIndex,
             Point(1.0, 1.0),
-            Point(0, visibleSize.height/3 + 15)
+            Point(0, lower_boundary)
     );   
 
     addChild(parallaxNode, 0);

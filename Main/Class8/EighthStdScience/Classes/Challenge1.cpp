@@ -41,7 +41,8 @@ bool Challenge1::init()
 
     // crate with physics properties
     auto crate = Sprite::create("crate.png");
-    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2));
+    crate->setAnchorPoint(Point(0.0, 0.0));
+    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/3));
     this->addChild(crate, SP_ZINDEX);
 
     this->setKeypadEnabled(true);
