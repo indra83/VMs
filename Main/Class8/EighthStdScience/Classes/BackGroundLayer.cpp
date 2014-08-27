@@ -1,5 +1,6 @@
 #include "BackGroundLayer.h"
 
+#define BUF_HT 10
 USING_NS_CC;
 
 // TODO: 
@@ -200,12 +201,12 @@ bool BackGroundLayer::init()
     parallaxNode->addChild(
             [] () -> Node * {
                 auto grass = Sprite::create("grass.png");
-                grass->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+                grass->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
                 return grass;
             },
             ++zIndex,
             Point(1.0, 1.0),
-            Point(0, lower_boundary)
+            Point(0, lower_boundary + 2*BUF_HT)
     );   
 
     //////////////////////////////
@@ -219,7 +220,7 @@ bool BackGroundLayer::init()
             },
             ++zIndex,
             Point(1.0, 1.0),
-            Point(0, lower_boundary)
+            Point(0, lower_boundary + BUF_HT)
     );   
 
     addChild(parallaxNode, 0);
