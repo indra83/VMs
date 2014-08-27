@@ -9,7 +9,7 @@
 
 #define ALTITUDE 150
 
-#define BOUNCE_SOUND "audio/crash.mp3"
+#define BOUNCE_SOUND "audio/crate.mp3"
 #define INITIAL_VOLUME 1.0
 #define DELTA_VOLUME 0.2
 
