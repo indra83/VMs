@@ -39,9 +39,9 @@ bool Challenge::init()
 
     // scroll container
     auto scrollContainer = Layer::create();
+    scrollContainer->setContentSize(Size(visibleSize.width , 2*visibleSize.height));
     scrollContainer->setAnchorPoint(Vec2::ZERO);
     scrollContainer->setPosition(Vec2::ZERO);
-    scrollContainer->setContentSize(Size(visibleSize.width , 2*visibleSize.height));
     this->addChild(scrollContainer);
 
 
@@ -76,6 +76,7 @@ bool Challenge::init()
     auto scrollview = ScrollView::create(visibleSize, scrollContainer);
     scrollview->setDirection(ScrollView::Direction::VERTICAL);
     scrollview->setPosition(Vec2::ZERO);
+    scrollview->setContentOffset(Vec2(0 , -visibleSize.height), true);
 
     this->addChild(scrollview);
 
