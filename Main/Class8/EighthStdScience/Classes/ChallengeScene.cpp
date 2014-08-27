@@ -86,10 +86,10 @@ bool Challenge::init()
     };
 
     // TODO: need to create a proper scale9 png for this
-    addChallenge("chalbox.png", 1);
-    addChallenge("chalbox.png", 2);
-    addChallenge("chalbox.png", 3);
-    addChallenge("chalbox.png", 4);
+    addChallenge("chalbox.9.png", 1);
+    addChallenge("chalbox.9.png", 2);
+    addChallenge("chalbox.9.png", 3);
+    addChallenge("chalbox.9.png", 4);
 
     // scroll view
     auto scrollview = ScrollViewWithTouchableItems::create(visibleSize, scrollContainer);
