@@ -5,6 +5,7 @@
 
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
+#define BUF_HT 15
 
 USING_NS_CC;
 
@@ -43,8 +44,9 @@ bool Challenge1::init()
 
     // crate
     auto crate = Sprite::create("crate.png");
-    crate->setAnchorPoint(Point(0.0, 0.0));
-    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/3));
+    crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/3 +
+    		crate->getContentSize().height/2 + BUF_HT));
     this->addChild(crate, SP_ZINDEX);
 
     this->setKeypadEnabled(true);
