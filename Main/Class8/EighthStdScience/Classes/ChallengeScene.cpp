@@ -1,18 +1,58 @@
 #include "ChallengeScene.h"
 #include "GameLoadScene.h"
+#include "Challenge1.h"
 
 #include "extensions/cocos-ext.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-Scene* Challenge::createScene()
+class ScrollViewWithTouchableItems: public ScrollView
+{
+public :
+    static ScrollViewWithTouchableItems* create(Size size, Node* container)
+    {
+        ScrollViewWithTouchableItems* pRet = new ScrollViewWithTouchableItems();
+        if (pRet && pRet->initWithViewSize(size, container))
+        {
+            pRet->_touchListener->setSwallowTouches(false);
+            pRet->autorelease();
+        }
+        else
+        {
+            CC_SAFE_DELETE(pRet);
+        }
+        return pRet;
+    }
+};
+
+class ControlButtonUsable: public ControlButton
+{
+public :
+    static ControlButtonUsable* create(Scale9Sprite* sprite)
+    {
+        ControlButtonUsable *pRet = new ControlButtonUsable();
+        pRet->initWithBackgroundSprite(sprite);
+        pRet->autorelease();
+        return pRet;
+    }
+
+    void setTouchDownHandler(Ref* target, Handler action)
+    {
+        addTargetWithActionForControlEvent(target, action, Control::EventType::TOUCH_DOWN);
+    }
+};
+
+Scene* Challenge::createScene(bool wasPushed)
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
-    
+
     // 'layer' is an autorelease object
     auto layer = Challenge::create();
+
+    // some funny comment about humpty-dumpty goes here
+    layer->_wasPushed = wasPushed;
 
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
@@ -31,6 +71,8 @@ bool Challenge::init()
     {
         return false;
     }
+
+    _wasPushed = false;
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
@@ -47,53 +89,53 @@ bool Challenge::init()
     auto ht = scrollContainer->getContentSize().height;
 
     // container item icons
-    auto chal_1 = Sprite::create("chalbox.png");
-    chal_1->setPosition(wd/5 , 4*ht/5);
-    scrollContainer->addChild(chal_1);
+    auto addChallenge =
+    [&](std::string fileName, int id) -> void
+    {
+        auto chal_sprite = Scale9Sprite::create(fileName);
+        auto chal = ControlButtonUsable::create(chal_sprite);
+        chal->setTag(id);
+        chal->setTouchDownHandler(this, cccontrol_selector(Challenge::touchDownAction));
+        chal->setPosition(wd/5, (5 - id) * ht/5);
+        scrollContainer->addChild(chal);
 
-    auto chal_2 = Sprite::create("chalbox.png");
-    chal_2->setPosition(wd/5 , 3*ht/5);
-    scrollContainer->addChild(chal_2);
+        std::stringstream sstr;
+        sstr << "challenge " << id;
+        auto label = LabelTTF::create(sstr.str(), "fonts/Marker Felt.ttf" , 20);
+        label->setPosition(3*wd/5, (5 - id) * ht/5);
+        scrollContainer->addChild(label);
+    };
 
-    auto chal_3 = Sprite::create("chalbox.png");
-    chal_3->setPosition(wd/5 , 2*ht/5);
-    scrollContainer->addChild(chal_3);
-
-    auto chal_4 = Sprite::create("chalbox.png");
-    chal_4->setPosition(wd/5 , ht/5);
-    scrollContainer->addChild(chal_4);
-
-    // container item info
-    auto label_1 = LabelTTF::create("challenge 1" , "fonts/Marker Felt.ttf" , 20);
-    label_1->setPosition(3*wd/5 , 4*ht/5);
-    scrollContainer->addChild(label_1);
-
-    auto label_2 = LabelTTF::create("challenge 2" , "fonts/Marker Felt.ttf" , 20);
-    label_2->setPosition(3*wd/5 , 3*ht/5);
-	scrollContainer->addChild(label_2);
-
-	auto label_3 = LabelTTF::create("challenge 3" , "fonts/Marker Felt.ttf" , 20);
-	label_3->setPosition(3*wd/5 , 2*ht/5);
-	scrollContainer->addChild(label_3);
-
-	auto label_4 = LabelTTF::create("challenge 4" , "fonts/Marker Felt.ttf" , 20);
-	label_4->setPosition(3*wd/5 , ht/5);
-	scrollContainer->addChild(label_4);
-
+    // TODO: need to create a proper scale9 png for this
+    addChallenge("chalbox.png", 1);
+    addChallenge("chalbox.png", 2);
+    addChallenge("chalbox.png", 3);
+    addChallenge("chalbox.png", 4);
 
     // scroll view
-    auto scrollview = ScrollView::create(visibleSize, scrollContainer);
+    auto scrollview = ScrollViewWithTouchableItems::create(visibleSize, scrollContainer);
     scrollview->setDirection(ScrollView::Direction::VERTICAL);
-   	scrollview->setPosition(Vec2::ZERO);
+    scrollview->setPosition(Vec2::ZERO);
 
-   	this->addChild(scrollview);
+    this->addChild(scrollview);
+
+    this->setKeypadEnabled(true);
 
     return true;
-
 }
 
 void Challenge::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
-	Director::getInstance()->popScene();
+    if (_wasPushed)
+        Director::getInstance()->end();
+    else
+        Director::getInstance()->popScene();
+}
+
+void Challenge::touchDownAction(Ref *sender, Control::EventType controlEvent)
+{
+    int sceneId = dynamic_cast<Node *>(sender)->getTag();
+    auto scene = Challenge1::createScene();
+    Director::getInstance()->replaceScene(scene);
 }
 

@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+if [[ -n $1 ]]
+then
+    cd $1
+else
+    # locate the path
+    while :
+    do
+        [[ -d ./Classes ]] && break  
+        prev_path=$(pwd)
+        cd ..
+        [[ $(pwd) == $prev_path ]] && echo "couldn't locate project to build" && exit
+    done
+fi
+
+proj_name=$(basename $(pwd))
+
+python proj.android/build_native.py -p 19 
+
+adb install -r proj.android/bin/$proj_name-debug.apk
+adb shell am start -n in.co.divi.$proj_name/org.cocos2dx.cpp.AppActivity
+adb logcat
