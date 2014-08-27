@@ -1,4 +1,5 @@
 #include "Challenge1.h"
+#include "ChallengeScene.h"
 #include "BackGroundLayer.h"
 #include "MenuLayer.h"
 

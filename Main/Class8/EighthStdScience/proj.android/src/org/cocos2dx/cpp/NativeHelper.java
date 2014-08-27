@@ -35,11 +35,6 @@ public class NativeHelper
         {
             v.vibrate(milliseconds);
         }
-        else
-        {
-            final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
-            tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-        }
     }
 
     public static void vibrate(long[] milliseconds, int repeat)
