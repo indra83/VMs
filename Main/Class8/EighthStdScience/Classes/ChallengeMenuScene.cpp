@@ -1,4 +1,4 @@
-#include "ChallengeScene.h"
+#include "ChallengeMenuScene.h"
 #include "GameLoadScene.h"
 #include "Challenge1.h"
 
@@ -7,13 +7,13 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-Scene* Challenge::createScene()
+Scene* ChallengeMenu::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
 
     // 'layer' is an autorelease object
-    auto layer = Challenge::create();
+    auto layer = ChallengeMenu::create();
 
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
@@ -24,7 +24,7 @@ Scene* Challenge::createScene()
 }
 
 // on "init" you need to initialize your instance
-bool Challenge::init()
+bool ChallengeMenu::init()
 {
     //////////////////////////////
     // 1. super init first
@@ -52,7 +52,7 @@ bool Challenge::init()
     auto addChallenge =
     [&](std::string fileName, int id) -> void
     {
-        auto chal = MenuItemImage::create(fileName, fileName, CC_CALLBACK_1(Challenge::touchDownAction, this));
+        auto chal = MenuItemImage::create(fileName, fileName, CC_CALLBACK_1(ChallengeMenu::touchDownAction, this));
         chal->setTag(id);
         chal->setPosition(wd/5, (5 - id) * ht/5);
         menu->addChild(chal);
@@ -86,12 +86,12 @@ bool Challenge::init()
     return true;
 }
 
-void Challenge::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
+void ChallengeMenu::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
         Director::getInstance()->popScene();
 }
 
-void Challenge::touchDownAction(Ref *sender)
+void ChallengeMenu::touchDownAction(Ref *sender)
 {
     int sceneId = dynamic_cast<Node *>(sender)->getTag();
     auto scene = Challenge1::createScene();

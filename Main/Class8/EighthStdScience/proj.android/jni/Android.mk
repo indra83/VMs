@@ -14,7 +14,7 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
                    eighthstdscience/NativeHelper.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/GameLoadScene.cpp \
-                   ../../Classes/ChallengeScene.cpp \
+                   ../../Classes/ChallengeMenuScene.cpp \
                    ../../Classes/Challenge1.cpp \
                    ../../Classes/GameLayerScene.cpp \
                    ../../Classes/BackGroundLayer.cpp \

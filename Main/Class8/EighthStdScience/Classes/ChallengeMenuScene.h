@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "extensions/cocos-ext.h"
 
-class Challenge : public cocos2d::Layer
+class ChallengeMenu : public cocos2d::Layer
 {
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
@@ -14,13 +14,11 @@ public:
     virtual bool init();  
     
     // implement the "static create()" method manually
-    CREATE_FUNC(Challenge);
+    CREATE_FUNC(ChallengeMenu);
 
     // back button previous scene
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
     void touchDownAction(cocos2d::Ref *sender);
-private:
-    bool _wasPushed;
 };
 
 #endif // __CHALLENGE_SCENE_H__

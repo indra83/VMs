@@ -1,7 +1,7 @@
 #include "GameLoadScene.h"
 #include "BackGroundLayer.h"
 #include "SimpleAudioEngine.h"
-#include "ChallengeScene.h"
+#include "ChallengeMenuScene.h"
 #include "NativeHelper.h"
 
 #define BG_ZINDEX 0
@@ -131,7 +131,7 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     }
     else
     {
-        auto scene = Challenge::createScene();
+        auto scene = ChallengeMenu::createScene();
         auto transition = TransitionMoveInT::create(1 , scene);
         Director::getInstance()->replaceScene(transition);
     }
