@@ -81,6 +81,6 @@ Thumbs.db
 
 #Android
 project.properties
-proj.android/assets/*
-
+assets/
 cocos2d/
+cocos2d
