@@ -3,10 +3,10 @@
 #include "MenuLayer.h"
 #include "SpriteLayer.h"
 
-#define BG_ZINDEX 0
-#define SP_ZINDEX 1
-#define MN_ZINDEX 2
-#define BUF_HT 15
+static const int BG_ZINDEX=0;
+static const int SP_ZINDEX=1;
+static const int MN_ZINDEX=2;
+//#define BUF_HT 15
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -40,30 +40,33 @@ bool Challenge1::init()
     Point origin = Director::getInstance()->getVisibleOrigin();
 
     /////////////////////////////
-    // 2. add the background layer
-    auto bgLayer = BackGroundLayer::create();
-    this->addChild(bgLayer, BG_ZINDEX);
+    // 1. add the background layer
+    _bgLayer = BackGroundLayer::create();
+    this->addChild(_bgLayer, BG_ZINDEX);
 
     /////////////////////////////
     // 2. add the sprite layer
-    //auto spLayer = SpriteLayer::create();
-    //this->addChild(spLayer, SP_ZINDEX);
+    _spriteLayer = SpriteLayer::create();
+    this->addChild(_spriteLayer, SP_ZINDEX);
 
     /////////////////////////////
-    // 3. add the sprite layer
+    // 3. add the menu layer
     auto menuLayer = MenuLayer::create();
 
-    // reset button
+    // add the reset button
     auto restart_scene = MenuItemImage::create("reset_normal.png",
                                                "reset_normal.png",
                                                CC_CALLBACK_1(Challenge1::restartScene , this));
     restart_scene->setScale(0.8);
     restart_scene->setPosition(-restart_scene->getContentSize().width/2, -restart_scene->getContentSize().height/2);
     menuLayer->addToTopMenu(restart_scene);
+
+    // add the force menu
     menuLayer->addForceMenu(this, cccontrol_selector(Challenge1::forceValueChanged));
 
     this->addChild(menuLayer, MN_ZINDEX);
 
+    // enable keypress cbs
     this->setKeypadEnabled(true);
 
     return true;
@@ -72,7 +75,13 @@ bool Challenge1::init()
 void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 {
     ControlSlider* pSlider = (ControlSlider*)sender;
-    //_spriteLayer->changeForceValue(pSlider->getValue());
+    _spriteLayer->changeForceValue(pSlider->getValue());
+}
+
+void Challenge1::frictionValueChanged(Ref* sender, Control::EventType controlEvent)
+{
+    ControlSlider* pSlider = (ControlSlider*)sender;
+    _spriteLayer->changeFrictionValue(pSlider->getValue());
 }
 
 void Challenge1::restartScene(Ref* pSender)

@@ -27,6 +27,7 @@ public:
 
     void restartScene(cocos2d::Ref* pSender);
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
+    void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 private:
