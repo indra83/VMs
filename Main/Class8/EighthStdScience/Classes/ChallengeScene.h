@@ -18,7 +18,7 @@ public:
 
     // back button previous scene
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
-    void touchDownAction(cocos2d::Ref *sender, cocos2d::extension::Control::EventType controlEvent);
+    void touchDownAction(cocos2d::Ref *sender);
 private:
     bool _wasPushed;
 };
