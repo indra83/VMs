@@ -1,10 +1,11 @@
 #include "Challenge1.h"
-#include "ChallengeScene.h"
 #include "BackGroundLayer.h"
 #include "MenuLayer.h"
+#include "SpriteLayer.h"
 
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
+#define MN_ZINDEX 2
 #define BUF_HT 15
 
 USING_NS_CC;
@@ -33,7 +34,7 @@ bool Challenge1::init()
     {
         return false;
     }
-    
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
@@ -42,12 +43,15 @@ bool Challenge1::init()
     auto bgLayer = BackGroundLayer::create();
     this->addChild(bgLayer, BG_ZINDEX);
 
-    // crate
-    auto crate = Sprite::create("crate.png");
-    crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/3 +
-    		crate->getContentSize().height/2 + BUF_HT));
-    this->addChild(crate, SP_ZINDEX);
+    /////////////////////////////
+    // 2. add the sprite layer
+    auto spLayer = SpriteLayer::create();
+    this->addChild(spLayer, SP_ZINDEX);
+
+    /////////////////////////////
+    // 3. add the sprite layer
+    auto menuLayer = MenuLayer::create();
+    this->addChild(menuLayer, MN_ZINDEX);
 
     this->setKeypadEnabled(true);
 
@@ -56,5 +60,5 @@ bool Challenge1::init()
 
 void Challenge1::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
-	Director::getInstance()->replaceScene(Challenge::createScene());
+	Director::getInstance()->popScene();
 }
