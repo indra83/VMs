@@ -156,4 +156,5 @@ void MenuLayer::setSpriteLayer(SpriteLayer* layer)
 
 MenuLayer::~MenuLayer() 
 { 
+    CC_SAFE_RELEASE(_spriteLayer);
 }
