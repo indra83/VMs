@@ -24,6 +24,10 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 
+ifeq ($(USE_VIBRATE),1)
+	LOCAL_CPPFLAGS := -DUSE_VIBRATE=1
+endif
+
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocosdenshion_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_extension_static

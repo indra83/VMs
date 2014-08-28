@@ -65,7 +65,7 @@ bool GameLoad::init()
     auto crate = Sprite::create("crate.png");
     crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height + crate->getContentSize().height/2));
 
-    auto crate_body = PhysicsBody::createBox(crate->getContentSize(), PhysicsMaterial(0.5, INITIAL_RESTITUTION, 0.5));
+    auto crate_body = PhysicsBody::createBox(crate->getContentSize(), PhysicsMaterial(0.8, INITIAL_RESTITUTION, 0.5));
     crate_body->setContactTestBitmask(0x1); // enable callbacks
     crate->setPhysicsBody(crate_body);
     this->addChild(crate, SP_ZINDEX);
@@ -123,8 +123,10 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
         // TODO: this should ideally have been based on the current impulse
         if (_vibration_length > 0)
         {
-//            NativeHelper::vibrate(_vibration_length);
-//            _vibration_length -= DELTA_VIBRATION;
+#ifdef USE_VIBRATE
+            NativeHelper::vibrate(_vibration_length);
+            _vibration_length -= DELTA_VIBRATION;
+#endif
         }
     }
     else
