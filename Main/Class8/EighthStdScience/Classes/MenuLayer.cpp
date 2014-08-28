@@ -2,6 +2,7 @@
 #include "MenuLayer.h"
 #include "BackGroundLayer.h"
 #include "SpriteLayer.h"
+#include "extensions/cocos-ext.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -47,22 +48,20 @@ bool MenuLayer::init()
 
 
     //////////////////////////////
-    // display controls
+    // 2. common display controls
+    _topMenu = Menu::create();
+    _topMenu->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+    _topMenu->setPosition(visibleSize.width, visibleSize.height);
+    this->addChild(_topMenu);
 
-    // menu item for resetting the scene
-    restart_scene = MenuItemImage::create("reset_normal.png" , "reset_normal.png" ,
-    		CC_CALLBACK_1(MenuLayer::restartScene , this));
-    restart_scene->setPosition(visibleSize.width/6 , visibleSize.height/6);
-    restart_scene->setScale(0.8);
+    return true;
+}
 
-    auto menu = Menu::create(restart_scene, NULL);
-    menu->setPosition(Point::ZERO);
-    this->addChild(menu);
+void MenuLayer::addForceMenu(Ref * target, Control::Handler handler)
+{
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
- 
-    //////////////////////////////
-    // controls on force
-    //
     auto labelForce = LabelTTF::create("Change Force :", "fonts/Marker Felt.ttf", 35);
     labelForce->setPosition(Point(visibleSize.width/2, visibleSize.height/4 + 20));
     addChild(labelForce);
@@ -75,8 +74,9 @@ bool MenuLayer::init()
     slider->setValue(0.0f);
 
     // When the value of the slider will change, the given selector will be called
-    slider->addTargetWithActionForControlEvents(this, cccontrol_selector(MenuLayer::forceValueChanged), Control::EventType::VALUE_CHANGED);                        
+    slider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
     addChild(slider);
+
     auto labelL = LabelTTF::create("-150", "fonts/Marker Felt.ttf", 25);
     labelL->setPosition(Point(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelL);
@@ -86,11 +86,13 @@ bool MenuLayer::init()
     auto labelH = LabelTTF::create("150", "fonts/Marker Felt.ttf", 25);
     labelH->setPosition(Point(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelH);
+}
 
-    // TODO: add a stepper for force
- 
-    //////////////////////////////
-    // controls on friction
+void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
+{
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
     auto labelF = LabelTTF::create("Change Friction :", "fonts/Marker Felt.ttf", 30);
     labelF->setPosition(Point(visibleSize.width/2, visibleSize.height/8));
     addChild(labelF);
@@ -104,7 +106,7 @@ bool MenuLayer::init()
     fSlider->setScale(0.75f);
 
     // When the value of the slider will change, the given selector will be called
-    fSlider->addTargetWithActionForControlEvents(this, cccontrol_selector(MenuLayer::frictionValueChanged), Control::EventType::VALUE_CHANGED);                        
+    fSlider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
     addChild(fSlider);
 
     auto labelL1 = LabelTTF::create("Low", "fonts/Marker Felt.ttf", 24);
@@ -120,41 +122,13 @@ bool MenuLayer::init()
     label->setPosition(Point(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
     addChild(label);
-
-    return true;
 }
-    
-void MenuLayer::restartScene(cocos2d::Ref* pSender)
+
+void MenuLayer::addToTopMenu(MenuItem * item)
 {
-	auto newScene = GameLayer::createScene();
-	Director::getInstance()->replaceScene(newScene);
-}
-
-//void MenuLayer::menuCallbackShowSumOfForces(Ref* pSender)
-//{
-//    MenuItemToggle* pLabel = (MenuItemToggle *)pSender;
-//    _spriteLayer->showSumOfForces(pLabel->getSelectedIndex());
-//}
-
-void MenuLayer::forceValueChanged(Ref* sender, Control::EventType controlEvent)
-{
-    ControlSlider* pSlider = (ControlSlider*)sender;
-    _spriteLayer->changeForceValue(pSlider->getValue());
-}
-
-void MenuLayer::frictionValueChanged(Ref* sender, Control::EventType controlEvent)
-{
-    ControlSlider* pSlider = (ControlSlider*)sender;
-    _spriteLayer->changeFrictionValue(pSlider->getValue());
-}
-
-void MenuLayer::setSpriteLayer(SpriteLayer* layer) 
-{ 
-    CC_SAFE_RETAIN(layer); 
-    _spriteLayer = layer; 
+    _topMenu->addChild(item);
 }
 
 MenuLayer::~MenuLayer() 
 { 
-    CC_SAFE_RELEASE(_spriteLayer);
 }

@@ -58,7 +58,7 @@ bool GameLayer::init()
     /////////////////////////////
     // 4. add the menu layer
     auto menuLayer = MenuLayer::create();
-    menuLayer->setSpriteLayer(spriteLayer);
+    //menuLayer->setSpriteLayer(spriteLayer);
     this->addChild(menuLayer, MN_ZINDEX);
 
     // trigger to back button exit

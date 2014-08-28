@@ -95,6 +95,7 @@ void ChallengeMenu::touchDownAction(Ref *sender)
 {
     int sceneId = dynamic_cast<Node *>(sender)->getTag();
     auto scene = Challenge1::createScene();
-    Director::getInstance()->replaceScene(scene);
+    // TODO: this should be conditional on how we got to the challengescreen
+    Director::getInstance()->pushScene(scene);
 }
 

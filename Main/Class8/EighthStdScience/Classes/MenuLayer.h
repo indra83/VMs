@@ -11,31 +11,23 @@ class MenuLayer : public cocos2d::Layer
 {
 private :    
     SpriteLayer * _spriteLayer;
-
-    cocos2d::MenuItemToggle *_sof;
-    cocos2d::MenuItemImage *restart_scene;
+    cocos2d::Menu * _topMenu;
 public :  
     MenuLayer() 
         : _spriteLayer(nullptr), 
-          _sof(nullptr)
+          _topMenu(nullptr)
     {}
     virtual bool init();  
 
-    void restartScene(cocos2d:: Ref* pSender);
-    void menuLeftCallback(cocos2d::Ref* pSender);
-    void menuRightCallback(cocos2d::Ref* pSender);
+    void addForceMenu(cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
+    void addFrictionMenu(cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
 
-    void menuCallbackShowSumOfForces(cocos2d::Ref* pSender);
-    void menuCallbackShowValues(cocos2d::Ref* pSender);
-    void menuCallbackShowForces(cocos2d::Ref* pSender);
-    void menuCallbackShowMasses(cocos2d::Ref* pSender);
-    void menuCallbackShowSpeed(cocos2d::Ref* pSender);
-
-    void forceValueChanged(cocos2d::Ref* pSender, cocos2d::extension::Control::EventType controlEvent);
-    void frictionValueChanged(cocos2d::Ref* pSender, cocos2d::extension::Control::EventType controlEvent);
     CREATE_FUNC(MenuLayer);
 
     void setSpriteLayer(SpriteLayer * layer);
+
+    void addToTopMenu(cocos2d::MenuItem * item);
+
     ~MenuLayer();
 };
 
