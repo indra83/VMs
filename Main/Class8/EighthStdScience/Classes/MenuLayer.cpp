@@ -57,7 +57,7 @@ bool MenuLayer::init()
     return true;
 }
 
-void MenuLayer::addForceMenu(Ref * target, Control::Handler handler)
+void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Control::Handler handler)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -66,24 +66,29 @@ void MenuLayer::addForceMenu(Ref * target, Control::Handler handler)
     labelForce->setPosition(Point(visibleSize.width/2, visibleSize.height/4 + 20));
     addChild(labelForce);
 
-    auto slider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", 0.0f);
+    auto slider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", start);
     slider->setAnchorPoint(Point(0.5f, 0.5f));
-    slider->setMinimumValue(-150.0f); // Sets the min value of range
-    slider->setMaximumValue(150.0f); // Sets the max value of range
+    slider->setMinimumValue(min); // Sets the min value of range
+    slider->setMaximumValue(max); // Sets the max value of range
     slider->setPosition(Point(visibleSize.width/2, visibleSize.height/4 - 20));
-    slider->setValue(0.0f);
+    slider->setValue(start);
 
     // When the value of the slider will change, the given selector will be called
     slider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
     addChild(slider);
 
-    auto labelL = LabelTTF::create("-150", "fonts/Marker Felt.ttf", 25);
+    std::stringstream sstr_min;
+    sstr_min << (int)min;
+    auto labelL = LabelTTF::create(sstr_min.str(), "fonts/Marker Felt.ttf", 25);
     labelL->setPosition(Point(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelL);
     auto labelM = LabelTTF::create("0", "fonts/Marker Felt.ttf", 25);
     labelM->setPosition(Point(slider->getPosition().x, slider->getPosition().y - 30 ));
     addChild(labelM);
-    auto labelH = LabelTTF::create("150", "fonts/Marker Felt.ttf", 25);
+
+    std::stringstream sstr_max;
+    sstr_max << (int)max;
+    auto labelH = LabelTTF::create(sstr_max.str(), "fonts/Marker Felt.ttf", 25);
     labelH->setPosition(Point(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelH);
 }

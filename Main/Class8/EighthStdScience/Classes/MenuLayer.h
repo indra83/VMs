@@ -19,7 +19,7 @@ public :
     {}
     virtual bool init();  
 
-    void addForceMenu(cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
+    void addForceMenu(float min, float max, float start, cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
     void addFrictionMenu(cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
 
     CREATE_FUNC(MenuLayer);

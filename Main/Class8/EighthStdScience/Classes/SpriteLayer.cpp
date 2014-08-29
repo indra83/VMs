@@ -14,14 +14,14 @@ static const int PTM_RATIO = 150;
 
 class ValueArrow : public Sprite
 {
-    float &_val;
+    float _val;
     MenuItemLabel * _label;
     bool _showValues;
 
 public :
-    static ValueArrow * create(const std::string &filename, float &trackable, bool showValues=true)
+    static ValueArrow * create(const std::string &filename, bool showValues=true)
     {
-        ValueArrow *sprite = new ValueArrow(trackable);
+        ValueArrow *sprite = new ValueArrow();
         if (sprite && sprite->initWithFile(filename))
         {
             sprite->autorelease();
@@ -33,12 +33,14 @@ public :
         return nullptr;
     }
 
-    ValueArrow(float &trackable) : _val(trackable), _label(nullptr) {}
+    ValueArrow() : _val(0.0), _label(nullptr) {}
 
     void setValue(float f)
     {
         _val = f;
         adjustSize();
+        if (_label)
+            _label->setLabel(getLabel());
     }
 
     float getValue() {return _val;}
@@ -130,9 +132,9 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 3. add the force arrows
     Point curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
-    auto addArrow = [&](const std::string & fileName, float &trackable) -> ValueArrow *
+    auto addArrow = [&](const std::string & fileName) -> ValueArrow *
     {
-        auto arrow = ValueArrow::create("arrow.png", trackable);
+        auto arrow = ValueArrow::create("arrow.png");
         arrow->setScaleY(0.25);
         arrow->setPosition(curr); 
         curr = curr + Point(0, arrow->getContentSize().height / 4);
@@ -140,9 +142,9 @@ bool SpriteLayer::init()
         return arrow;
     };
 
-    _sumOfForces = addArrow("arrow.png", _sumOfForcesValue);
-    _forceFriction = addArrow("arrow-fr.png", _forceFrictionValue);
-    _forceExternal = addArrow("arrow-force.png", _forceExternalValue);
+    _sumOfForces = addArrow("arrow.png");
+    _forceFriction = addArrow("arrow-fr.png");
+    _forceExternal = addArrow("arrow-force.png");
 
     //////////////////////////////
     // 3. add the speedLabel
@@ -167,7 +169,6 @@ int getIndexFromForce(float force)
 
 void SpriteLayer::addPersonOfForce(float force)
 {
-
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
@@ -222,7 +223,7 @@ float SpriteLayer::getFrictionalForce()
     float fric = 0.0;
     float gravity = 10.0;
     float max = _frictionCoefficient * _mass * gravity;
-    if (fabs(_velocity) > 0.0)
+    if (fabs(_velocity) > 0.2)
         fric = _velocity > 0.0 ? -max : max;
     else if (fabs(_forceExternalValue) != 0.0)
     {
@@ -234,17 +235,22 @@ float SpriteLayer::getFrictionalForce()
     return fric;
 }
 
+void SpriteLayer::readjustForces()
+{
+    _forceFrictionValue = getFrictionalForce();
+    _forceFriction->setValue(_forceFrictionValue);
+    _sumOfForcesValue = _forceExternalValue + _forceFrictionValue;
+    _sumOfForces->setValue(_sumOfForcesValue);
+}
+
 void SpriteLayer::changeForceValue(float value)
 {
     addPersonOfForce(value);
 
     _forceExternalValue = value;
-    _forceFrictionValue = getFrictionalForce();
-    _sumOfForcesValue = _forceExternalValue + _forceFrictionValue;
+    _forceExternal->setValue(_forceExternalValue);
 
-    _forceExternal->adjustSize();
-    _forceFriction->adjustSize();
-    _sumOfForces->adjustSize();
+    readjustForces();
 }
 
 void SpriteLayer::changeFrictionValue(float value)
@@ -278,17 +284,22 @@ void SpriteLayer::setMass(float mass)
 
 void SpriteLayer::update(float dt)
 {
-    float acc = _prevSumOfForcesValue / _mass;
+    readjustForces();
 
+    float acc = _prevSumOfForcesValue / _mass;
     float dv = acc * dt;
     _velocity += dv;
-    float dx = _velocity * dt * PTM_RATIO;
+    float dx = 0.0;
+    if(fabs(_velocity > 0.2))
+        dx = _velocity * dt * PTM_RATIO;
     _speedLabel->setLabel(getSpeedLabel());
 
-    _moveCB(dx);
-
-    if(!_personPushing)
-        _person->runAction(Place::create(_person->getPosition() + Point(-dx, 0.0)));
+    if(fabs(dx) > 0.0)
+    {
+        _moveCB(dx);
+        if(!_personPushing)
+            _person->runAction(Place::create(_person->getPosition() + Point(-dx, 0.0)));
+    }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
     Node::update(dt);

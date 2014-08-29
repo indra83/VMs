@@ -58,6 +58,7 @@ private :
     cocos2d::LabelTTF * getSpeedLabel();
     cocos2d::LabelTTF * getMassLabel();
     float getFrictionalForce();
+    void readjustForces();
     
 };
 
