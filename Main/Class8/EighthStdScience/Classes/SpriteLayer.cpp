@@ -173,7 +173,7 @@ void SpriteLayer::addPersonOfForce(float force)
     if (_person)
     {
         prevPosition = _person->getPosition() + Point(_person->getContentSize().width, 0.0); 
-        //_crate->removeAltNode(_person); 
+        _personPushing = true;
         removeChild(_person);
     }
 
@@ -206,13 +206,8 @@ void SpriteLayer::addPersonOfForce(float force)
     if (reflect)
         _person->setFlippedX(true);
     addChild(_person);
-    //if (force == 0)
-    //    _crate->addAltNode(_person);
-}
-
-void SpriteLayer::setBackGroundLayer(Layer *layer)
-{
-    //_crate->addAltNode(layer);
+    if (force == 0)
+        _personPushing = false;
 }
 
 float SpriteLayer::getFrictionalForce()
@@ -270,8 +265,18 @@ LabelTTF * SpriteLayer::getSpeedLabel()
 
 void SpriteLayer::update(float dt)
 {
+    static float jiffy = 1;
+    float acc = _prevSumOfForcesValue / _mass;
 
+    float dv = acc * dt;
+    _velocity += dv;
+    float dx = _velocity * dt * PTM_RATIO;
     _speedLabel->setLabel(getSpeedLabel());
+    _prevSumOfForcesValue = _sumOfForcesValue;
+
+    _moveCB( dx );
+    if(!_personPushing)
+        _person->runAction(Place::create(_person->getPosition() + Point(-dx, 0.0)));
     Node::update(dt);
 }
 

@@ -66,6 +66,13 @@ bool Challenge<Derived>::init()
     /////////////////////////////
     // 2. add the sprite layer
     _spriteLayer = SpriteLayer::create();
+    _spriteLayer->setMass(100.0);
+    _spriteLayer->setFrictionCoefficient(0.5);
+    _spriteLayer->setMoveCB(
+            [&](float deltaX) -> void
+            {
+                _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Point(-deltaX, 0.0)));
+            });
     this->addChild(_spriteLayer, SP_ZINDEX);
 
     /////////////////////////////
@@ -113,6 +120,24 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 {
 	Director::getInstance()->popScene();
 }
-// a treatise on the unusability of templates
-#include <Challenge1.h>
-template class Challenge<Challenge1>;
+
+
+//////////////////////////////
+// challenge1
+
+// on "init" you need to initialize your instance
+bool Challenge1::init()
+{
+    //////////////////////////////
+    // 1. super init first
+    if ( !Challenge::init() )
+    {
+        return false;
+    }
+
+    // add the force menu
+    _menuLayer->addForceMenu(this, cccontrol_selector(Challenge1::forceValueChanged));
+
+    return true;
+}
+

@@ -11,28 +11,34 @@ class SpriteLayer : public cocos2d::Layer
     ValueArrow * _sumOfForces; 
     cocos2d::Sprite * _crate;
     cocos2d::Sprite *_person;
-    cocos2d::MenuItemLabel * _massLabel;
+    bool _personPushing;
+    std::function< void (float) > _moveCB;
     cocos2d::MenuItemLabel * _speedLabel;
+    cocos2d::MenuItemLabel * _massLabel;
     float _forceExternalValue;
     float _forceFrictionValue;
     float _sumOfForcesValue;
+    float _prevSumOfForcesValue;
     float _velocity;
     float _mass;
     float _frictionCoefficient;
 public :  
     SpriteLayer() : 
-       _crate(nullptr), 
-       _person(nullptr),
-       _speedLabel(nullptr),
-       _massLabel(nullptr),
-       _velocity(0.0),
-       _mass(0.0),
        _forceFriction(nullptr),
        _forceExternal(nullptr),
        _sumOfForces(nullptr),
+       _crate(nullptr), 
+       _person(nullptr),
+       _personPushing(false),
+       _speedLabel(nullptr),
+       _massLabel(nullptr),
        _forceExternalValue(0.0),
        _forceFrictionValue(0.0),
-       _sumOfForcesValue(0.0) {}
+       _sumOfForcesValue(0.0),
+       _prevSumOfForcesValue(0.0),
+       _velocity(0.0),
+       _mass(0.0),
+       _frictionCoefficient(0.0) {}
 
     ~SpriteLayer();
 
@@ -44,6 +50,9 @@ public :
     void setBackGroundLayer(Layer *layer);
     void addPersonOfForce(float);
     void update(float);
+    void setMass(float mass) { _mass = mass; }
+    void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
+    void setMoveCB( std::function< void (float) > cb ) { _moveCB = cb; }
 
 private :    
     cocos2d::LabelTTF * getSpeedLabel();

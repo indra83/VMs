@@ -52,7 +52,7 @@ bool GameLayer::init()
     /////////////////////////////
     // 3. add the sprite layer
     auto spriteLayer = SpriteLayer::create();
-    spriteLayer->setBackGroundLayer(bgLayer);
+    //spriteLayer->setBackGroundLayer(bgLayer);
     this->addChild(spriteLayer, SP_ZINDEX);
 
     /////////////////////////////

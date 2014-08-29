@@ -21,8 +21,8 @@ public:
     static cocos2d::Scene* createScene();
 
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
-    virtual bool init();  
-    
+    virtual bool init();
+
     // implement the "static create()" method manually
     static Derived * create();
 
@@ -36,6 +36,12 @@ protected:
     SpriteLayer * _spriteLayer;
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
+};
+
+class Challenge1: public Challenge<Challenge1>
+{
+public:
+    virtual bool init();
 };
 
 #endif // __CHALLENGE_H__

@@ -1,6 +1,6 @@
 #include "ChallengeMenuScene.h"
 #include "GameLoadScene.h"
-#include "Challenge1.h"
+#include "Challenge.h"
 
 #include "extensions/cocos-ext.h"
 
