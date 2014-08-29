@@ -64,7 +64,6 @@ bool ChallengeMenu::init()
         menu->addChild(label);
     };
 
-    // TODO: need to create a proper scale9 png for this
     addChallenge("chalbox.png", 1);
     addChallenge("chalbox.png", 2);
     addChallenge("chalbox.png", 3);
