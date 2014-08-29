@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/GameLoadScene.cpp \
                    ../../Classes/ChallengeMenuScene.cpp \
+                   ../../Classes/Challenge.cpp \
                    ../../Classes/Challenge1.cpp \
                    ../../Classes/GameLayerScene.cpp \
                    ../../Classes/BackGroundLayer.cpp \
