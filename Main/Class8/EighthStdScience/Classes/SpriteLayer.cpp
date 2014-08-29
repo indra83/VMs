@@ -8,7 +8,9 @@ USING_NS_CC;
 static const int SPRITE_ZINDEX = 0;
 static const int LABEL_ZINDEX = 1;
 static const Color3B BLACK(0, 0, 0);
-static const int PTM_RATIO = 100;
+
+// TODO: base it on the crate size.. assuming the crate is 1m wide
+static const int PTM_RATIO = 150;
 
 class ValueArrow : public Sprite
 {
@@ -105,20 +107,25 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 2. add crate
-    _crate = Sprite::create("crate.png");
-    _crate->setAnchorPoint(Point::ANCHOR_MIDDLE);
-    _crate->setPosition(Point(visibleSize.width/2 + origin.x , _crate->getContentSize().height/2 + visibleSize.height/3 + origin.y+ 15));
-    this->addChild(_crate, SPRITE_ZINDEX);
+    _crate = Layer::create();
+    _crate->setAnchorPoint(Point::ANCHOR_MIDDLE_BOTTOM);
+    _crate->setPosition(Point(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
 
-    // TODO : join with _crate
+    auto crate = Sprite::create("crate.png");
+    crate->setAnchorPoint(Point::ANCHOR_MIDDLE_BOTTOM);
+    crate->setPosition(Point::ZERO);
+    _crate->setContentSize(crate->getContentSize());
+    _crate->addChild(crate, SPRITE_ZINDEX);
+
     //////////////////////////////
     // 3. add mass label
     _massLabel = MenuItemLabel::create(getMassLabel());
     _massLabel->setColor(BLACK);
     _massLabel->setAnchorPoint(Point::ANCHOR_BOTTOM_LEFT);
-    auto half = _crate->getContentSize()/2;
-    _massLabel->setPosition(_crate->getPosition() - Point(half.width, half.height));
-    addChild(_massLabel, LABEL_ZINDEX);
+    _massLabel->setPosition(Point(-crate->getContentSize().width/2, 0.0));
+    _crate->addChild(_massLabel, LABEL_ZINDEX);
+
+    this->addChild(_crate, SPRITE_ZINDEX);
 
     //////////////////////////////
     // 3. add the force arrows
@@ -257,26 +264,33 @@ LabelTTF * SpriteLayer::getMassLabel()
 LabelTTF * SpriteLayer::getSpeedLabel()
 {
     std::stringstream sstr;
-    sstr << "Speed - " << _velocity << " m/sec";
+    sstr << "Speed - " << (int)_velocity << " m/sec";
     auto labelTTF = LabelTTF::create(sstr.str().c_str(), "fonts/Marker Felt.ttf", 30);
     labelTTF->setHorizontalAlignment(TextHAlignment::LEFT);
     return labelTTF;
 }
 
+void SpriteLayer::setMass(float mass)
+{
+    _mass = mass;
+    _massLabel->setLabel(getMassLabel());
+}
+
 void SpriteLayer::update(float dt)
 {
-    static float jiffy = 1;
     float acc = _prevSumOfForcesValue / _mass;
 
     float dv = acc * dt;
     _velocity += dv;
     float dx = _velocity * dt * PTM_RATIO;
     _speedLabel->setLabel(getSpeedLabel());
-    _prevSumOfForcesValue = _sumOfForcesValue;
 
-    _moveCB( dx );
+    _moveCB(dx);
+
     if(!_personPushing)
         _person->runAction(Place::create(_person->getPosition() + Point(-dx, 0.0)));
+
+    _prevSumOfForcesValue = _sumOfForcesValue;
     Node::update(dt);
 }
 

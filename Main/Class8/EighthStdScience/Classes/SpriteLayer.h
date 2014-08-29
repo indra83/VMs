@@ -9,7 +9,7 @@ class SpriteLayer : public cocos2d::Layer
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
     ValueArrow * _sumOfForces; 
-    cocos2d::Sprite * _crate;
+    cocos2d::Layer *_crate;
     cocos2d::Sprite *_person;
     bool _personPushing;
     std::function< void (float) > _moveCB;
@@ -50,7 +50,7 @@ public :
     void setBackGroundLayer(Layer *layer);
     void addPersonOfForce(float);
     void update(float);
-    void setMass(float mass) { _mass = mass; }
+    void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
     void setMoveCB( std::function< void (float) > cb ) { _moveCB = cb; }
 
