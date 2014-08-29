@@ -8,6 +8,11 @@ USING_NS_CC;
 static const int SPRITE_ZINDEX = 0;
 static const int LABEL_ZINDEX = 1;
 static const Color3B BLACK(0, 0, 0);
+static const float EPSILON 0.2;
+static const int NUM_IMAGES=15;
+
+// per person;
+const float SpriteLayer::MAX_FORCE=100;
 
 // TODO: base it on the crate size.. assuming the crate is 1m wide
 static const int PTM_RATIO = 150;
@@ -37,10 +42,13 @@ public :
 
     void setValue(float f)
     {
-        _val = f;
-        adjustSize();
-        if (_label)
-            _label->setLabel(getLabel());
+        if( _val != f )
+        {
+            _val = f;
+            adjustSize();
+            if (_label)
+                _label->setLabel(getLabel());
+        }
     }
 
     float getValue() {return _val;}
@@ -72,7 +80,7 @@ public :
         // 150 == normal size
         //
         // Stretches content proportional to newLevel
-        float scale = val/150;
+        float scale = val/MAX_FORCE;
         setScaleX(scale);
     }
 
@@ -161,9 +169,9 @@ bool SpriteLayer::init()
 
 int getIndexFromForce(float force)
 {
-    // 10 = 150/15;
-    auto val = floor(force/10);
-    if (val > 14) val = 14;
+    static const int DELTA = MAX_FORCE/NUM_IMAGES;
+    auto val = floor(force/DELTA);
+    if (val > 14) val = 14; // for the exactly MAX_FORCE case
     return val;
 }
 
@@ -191,13 +199,9 @@ void SpriteLayer::addPersonOfForce(float force)
         sstr << "pusher_straight_on.png";
     else
     {
-        if (force > 0) 
-            sstr << "pusher_" << getIndexFromForce(force) << ".png";
-        else
-        {
-            sstr << "pusher_" << getIndexFromForce(-force) << ".png";
+        sstr << "pusher_" << getIndexFromForce(fabs(force)) << ".png";
+        if (force < 0)
             reflect = true;
-        }
     }
 
     _person = Sprite::create(sstr.str());
@@ -206,11 +210,11 @@ void SpriteLayer::addPersonOfForce(float force)
     beforeCrate -= Point(_person->getContentSize().width, 0.0);
     if (force > 0)
         _person->setPosition(beforeCrate);
-    else if (force < 0) 
+    else if (force < 0)
         _person->setPosition(afterCrate);
     else
         _person->setPosition(prevPosition);
-        
+
     if (reflect)
         _person->setFlippedX(true);
     addChild(_person);
@@ -290,7 +294,7 @@ void SpriteLayer::update(float dt)
     float dv = acc * dt;
     _velocity += dv;
     float dx = 0.0;
-    if(fabs(_velocity > 0.2))
+    if(fabs(_velocity > EPSILON))
         dx = _velocity * dt * PTM_RATIO;
     _speedLabel->setLabel(getSpeedLabel());
 

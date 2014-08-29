@@ -27,7 +27,7 @@ public:
     static Derived * create();
 
     virtual void restartScene(cocos2d::Ref* pSender);
-    void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
+    virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
@@ -42,6 +42,8 @@ class Challenge1: public Challenge<Challenge1>
 {
 public:
     virtual bool init();
+    void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
+private:
 };
 
 #endif // __CHALLENGE_H__

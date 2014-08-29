@@ -66,7 +66,7 @@ bool Challenge<Derived>::init()
     /////////////////////////////
     // 2. add the sprite layer
     _spriteLayer = SpriteLayer::create();
-    _spriteLayer->setMass(10.0);
+    _spriteLayer->setMass(30.0);
     _spriteLayer->setFrictionCoefficient(0.5);
     _spriteLayer->setMoveCB(
             [&](float deltaX) -> void
@@ -137,8 +137,12 @@ bool Challenge1::init()
     }
 
     // add the force menu
-    _menuLayer->addForceMenu(-150, 150, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
+    _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
 
     return true;
 }
 
+void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
+{
+
+}

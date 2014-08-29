@@ -6,6 +6,10 @@
 class ValueArrow;
 class SpriteLayer : public cocos2d::Layer 
 {
+public :
+    // per person
+    static const float MAX_FORCE;
+private :
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
     ValueArrow * _sumOfForces; 
