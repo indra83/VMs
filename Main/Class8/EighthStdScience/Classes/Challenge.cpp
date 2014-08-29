@@ -79,10 +79,6 @@ bool Challenge<Derived>::init()
     restart_scene->setScale(0.8);
     restart_scene->setPosition(-restart_scene->getContentSize().width/2, -restart_scene->getContentSize().height/2);
     _menuLayer->addToTopMenu(restart_scene);
-    
-    // TODO: this moves out to the derived class
-    // add the force menu
-    //_menuLayer->addForceMenu(this, cccontrol_selector(Challenge1::forceValueChanged));
 
     this->addChild(_menuLayer, MN_ZINDEX);
 

@@ -27,8 +27,6 @@ bool Challenge1::init()
     // add the force menu
     _menuLayer->addForceMenu(this, cccontrol_selector(Challenge1::forceValueChanged));
 
-    this->addChild(_menuLayer, MN_ZINDEX);
-
     // enable keypress cbs
     this->setKeypadEnabled(true);
 
