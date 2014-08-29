@@ -16,6 +16,7 @@ fi
 
 proj_name=$(basename $(pwd))
 
+export USE_VIBRATE=1
 python proj.android/build_native.py -p 19 
 
 adb install -r proj.android/bin/$proj_name-debug.apk
