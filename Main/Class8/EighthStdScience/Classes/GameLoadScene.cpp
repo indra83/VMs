@@ -132,7 +132,7 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     else
     {
         auto scene = ChallengeMenu::createScene();
-        auto transition = TransitionMoveInT::create(1 , scene);
+        auto transition = TransitionMoveInT::create(0.2 , scene);
         Director::getInstance()->replaceScene(transition);
     }
 }

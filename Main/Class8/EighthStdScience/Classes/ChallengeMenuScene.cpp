@@ -1,8 +1,12 @@
 #include "ChallengeMenuScene.h"
 #include "GameLoadScene.h"
 #include "Challenge.h"
+//#include "SimpleAudioEngine.h"
 
 #include "extensions/cocos-ext.h"
+
+#define GREENISH Color4B(64,102,24,255)
+//#define CHIME "audio/notification.mp3"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -36,6 +40,14 @@ bool ChallengeMenu::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
+    // preload music and play music
+//    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME);
+//    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME);
+
+    // green board layer
+    auto bglayer = LayerColor::create(GREENISH , visibleSize.width , visibleSize.height);
+    this->addChild(bglayer);
+
     // scroll container
     auto scrollContainer = Layer::create();
     scrollContainer->setContentSize(Size(visibleSize.width , 2*visibleSize.height));
@@ -59,18 +71,23 @@ bool ChallengeMenu::init()
 
         std::stringstream sstr;
         sstr << "challenge " << id;
-        auto label = LabelTTF::create(sstr.str(), "fonts/Marker Felt.ttf" , 20);
+        auto label = LabelTTF::create(sstr.str(), "fonts/EraserDust.ttf" , 40);
         label->setPosition(3*wd/5, (5 - id) * ht/5);
         menu->addChild(label);
     };
 
-    addChallenge("chalbox.png", 1);
-    addChallenge("chalbox.png", 2);
-    addChallenge("chalbox.png", 3);
-    addChallenge("chalbox.png", 4);
+    addChallenge("chal_1.png", 1);
+    addChallenge("chl.png", 2);
+    addChallenge("chl.png", 3);
+    addChallenge("chl.png", 4);
 
     menu->setPosition(Point::ZERO);
     scrollContainer->addChild(menu);
+
+    // challenge label
+	auto label = LabelTTF::create("CHALLENGES" , "fonts/EraserDust.ttf" , 60);
+	label->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + 2*visibleSize.height - label->getContentSize().height));
+	scrollContainer->addChild(label);
 
     // scroll view
     auto scrollview = ScrollView::create(visibleSize, scrollContainer);
