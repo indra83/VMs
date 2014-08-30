@@ -38,7 +38,7 @@ bool ChallengeMenu::init()
     }
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // preload music and play music
 //    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME);
@@ -81,7 +81,7 @@ bool ChallengeMenu::init()
     addChallenge("chl.png", 3);
     addChallenge("chl.png", 4);
 
-    menu->setPosition(Point::ZERO);
+    menu->setPosition(Vec2::ZERO);
     scrollContainer->addChild(menu);
 
     // challenge label

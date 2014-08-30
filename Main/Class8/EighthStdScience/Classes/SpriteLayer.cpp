@@ -58,22 +58,22 @@ public :
         auto val = _val;
         if (_val < 0)
             val = -_val;
-        setAnchorPoint(_val < 0.0 ? Point::ANCHOR_BOTTOM_RIGHT : Point::ANCHOR_BOTTOM_LEFT);
+        setAnchorPoint(_val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT);
 
         if( _showValues && !_label) 
         {
             _label = MenuItemLabel::create(getLabel());
             _label->setColor(Color3B(255,255,255));
-            _label->setAnchorPoint(Point(0.5, 0.0));
-            _label->setPosition(Point(getContentSize().width /** getScaleX()/2 */, 65.0));
+            _label->setAnchorPoint(Vec2(0.5, 0.0));
+            _label->setPosition(Vec2(getContentSize().width /** getScaleX()/2 */, 65.0));
             // add the mass label
             addChild(_label);
         }
 
         if (_label)
         {
-            _label->setAnchorPoint(Point(0.5, 0.0));
-            _label->setPosition(Point(getContentSize().width * getScaleX()/2 , 65.0));
+            _label->setAnchorPoint(Vec2(0.5, 0.0));
+            _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 65.0));
         }
         setFlippedX(_val < 0);
 
@@ -111,17 +111,17 @@ bool SpriteLayer::init()
     }
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     //////////////////////////////
     // 2. add crate
     _crate = Layer::create();
-    _crate->setAnchorPoint(Point::ANCHOR_MIDDLE_BOTTOM);
-    _crate->setPosition(Point(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
+    _crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    _crate->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
 
     auto crate = Sprite::create("crate.png");
-    crate->setAnchorPoint(Point::ANCHOR_MIDDLE_BOTTOM);
-    crate->setPosition(Point::ZERO);
+    crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    crate->setPosition(Vec2::ZERO);
     _crate->setContentSize(crate->getContentSize());
     _crate->addChild(crate, SPRITE_ZINDEX);
 
@@ -129,21 +129,21 @@ bool SpriteLayer::init()
     // 3. add mass label
     _massLabel = MenuItemLabel::create(getMassLabel());
     _massLabel->setColor(BLACK);
-    _massLabel->setAnchorPoint(Point::ANCHOR_BOTTOM_LEFT);
-    _massLabel->setPosition(Point(-crate->getContentSize().width/2, 0.0));
+    _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    _massLabel->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
     _crate->addChild(_massLabel, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);
 
     //////////////////////////////
     // 3. add the force arrows
-    Point curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
+    Vec2 curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
     auto addArrow = [&](const std::string & fileName) -> ValueArrow *
     {
         auto arrow = ValueArrow::create("arrow.png");
         arrow->setScaleY(0.25);
         arrow->setPosition(curr); 
-        curr = curr + Point(0, arrow->getContentSize().height / 4);
+        curr = curr + Vec2(0, arrow->getContentSize().height / 4);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
     };
@@ -156,8 +156,8 @@ bool SpriteLayer::init()
     // 3. add the speedLabel
     _speedLabel = MenuItemLabel::create(getSpeedLabel());
     _speedLabel->setColor(BLACK);
-    _speedLabel->setAnchorPoint(Point::ANCHOR_BOTTOM_RIGHT);
-    _speedLabel->setPosition(Point(visibleSize.width, visibleSize.height/3));
+    _speedLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    _speedLabel->setPosition(Vec2(visibleSize.width, visibleSize.height/3));
     addChild(_speedLabel);
 
     this->addPersonOfForce(0.0);
@@ -176,17 +176,17 @@ int getIndexFromForce(float force)
 void SpriteLayer::addPersonOfForce(float force)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    auto beforeCrate = Point(visibleSize.width/2 + origin.x - _crate->getContentSize().width/2,
+    auto beforeCrate = Vec2(visibleSize.width/2 + origin.x - _crate->getContentSize().width/2,
                     visibleSize.height/3 + 15 +origin.y);
-    auto afterCrate = Point(visibleSize.width/2 + origin.x + _crate->getContentSize().width/2,
+    auto afterCrate = Vec2(visibleSize.width/2 + origin.x + _crate->getContentSize().width/2,
                     visibleSize.height/3 + 15 +origin.y);
 
     auto prevPosition = beforeCrate;
     if (_person)
     {
-        prevPosition = _person->getPosition() + Point(_person->getContentSize().width, 0.0); 
+        prevPosition = _person->getPosition() + Vec2(_person->getContentSize().width, 0.0); 
         _personPushing = true;
         removeChild(_person);
     }
@@ -203,9 +203,9 @@ void SpriteLayer::addPersonOfForce(float force)
     }
 
     _person = Sprite::create(sstr.str());
-    _person->setAnchorPoint(Point(0.0, 0.0));
-    prevPosition -= Point(_person->getContentSize().width, 0.0);
-    beforeCrate -= Point(_person->getContentSize().width, 0.0);
+    _person->setAnchorPoint(Vec2(0.0, 0.0));
+    prevPosition -= Vec2(_person->getContentSize().width, 0.0);
+    beforeCrate -= Vec2(_person->getContentSize().width, 0.0);
     if (force > 0)
         _person->setPosition(beforeCrate);
     else if (force < 0)
@@ -300,7 +300,7 @@ void SpriteLayer::update(float dt)
     {
         _moveCB(dx);
         if(!_personPushing)
-            _person->runAction(Place::create(_person->getPosition() + Point(-dx, 0.0)));
+            _person->runAction(Place::create(_person->getPosition() + Vec2(-dx, 0.0)));
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;

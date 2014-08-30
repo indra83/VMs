@@ -11,18 +11,18 @@ USING_NS_CC;
 static const Color4B BLUEISH(173, 255, 250, 255);
 static const Color4B GRAYISH (70, 70, 70, 255);
 
-// due to lack of access to the PointObject class in ParallaxNode, replicate it here
-class PointObject : public Ref
+// due to lack of access to the Vec2Object class in ParallaxNode, replicate it here
+class Vec2Object : public Ref
 {
 public:
-    inline void setRatio(Point ratio) {_ratio = ratio;}
-    inline void setOffset(Point offset) {_offset = offset;}
+    inline void setRatio(Vec2 ratio) {_ratio = ratio;}
+    inline void setOffset(Vec2 offset) {_offset = offset;}
     inline void setChild(Node *var) {_child = var;}
-    inline Point getOffset() const {return _offset;}
+    inline Vec2 getOffset() const {return _offset;}
     inline Node* getChild() const {return _child;}
 private:
-    Point _ratio;
-    Point _offset;
+    Vec2 _ratio;
+    Vec2 _offset;
     Node* _child;
 };
 
@@ -53,17 +53,17 @@ public:
         return n->getContentSize().width * n->getScaleX();
     }
 
-    void addChild(std::function<Node * ()> cb, int zIndex, const Point& ratio, const Point& offset)
+    void addChild(std::function<Node * ()> cb, int zIndex, const Vec2& ratio, const Vec2& offset)
     {
         Size visibleSize = Director::getInstance()->getVisibleSize();
         float totalSize = 0;
-        Point offsetIter = offset;
+        Vec2 offsetIter = offset;
         while (totalSize < visibleSize.width*2)
         {
             auto child = cb();
             ParallaxNode::addChild(child, zIndex, ratio, offsetIter);
             totalSize += getScaledSizeX( child );
-            offsetIter += Point(child->getContentSize().width * child->getScaleX(), 0);
+            offsetIter += Vec2(child->getContentSize().width * child->getScaleX(), 0);
         }
     }
 
@@ -89,14 +89,14 @@ public:
 
             if (whichSide != 0) 
             {
-                // 3. Find PointObject that corresponds to current node
+                // 3. Find Vec2Object that corresponds to current node
                 for (int i = 0; i < _parallaxArray->num; i++)
                 {
-                    auto po = (PointObject*)_parallaxArray->arr[i];
+                    auto po = (Vec2Object*)_parallaxArray->arr[i];
                     // If yes increase its current offset on the value of visible width
                     if (po->getChild() == node)
                         po->setOffset(po->getOffset() +
-                                Point(visibleSize.width + getScaledSizeX(node), 0)*whichSide);
+                                Vec2(visibleSize.width + getScaledSizeX(node), 0)*whichSide);
                 }
             }
         }
@@ -122,7 +122,7 @@ bool BackGroundLayer::init()
 
     int zIndex = 0;
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     float lower_boundary = visibleSize.height/3;
 
@@ -137,8 +137,8 @@ bool BackGroundLayer::init()
                 		visibleSize.height);
             },
             zIndex,
-            Point(1.0, 1.0),
-            Point(0 , 0)
+            Vec2(1.0, 1.0),
+            Vec2(0 , 0)
     );   
 
     //////////////////////////////
@@ -150,8 +150,8 @@ bool BackGroundLayer::init()
                 return layer;
             },
             ++zIndex,
-            Point(1.0, 1.0),
-            Point(0, 0)
+            Vec2(1.0, 1.0),
+            Vec2(0, 0)
     );
 
     //////////////////////////////
@@ -164,8 +164,8 @@ bool BackGroundLayer::init()
                 return clouds; 
             },
             ++zIndex,
-            Point(0.025, 1.0),
-            Point(0, 9*visibleSize.height/10)
+            Vec2(0.025, 1.0),
+            Vec2(0, 9*visibleSize.height/10)
     );   
 
     //////////////////////////////
@@ -178,8 +178,8 @@ bool BackGroundLayer::init()
                 return mountains;
             },
             ++zIndex,
-            Point(0.05, 1.0),
-            Point(0, lower_boundary)
+            Vec2(0.05, 1.0),
+            Vec2(0, lower_boundary)
     );   
 
     //////////////////////////////
@@ -192,8 +192,8 @@ bool BackGroundLayer::init()
                 return tree;
             },
             ++zIndex,
-            Point(0.75, 1.0),
-            Point(0, lower_boundary)
+            Vec2(0.75, 1.0),
+            Vec2(0, lower_boundary)
     );   
 
     //////////////////////////////
@@ -205,8 +205,8 @@ bool BackGroundLayer::init()
                 return grass;
             },
             ++zIndex,
-            Point(1.0, 1.0),
-            Point(0, lower_boundary + 2*BUF_HT)
+            Vec2(1.0, 1.0),
+            Vec2(0, lower_boundary + 2*BUF_HT)
     );   
 
     //////////////////////////////
@@ -219,8 +219,8 @@ bool BackGroundLayer::init()
                 return bricks;
             },
             ++zIndex,
-            Point(1.0, 1.0),
-            Point(0, lower_boundary + BUF_HT)
+            Vec2(1.0, 1.0),
+            Vec2(0, lower_boundary + BUF_HT)
     );   
 
     addChild(parallaxNode, 0);

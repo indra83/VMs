@@ -37,7 +37,7 @@ bool GameLayer::init()
     }
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 
 ///////////////////////////////////////////////////////////////////////////
