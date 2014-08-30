@@ -2,13 +2,12 @@
 #include "BackGroundLayer.h"
 #include "MenuLayer.h"
 #include "SpriteLayer.h"
+#include "ChallengeMenuScene.h"
 
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 static const int INF_ZINDEX=3;
-
-#define BUF_HT 15
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -57,7 +56,7 @@ bool Challenge<Derived>::init()
     }
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     /////////////////////////////
     // 1. add the background layer
@@ -72,7 +71,7 @@ bool Challenge<Derived>::init()
     _spriteLayer->setMoveCB(
             [&](float deltaX) -> void
             {
-                _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Point(-deltaX, 0.0)));
+                _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Vec2(-deltaX, 0.0)));
             });
     _spriteLayer->changeForceValue(0.0);
     this->addChild(_spriteLayer, SP_ZINDEX);
@@ -96,10 +95,21 @@ bool Challenge<Derived>::init()
                                       "info.png",
                                       [&](Ref * sender) -> void
                                       {
-                                        _menuLayer->addPopupMenu("Objective", "Try to move the crate by changing the force applied");
+                                            _menuLayer->addPopupMenu("Objective", "Try to move the crate by changing the force applied");
                                       });
     info->setScale(0.8);
     _menuLayer->addToTopMenu(info);
+
+    // add the challenges menu
+    
+    auto list = MenuItemImage::create("list.png",
+                                      "list.png",
+                                      [&](Ref * sender) -> void
+                                      {
+                                            Director::getInstance()->pushScene(ChallengeMenu::createScene());
+                                      });
+    list->setScale(0.2);
+    _menuLayer->addToTopMenu(list);
 
     this->addChild(_menuLayer, MN_ZINDEX);
 
@@ -128,7 +138,7 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 {
     if (_menuLayer->isShowingPopupMenu())
     {
-        _menuLayer->disablePopUpMenu(nullptr);
+        _menuLayer->disablePopUpMenu();
     }
     else
     {
@@ -165,17 +175,18 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
     Challenge<Challenge1>::forceValueChanged(sender, controlEvent);
     if ( !_friendHelpShown && fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE)
     {
-        _menuLayer->addPopupMenu("Ask for Help", "Not enough force, ask a friend to help out by clicking the friend button on the top left");
+        _menuLayer->addPopupMenu("Ask for Help", "Not enough force, ask a friend to help out, by clicking the friend button on the top right");
 
-        MenuItemImage * friendButton = MenuItemImage::create("help.png", "help.png");
-        friendButton->setScale(0.5);
+        auto friendButton = MenuItemImage::create("help.png", "help.png");
+        friendButton->setScale(0.25);
         friendButton->setCallback(  [&](Ref * sender)-> void 
                                     {
-                                        _spriteLayer->addAnotherPerson();
+                                        this->_spriteLayer->addAnotherPerson();
+                                        // TODO: fix crash
                                         friendButton->setEnabled(false);
                                     }); 
-
         _menuLayer->addToTopMenu(friendButton);
+        friendButton->retain();
         _friendHelpShown = true;
     }
 }

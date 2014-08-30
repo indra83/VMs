@@ -10,6 +10,7 @@ USING_NS_CC_EXT;
 static const Color4B GREENISH(64,102,24,255);
 static const int LAB_ZINDEX=0;
 static const int POP_ZINDEX=1;
+static const float PADDING = 10.0;
 
 class ControlSliderRollBack : public ControlSlider
 {
@@ -67,14 +68,14 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     auto labelForce = LabelTTF::create("Change Force :", "fonts/Marker Felt.ttf", 35);
-    labelForce->setPosition(Point(visibleSize.width/2, visibleSize.height/4 + 20));
+    labelForce->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 + 20));
     addChild(labelForce);
 
     auto slider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", start);
-    slider->setAnchorPoint(Point(0.5f, 0.5f));
+    slider->setAnchorPoint(Vec2(0.5f, 0.5f));
     slider->setMinimumValue(min); // Sets the min value of range
     slider->setMaximumValue(max); // Sets the max value of range
-    slider->setPosition(Point(visibleSize.width/2, visibleSize.height/4 - 20));
+    slider->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 - 20));
     slider->setValue(start);
 
     // When the value of the slider will change, the given selector will be called
@@ -84,17 +85,17 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     std::stringstream sstr_min;
     sstr_min << (int)min;
     auto labelL = LabelTTF::create(sstr_min.str(), "fonts/Marker Felt.ttf", 25);
-    labelL->setPosition(Point(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
+    labelL->setPosition(Vec2(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelL);
     /*
     auto labelM = LabelTTF::create("0", "fonts/Marker Felt.ttf", 25);
-    labelM->setPosition(Point(slider->getPosition().x, slider->getPosition().y - 30 ));
+    labelM->setPosition(Vec2(slider->getPosition().x, slider->getPosition().y - 30 ));
     addChild(labelM);
     */
     std::stringstream sstr_max;
     sstr_max << (int)max;
     auto labelH = LabelTTF::create(sstr_max.str(), "fonts/Marker Felt.ttf", 25);
-    labelH->setPosition(Point(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
+    labelH->setPosition(Vec2(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelH);
 }
 
@@ -104,14 +105,14 @@ void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     auto labelF = LabelTTF::create("Change Friction :", "fonts/Marker Felt.ttf", 30);
-    labelF->setPosition(Point(visibleSize.width/2, visibleSize.height/8));
+    labelF->setPosition(Vec2(visibleSize.width/2, visibleSize.height/8));
     addChild(labelF);
 
     auto fSlider = ControlSlider::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png");
-    fSlider->setAnchorPoint(Point(0.5f, 0.5f));
+    fSlider->setAnchorPoint(Vec2(0.5f, 0.5f));
     fSlider->setMinimumValue(0.0f); // Sets the min value of range
     fSlider->setMaximumValue(1.0f); // Sets the max value of range
-    fSlider->setPosition(Point(visibleSize.width/2 , visibleSize.height/8 - 30));
+    fSlider->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/8 - 30));
     fSlider->setValue(0.5f);
     fSlider->setScale(0.75f);
 
@@ -120,16 +121,16 @@ void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
     addChild(fSlider);
 
     auto labelL1 = LabelTTF::create("Low", "fonts/Marker Felt.ttf", 24);
-    labelL1->setPosition(Point(fSlider->getPosition().x - fSlider->getContentSize().width*fSlider->getScale()/2, fSlider->getPosition().y - 20));
+    labelL1->setPosition(Vec2(fSlider->getPosition().x - fSlider->getContentSize().width*fSlider->getScale()/2, fSlider->getPosition().y - 20));
     addChild(labelL1);
      auto labelH1 = LabelTTF::create("High", "fonts/Marker Felt.ttf", 24);
-    labelH1->setPosition(Point(fSlider->getPosition().x + fSlider->getContentSize().width*fSlider->getScale()/2, fSlider->getPosition().y - 20));
+    labelH1->setPosition(Vec2(fSlider->getPosition().x + fSlider->getContentSize().width*fSlider->getScale()/2, fSlider->getPosition().y - 20));
     addChild(labelH1);
  
     //////////////////////////////
     // add label
     auto label = LabelTTF::create("Friction", "fonts/Marker Felt.ttf", 30);
-    label->setPosition(Point(origin.x + visibleSize.width/2,
+    label->setPosition(Vec2(origin.x + visibleSize.width/2,
                             origin.y + visibleSize.height - label->getContentSize().height));
     addChild(label);
 }
@@ -137,7 +138,9 @@ void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
 void MenuLayer::addToTopMenu(MenuItem * item)
 {
     item->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
-    item->setPosition(-item->getContentSize().width/2, 0.0);
+    _topMenuOffsetX -= PADDING;
+    item->setPosition(_topMenuOffsetX, -PADDING);
+    _topMenuOffsetX -= item->getContentSize().width * item->getScale();
     _topMenu->addChild(item);
 }
 
@@ -147,34 +150,49 @@ void MenuLayer::addPopupMenu(const std::string &title, const std::string & capti
     if (!_popupLayer)
     {
         Size visibleSize = Director::getInstance()->getVisibleSize();
-        Point origin = Director::getInstance()->getVisibleOrigin();
-
-        _popupLayer = Layer::create();
+        Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
         auto bgLayer = LayerColor::create(GREENISH, visibleSize.width/2, visibleSize.height/2);
-        bgLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        bgLayer->setPosition(Vec2(visibleSize.width/2, visibleSize.height/2));
-        _popupLayer->addChild(bgLayer);
+        //bgLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        bgLayer->setPosition(Vec2(visibleSize.width/4, visibleSize.height/4));
 
         auto inf_wd = bgLayer->getContentSize().width;
         auto inf_ht = bgLayer->getContentSize().height;
 
-        auto close = MenuItemImage::create("close.png", "close.png" , CC_CALLBACK_1(MenuLayer::disablePopUpMenu, this));
+        auto close = MenuItemImage::create("close.png",
+                "close.png", 
+                [&](Ref * sender) -> void
+                {
+                    this->disablePopUpMenu();
+                });
         auto menu = Menu::create(close , nullptr);
         menu->setPosition(Vec2(inf_wd, inf_ht));
-        _popupLayer->addChild(menu, 1);
+        bgLayer->addChild(menu, 1);
 
-        // TODO : set positions
         _popupLabelTitle = LabelTTF::create("", "fonts/EraserDust.ttf", 40);
+        _popupLabelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
+        _popupLabelTitle->setPosition(Vec2(inf_wd/2, inf_ht - 20.0 ));
+        bgLayer->addChild(_popupLabelTitle, 2);
         _popupLabelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30);
+        _popupLabelCaption->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        _popupLabelCaption->setPosition(Vec2(inf_wd/2, inf_ht/2));
+        bgLayer->addChild(_popupLabelCaption, 2);
+
+        _popupLayer = bgLayer;
+        this->addChild(_popupLayer, 1);
     }
 
+    // TODO: Change Size according to message
+    // TODO: warp text
+    // TODO: 
+    // disable every button in the background 
+    // or change this to a scene 
+    // or drop this when anything else is pressed
     _popupLabelTitle->setString(title);
     _popupLabelCaption->setString(caption);
-
 }
 
-void MenuLayer::disablePopUpMenu(Ref * sender)
+void MenuLayer::disablePopUpMenu()
 {
     this->removeChild(_popupLayer);
     _popupLayer = nullptr;

@@ -12,6 +12,7 @@ class MenuLayer : public cocos2d::Layer
 private :    
     SpriteLayer * _spriteLayer;
     cocos2d::Menu * _topMenu;
+    float _topMenuOffsetX;
     cocos2d::Layer * _popupLayer;
     cocos2d::LabelTTF * _popupLabelTitle;
     cocos2d::LabelTTF * _popupLabelCaption;
@@ -20,7 +21,10 @@ public :
     MenuLayer() 
         : _spriteLayer(nullptr), 
           _topMenu(nullptr),
-          _popupLayer(nullptr)
+          _topMenuOffsetX(0.0),
+          _popupLayer(nullptr),
+          _popupLabelTitle(nullptr),
+          _popupLabelCaption(nullptr)
     {}
     virtual bool init();  
 
@@ -35,7 +39,7 @@ public :
 
     void addPopupMenu(const std::string & title, const std::string & caption);
 
-    void disablePopUpMenu(cocos2d::Ref *sender);
+    void disablePopUpMenu();
 
     bool isShowingPopupMenu() { return _popupLayer != nullptr; }
 
