@@ -26,17 +26,11 @@ public:
     // implement the "static create()" method manually
     static Derived * create();
 
-    virtual void restartScene(cocos2d::Ref* pSender);
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 
-    // show info
-    void showInfo(cocos2d::Ref *pSender);
-
-    // destroy info
-    void destroyInfo(cocos2d::Ref *pSender);
 protected:
 
     SpriteLayer * _spriteLayer;
@@ -53,7 +47,6 @@ public:
     virtual bool init();
     static cocos2d::Scene* createScene();
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
-    void helpClickedAction(cocos2d::Ref * sender);
 private:
     bool _friendHelpShown;
 };

@@ -307,10 +307,6 @@ void SpriteLayer::update(float dt)
     Node::update(dt);
 }
 
-void SpriteLayer::showAnotherPerson(bool right)
-{
-}
-
 void SpriteLayer::addAnotherPerson()
 {
 }

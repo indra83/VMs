@@ -58,7 +58,6 @@ public :
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
     void setMoveCB( std::function< void (float) > cb ) { _moveCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
-    void showAnotherPerson(bool right);
     void addAnotherPerson();
 
 private :    

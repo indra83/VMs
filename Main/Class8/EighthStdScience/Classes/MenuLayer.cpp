@@ -7,6 +7,10 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
+static const Color4B GREENISH(64,102,24,255);
+static const int LAB_ZINDEX=0;
+static const int POP_ZINDEX=1;
+
 class ControlSliderRollBack : public ControlSlider
 {
     float _base;
@@ -82,10 +86,11 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     auto labelL = LabelTTF::create(sstr_min.str(), "fonts/Marker Felt.ttf", 25);
     labelL->setPosition(Point(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
     addChild(labelL);
+    /*
     auto labelM = LabelTTF::create("0", "fonts/Marker Felt.ttf", 25);
     labelM->setPosition(Point(slider->getPosition().x, slider->getPosition().y - 30 ));
     addChild(labelM);
-
+    */
     std::stringstream sstr_max;
     sstr_max << (int)max;
     auto labelH = LabelTTF::create(sstr_max.str(), "fonts/Marker Felt.ttf", 25);
@@ -131,9 +136,50 @@ void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
 
 void MenuLayer::addToTopMenu(MenuItem * item)
 {
+    item->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+    item->setPosition(-item->getContentSize().width/2, 0.0);
     _topMenu->addChild(item);
 }
 
-MenuLayer::~MenuLayer() 
+void MenuLayer::addPopupMenu(const std::string &title, const std::string & caption)
+{
+
+    if (!_popupLayer)
+    {
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        Point origin = Director::getInstance()->getVisibleOrigin();
+
+        _popupLayer = Layer::create();
+
+        auto bgLayer = LayerColor::create(GREENISH, visibleSize.width/2, visibleSize.height/2);
+        bgLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        bgLayer->setPosition(Vec2(visibleSize.width/2, visibleSize.height/2));
+        _popupLayer->addChild(bgLayer);
+
+        auto inf_wd = bgLayer->getContentSize().width;
+        auto inf_ht = bgLayer->getContentSize().height;
+
+        auto close = MenuItemImage::create("close.png", "close.png" , CC_CALLBACK_1(MenuLayer::disablePopUpMenu, this));
+        auto menu = Menu::create(close , nullptr);
+        menu->setPosition(Vec2(inf_wd, inf_ht));
+        _popupLayer->addChild(menu, 1);
+
+        // TODO : set positions
+        _popupLabelTitle = LabelTTF::create("", "fonts/EraserDust.ttf", 40);
+        _popupLabelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30);
+    }
+
+    _popupLabelTitle->setString(title);
+    _popupLabelCaption->setString(caption);
+
+}
+
+void MenuLayer::disablePopUpMenu(Ref * sender)
+{
+    this->removeChild(_popupLayer);
+    _popupLayer = nullptr;
+}
+
+MenuLayer::~MenuLayer()
 { 
 }
