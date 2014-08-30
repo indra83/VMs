@@ -81,35 +81,31 @@ bool Challenge<Derived>::init()
     _menuLayer = MenuLayer::create();
 
     // add the reset button
-    auto restart_scene = MenuItemImage::create("reset_normal.png",
-                                               "reset_normal.png",
-                                                [&](Ref * sender) -> void
-                                                {
-                                                    Director::getInstance()->replaceScene(Derived::createScene());
-                                                });
+    auto restart_scene = MenuItemImage::create("reset_normal.png", "reset_normal.png");
     restart_scene->setScale(0.8);
-    _menuLayer->addToTopMenu(restart_scene);
+    _menuLayer->addToTopMenu(restart_scene,
+                             [&](Ref * sender) -> void
+                             {
+                                Director::getInstance()->replaceScene(Derived::createScene());
+                             });
 
     // add the info button
-    auto info = MenuItemImage::create("info.png",
-                                      "info.png",
-                                      [&](Ref * sender) -> void
-                                      {
-                                            _menuLayer->addPopupMenu("Objective", "Try to move the crate by changing the force applied");
-                                      });
+    auto info = MenuItemImage::create("info.png", "info.png");
     info->setScale(0.8);
-    _menuLayer->addToTopMenu(info);
+    _menuLayer->addToTopMenu(info,
+                             [&](Ref * sender) -> void
+                             {
+                                _menuLayer->addPopupMenu("Objective", "Try to move the crate by changing the force applied");
+                             });
 
     // add the challenges menu
-    
-    auto list = MenuItemImage::create("list.png",
-                                      "list.png",
-                                      [&](Ref * sender) -> void
-                                      {
-                                            Director::getInstance()->pushScene(ChallengeMenu::createScene());
-                                      });
+    auto list = MenuItemImage::create("list.png", "list.png");
     list->setScale(0.2);
-    _menuLayer->addToTopMenu(list);
+    _menuLayer->addToTopMenu(list,
+                             [&](Ref * sender) -> void
+                             {
+                                Director::getInstance()->pushScene(ChallengeMenu::createScene());
+                             });
 
     this->addChild(_menuLayer, MN_ZINDEX);
 
@@ -179,12 +175,12 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 
         auto friendButton = MenuItemImage::create("help.png", "help.png");
         friendButton->setScale(0.25);
-        friendButton->setCallback(  [&](Ref * sender)-> void 
-                                    {
-                                        dynamic_cast< MenuItemImage * >( sender )->setEnabled(false);
-                                        this->_spriteLayer->addAnotherPerson();
-                                    }); 
-        _menuLayer->addToTopMenu(friendButton);
+        _menuLayer->addToTopMenu(friendButton,
+                                 [&](Ref * sender)-> void 
+                                 {
+                                    dynamic_cast< MenuItemImage * >( sender )->setEnabled(false);
+                                    this->_spriteLayer->addAnotherPerson();
+                                 }); 
         friendButton->retain();
         _friendHelpShown = true;
     }

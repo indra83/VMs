@@ -135,8 +135,15 @@ void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
     addChild(label);
 }
 
-void MenuLayer::addToTopMenu(MenuItem * item)
+void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)> &cb)
 {
+    item->setCallback(
+            [cb, this]( Ref * sender) -> void
+            {
+                if (isShowingPopupMenu())
+                    return;
+                cb(sender);    
+            });
     item->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
     _topMenuOffsetX -= PADDING;
     item->setPosition(_topMenuOffsetX, -PADDING);
@@ -184,10 +191,6 @@ void MenuLayer::addPopupMenu(const std::string &title, const std::string & capti
 
     // TODO: Change Size according to message
     // TODO: warp text
-    // TODO: 
-    // disable every button in the background 
-    // or change this to a scene 
-    // or drop this when anything else is pressed
     _popupLabelTitle->setString(title);
     _popupLabelCaption->setString(caption);
 }

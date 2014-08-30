@@ -33,11 +33,8 @@ public :
 
     CREATE_FUNC(MenuLayer);
 
-    void setSpriteLayer(SpriteLayer * layer);
-
-    void addToTopMenu(cocos2d::MenuItem * item);
-
     void addPopupMenu(const std::string & title, const std::string & caption);
+    void addToTopMenu(cocos2d::MenuItem * item, const std::function< void (cocos2d::Ref *)> &cb);
 
     void disablePopUpMenu();
 
