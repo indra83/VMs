@@ -37,18 +37,18 @@ protected:
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
 
-    int count = 0;
 };
 
 class Challenge1: public Challenge<Challenge1>
 {
 public:
-    Challenge1() : _friendHelpShown(false) {}
+    Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
     virtual bool init();
     static cocos2d::Scene* createScene();
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
 private:
     bool _friendHelpShown;
+    int _numMaxHits;
 };
 
 #endif // __CHALLENGE_H__

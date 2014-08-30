@@ -169,7 +169,7 @@ int getIndexFromForce(float force)
 {
     static const int DELTA = SpriteLayer::MAX_FORCE/NUM_IMAGES;
     auto val = floor(force/DELTA);
-    if (val > 14) val = 14; // for the exactly MAX_FORCE case
+    if (val >= NUM_IMAGES) val = NUM_IMAGES - 1; // for the exactly MAX_FORCE case
     return val;
 }
 
@@ -247,7 +247,8 @@ void SpriteLayer::readjustForces()
 
 void SpriteLayer::changeForceValue(float value)
 {
-    addPersonOfForce(value);
+    if(value != _forceExternalValue)
+        addPersonOfForce(value);
 
     _forceExternalValue = value;
     _forceExternal->setValue(_forceExternalValue);

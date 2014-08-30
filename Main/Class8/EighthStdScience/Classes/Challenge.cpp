@@ -166,10 +166,14 @@ bool Challenge1::init()
     return true;
 }
 
+#define SHOW_AFTER 3
 void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 {
+    static float prevValue=0.0;
     Challenge<Challenge1>::forceValueChanged(sender, controlEvent);
-    if ( !_friendHelpShown && fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE)
+    if ( !_friendHelpShown && 
+         fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE && 
+         prevValue != _spriteLayer->getExternalForceValue() && ++_numMaxHits > SHOW_AFTER)
     {
         _menuLayer->addPopupMenu("Ask for Help", "Not enough force, ask a friend to help out, by clicking the friend button on the top right");
 
@@ -179,9 +183,11 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
                                  [&](Ref * sender)-> void 
                                  {
                                     dynamic_cast< MenuItemImage * >( sender )->setEnabled(false);
+                                    this->_menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE*2, SpriteLayer::MAX_FORCE*2, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
                                     this->_spriteLayer->addAnotherPerson();
                                  }); 
         friendButton->retain();
         _friendHelpShown = true;
     }
+    prevValue = _spriteLayer->getExternalForceValue();
 }
