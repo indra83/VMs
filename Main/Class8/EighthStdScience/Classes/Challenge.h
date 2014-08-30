@@ -31,11 +31,19 @@ public:
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
+
+    // show info
+    void showInfo(cocos2d::Ref *pSender);
+
+    // destroy info
+    void destroyInfo(cocos2d::Ref *pSender);
 protected:
 
     SpriteLayer * _spriteLayer;
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
+
+    int count = 0;
 };
 
 class Challenge1: public Challenge<Challenge1>

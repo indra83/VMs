@@ -6,7 +6,9 @@
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
-//#define BUF_HT 15
+static const int INF_ZINDEX=3;
+
+#define BUF_HT 15
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -90,6 +92,15 @@ bool Challenge<Derived>::init()
 
     this->addChild(_menuLayer, MN_ZINDEX);
 
+    auto info = MenuItemImage::create("info.png" , "info.png" , CC_CALLBACK_1(Challenge::showInfo , this));
+    info->setScale(0.8);
+    info->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+    info->setPosition(Vec2(origin.x  + BUF_HT , origin.y + visibleSize.height - BUF_HT));
+
+    auto menu = Menu::create(info , NULL);
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu , INF_ZINDEX);
+
     // enable keypress cbs
     this->setKeypadEnabled(true);
 
@@ -122,6 +133,37 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 	Director::getInstance()->popScene();
 }
 
+template< class Derived >
+void Challenge<Derived>::showInfo(cocos2d::Ref *pSender)
+{
+	count +=1;
+
+	if(count == 1)
+	{
+		Size visibleSize = Director::getInstance()->getVisibleSize();
+		Point origin = Director::getInstance()->getVisibleOrigin();
+
+		auto info_layer = MenuItemImage::create("HelloWorld.png" , "HelloWorld.png");
+		info_layer->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+
+		auto inf_wd = info_layer->getContentSize().width;
+		auto inf_ht = info_layer->getContentSize().height;
+
+		auto close = MenuItemImage::create("close.png" , "close.png" , CC_CALLBACK_1(Challenge::destroyInfo , this));
+		close->setPosition(Vec2(origin.x + visibleSize.width/2 + inf_wd/2 , origin.y + visibleSize.height/2 + inf_ht/2));
+
+		auto menu = Menu::create(info_layer , close , NULL);
+		menu->setPosition(Vec2::ZERO);
+		this->addChild(menu , INF_ZINDEX);
+	}
+}
+
+template< class Derived >
+void Challenge<Derived>::destroyInfo(cocos2d::Ref *pSender)
+{
+	// TODO: call to destruct the menu only
+	CC_SAFE_DELETE(pSender);
+}
 
 //////////////////////////////
 // challenge1
