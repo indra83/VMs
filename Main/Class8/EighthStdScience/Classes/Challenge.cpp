@@ -126,22 +126,10 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 //////////////////////////////
 // challenge1
 
-
 Scene* Challenge1::createScene()
 {
-    // 'scene' is an autorelease object
-    auto scene = Scene::create();
-
-    // 'layer' is an autorelease object
-    auto layer = Challenge<Challenge1>::create();
-    // add layer as a child to scene
-    // attaches all the children to the existing physics world as well
-    scene->addChild(layer);
-
-    // return the scene
-    return scene;
+    return Challenge<Challenge1>::createScene();
 }
-
 
 // on "init" you need to initialize your instance
 bool Challenge1::init()
