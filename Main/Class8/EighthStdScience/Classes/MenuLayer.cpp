@@ -67,9 +67,13 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+    if (_forceSlider)
+        removeChild(_forceSlider);
+
+    _forceSlider = Layer::create();
     auto labelForce = LabelTTF::create("Change Force :", "fonts/Marker Felt.ttf", 35);
     labelForce->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 + 20));
-    addChild(labelForce);
+    _forceSlider->addChild(labelForce);
 
     auto slider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", start);
     slider->setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -80,13 +84,13 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
 
     // When the value of the slider will change, the given selector will be called
     slider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
-    addChild(slider);
+    _forceSlider->addChild(slider);
 
     std::stringstream sstr_min;
     sstr_min << (int)min;
     auto labelL = LabelTTF::create(sstr_min.str(), "fonts/Marker Felt.ttf", 25);
     labelL->setPosition(Vec2(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
-    addChild(labelL);
+    _forceSlider->addChild(labelL);
     /*
     auto labelM = LabelTTF::create("0", "fonts/Marker Felt.ttf", 25);
     labelM->setPosition(Vec2(slider->getPosition().x, slider->getPosition().y - 30 ));
@@ -96,7 +100,8 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     sstr_max << (int)max;
     auto labelH = LabelTTF::create(sstr_max.str(), "fonts/Marker Felt.ttf", 25);
     labelH->setPosition(Vec2(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
-    addChild(labelH);
+    _forceSlider->addChild(labelH);
+    addChild(_forceSlider);
 }
 
 void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)

@@ -13,6 +13,7 @@ private :
     SpriteLayer * _spriteLayer;
     cocos2d::Menu * _topMenu;
     float _topMenuOffsetX;
+    cocos2d::Layer * _forceSlider;
     cocos2d::Layer * _popupLayer;
     cocos2d::LabelTTF * _popupLabelTitle;
     cocos2d::LabelTTF * _popupLabelCaption;
@@ -22,6 +23,7 @@ public :
         : _spriteLayer(nullptr), 
           _topMenu(nullptr),
           _topMenuOffsetX(0.0),
+          _forceSlider(nullptr),
           _popupLayer(nullptr),
           _popupLabelTitle(nullptr),
           _popupLabelCaption(nullptr)
