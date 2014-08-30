@@ -8,7 +8,7 @@ USING_NS_CC;
 static const int SPRITE_ZINDEX = 0;
 static const int LABEL_ZINDEX = 1;
 static const Color3B BLACK(0, 0, 0);
-static const float EPSILON 0.2;
+static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
 
 // per person;
@@ -80,7 +80,7 @@ public :
         // 150 == normal size
         //
         // Stretches content proportional to newLevel
-        float scale = val/MAX_FORCE;
+        float scale = val/SpriteLayer::MAX_FORCE;
         setScaleX(scale);
     }
 
@@ -169,7 +169,7 @@ bool SpriteLayer::init()
 
 int getIndexFromForce(float force)
 {
-    static const int DELTA = MAX_FORCE/NUM_IMAGES;
+    static const int DELTA = SpriteLayer::MAX_FORCE/NUM_IMAGES;
     auto val = floor(force/DELTA);
     if (val > 14) val = 14; // for the exactly MAX_FORCE case
     return val;
@@ -294,7 +294,7 @@ void SpriteLayer::update(float dt)
     float dv = acc * dt;
     _velocity += dv;
     float dx = 0.0;
-    if(fabs(_velocity > EPSILON))
+    if(fabs(_velocity) > EPSILON)
         dx = _velocity * dt * PTM_RATIO;
     _speedLabel->setLabel(getSpeedLabel());
 

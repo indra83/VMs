@@ -41,9 +41,12 @@ protected:
 class Challenge1: public Challenge<Challenge1>
 {
 public:
+    Challenge1() : _friendHelpShown(false) {}
     virtual bool init();
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
+    void helpClickedAction(cocos2d::Ref * sender);
 private:
+    bool _friendHelpShown;
 };
 
 #endif // __CHALLENGE_H__

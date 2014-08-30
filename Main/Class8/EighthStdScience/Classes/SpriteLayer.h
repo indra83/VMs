@@ -57,6 +57,7 @@ public :
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
     void setMoveCB( std::function< void (float) > cb ) { _moveCB = cb; }
+    float getExternalForceValue() { return _forceExternalValue; }
 
 private :    
     cocos2d::LabelTTF * getSpeedLabel();
