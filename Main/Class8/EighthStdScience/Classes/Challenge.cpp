@@ -168,7 +168,7 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
         auto help = MenuItemImage::create("help.png", "help.png", CC_CALLBACK_1(Challenge1::helpClickedAction, this));
         auto menu = Menu::create(help, nullptr);
         //_menuLayer->addPopupButton(menu);
-        //_spriteLayer->showAnotherPerson(_spriteLayer->getExternalForceValue() > 0.0);
+        _spriteLayer->showAnotherPerson(_spriteLayer->getExternalForceValue() > 0.0);
         _friendHelpShown = true;
     }
 }
@@ -176,5 +176,5 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 void Challenge1::helpClickedAction(Ref * sender)
 {
     //_menuLayer->dropPopUp();
-    //_spriteLayer->addAnotherPerson();
+    _spriteLayer->addAnotherPerson();
 }

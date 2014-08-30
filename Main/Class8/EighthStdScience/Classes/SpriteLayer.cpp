@@ -77,8 +77,6 @@ public :
         }
         setFlippedX(_val < 0);
 
-        // 150 == normal size
-        //
         // Stretches content proportional to newLevel
         float scale = val/SpriteLayer::MAX_FORCE;
         setScaleX(scale);
@@ -307,6 +305,14 @@ void SpriteLayer::update(float dt)
 
     _prevSumOfForcesValue = _sumOfForcesValue;
     Node::update(dt);
+}
+
+void SpriteLayer::showAnotherPerson(bool right)
+{
+}
+
+void SpriteLayer::addAnotherPerson()
+{
 }
 
 SpriteLayer::~SpriteLayer()
