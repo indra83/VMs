@@ -181,9 +181,8 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
         friendButton->setScale(0.25);
         friendButton->setCallback(  [&](Ref * sender)-> void 
                                     {
+                                        dynamic_cast< MenuItemImage * >( sender )->setEnabled(false);
                                         this->_spriteLayer->addAnotherPerson();
-                                        // TODO: fix crash
-                                        friendButton->setEnabled(false);
                                     }); 
         _menuLayer->addToTopMenu(friendButton);
         friendButton->retain();
