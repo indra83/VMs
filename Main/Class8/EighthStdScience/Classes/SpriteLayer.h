@@ -19,6 +19,8 @@ private :
     std::function< void (float) > _moveCB;
     cocos2d::MenuItemLabel * _speedLabel;
     cocos2d::MenuItemLabel * _massLabel;
+    cocos2d::Sprite * _dial;
+    cocos2d::Sprite * _needle;
     float _forceExternalValue;
     float _forceFrictionValue;
     float _sumOfForcesValue;
@@ -26,6 +28,7 @@ private :
     float _velocity;
     float _mass;
     float _frictionCoefficient;
+    float _angle;
 public :  
     SpriteLayer() : 
        _forceFriction(nullptr),

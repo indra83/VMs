@@ -7,9 +7,15 @@ USING_NS_CC;
 
 static const int SPRITE_ZINDEX = 0;
 static const int LABEL_ZINDEX = 1;
+static const int DIAL_ZINDEX = 2;
+static const int NEEDLE_ZINDEX = 3;
 static const Color3B BLACK(0, 0, 0);
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
+
+#define MAX_ANGLE 300
+#define MAX_SPEED 100
+#define OFFSET 45
 
 // per person;
 const float SpriteLayer::MAX_FORCE=100;
@@ -153,15 +159,33 @@ bool SpriteLayer::init()
     _forceExternal = addArrow("arrow-force.png");
 
     //////////////////////////////
-    // 3. add the speedLabel
+    // 4. add the speedLabel
     _speedLabel = MenuItemLabel::create(getSpeedLabel());
     _speedLabel->setColor(BLACK);
     _speedLabel->setAnchorPoint(Point::ANCHOR_BOTTOM_RIGHT);
     _speedLabel->setPosition(Point(visibleSize.width, visibleSize.height/3));
     addChild(_speedLabel);
 
+    // 5. add the dial and needle for speedometer
+    // dial
+    _dial = Sprite::create("dial.png");
+    _dial->setPosition(Vec2(origin.x + visibleSize.width/6 , origin.y + visibleSize.height/6));
+    _dial->setScale(0.8);
+    this->addChild(_dial , DIAL_ZINDEX);
+
+    // needle
+    _needle = Sprite::create("needle.png");
+    _needle->setAnchorPoint(Vec2(0.85, 0.5));
+    _needle->setPosition(Vec2(origin.x + visibleSize.width/6 , origin.y + visibleSize.height/6));
+    _needle->setScale(0.8);
+    this->addChild(_needle , NEEDLE_ZINDEX);
+    auto action = RotateTo::create(0.1,-OFFSET);
+    _needle->runAction(action);
+
+
     this->addPersonOfForce(0.0);
     this->scheduleUpdate();
+
     return true;
 }
 
@@ -304,6 +328,12 @@ void SpriteLayer::update(float dt)
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
+
+    // speedometer implementation
+    _angle = _velocity * (MAX_ANGLE/MAX_SPEED);
+    auto action = RotateBy::create(0.1 , _angle);
+    _needle->runAction(action);
+
     Node::update(dt);
 }
 
