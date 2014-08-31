@@ -15,7 +15,8 @@ public:
     Challenge() :
         _spriteLayer(nullptr),
         _bgLayer(nullptr),
-        _menuLayer(nullptr) {}
+        _menuLayer(nullptr),
+        _challengeOver(false) {}
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static cocos2d::Scene* createScene();
@@ -26,6 +27,7 @@ public:
     // implement the "static create()" method manually
     static Derived * create();
 
+    void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     // back button exit
@@ -36,6 +38,7 @@ protected:
     SpriteLayer * _spriteLayer;
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
+    bool _challengeOver;
 
 };
 

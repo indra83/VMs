@@ -115,6 +115,14 @@ bool Challenge<Derived>::init()
     return true;
 }
 
+
+template< class Derived >
+void Challenge<Derived>::done()
+{
+    _challengeOver = true;
+    _menuLayer->addPopupMenu("Challenge Complete", "Congrats!!");
+}
+
 template< class Derived >
 void Challenge<Derived>::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 {
@@ -135,6 +143,8 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
     if (_menuLayer->isShowingPopupMenu())
     {
         _menuLayer->disablePopUpMenu();
+        if (_challengeOver)
+            Director::getInstance()->popScene();
     }
     else
     {
