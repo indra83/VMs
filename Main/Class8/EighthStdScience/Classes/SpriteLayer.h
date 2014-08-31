@@ -30,11 +30,8 @@ private :
     float _velocity;
     float _mass;
     float _frictionCoefficient;
-<<<<<<< HEAD
     float _angle;
-=======
     bool _showAnotherPerson;
->>>>>>> origin/master
 public :  
     SpriteLayer() : 
        _forceFriction(nullptr),

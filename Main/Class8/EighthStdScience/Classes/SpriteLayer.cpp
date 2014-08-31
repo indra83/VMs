@@ -6,15 +6,11 @@
 USING_NS_CC;
 
 static const int SPRITE_ZINDEX = 0;
-<<<<<<< HEAD
-static const int LABEL_ZINDEX = 1;
-static const int DIAL_ZINDEX = 2;
-static const int NEEDLE_ZINDEX = 3;
-=======
-static const int PERSON_ZINDEX = 0;
-
+static const int PERSON_ZINDEX = 1;
 static const int LABEL_ZINDEX = 2;
->>>>>>> origin/master
+static const int DIAL_ZINDEX = 3;
+static const int NEEDLE_ZINDEX = 4;
+
 static const Color3B BLACK(0, 0, 0);
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
