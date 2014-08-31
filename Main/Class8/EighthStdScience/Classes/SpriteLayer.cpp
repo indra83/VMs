@@ -184,11 +184,11 @@ void SpriteLayer::addPersonOfForce(float force)
                     visibleSize.height/3 + 15 +origin.y);
 
     auto prevPosition = beforeCrate;
-    if (_person)
+    if (_personLayer)
     {
-        prevPosition = _person->getPosition() + Vec2(_person->getContentSize().width, 0.0); 
+        prevPosition = _personLayer->getPosition() + Vec2(_personLayer->getContentSize().width, 0.0); 
         _personPushing = true;
-        removeChild(_person);
+        removeChild(_personLayer);
     }
 
     bool reflect = false;
@@ -197,25 +197,59 @@ void SpriteLayer::addPersonOfForce(float force)
         sstr << "pusher_straight_on.png";
     else
     {
-        sstr << "pusher_" << getIndexFromForce(fabs(force)) << ".png";
+        sstr << "pusher_" << getIndexFromForce(fabs(_showAnotherPerson ? force/2 : force)) << ".png";
         if (force < 0)
             reflect = true;
     }
 
-    _person = Sprite::create(sstr.str());
-    _person->setAnchorPoint(Vec2(0.0, 0.0));
-    prevPosition -= Vec2(_person->getContentSize().width, 0.0);
-    beforeCrate -= Vec2(_person->getContentSize().width, 0.0);
-    if (force > 0)
-        _person->setPosition(beforeCrate);
-    else if (force < 0)
-        _person->setPosition(afterCrate);
+    _personLayer = Layer::create();
+    _personLayer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    auto person = Sprite::create(sstr.str());
+    person->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    _personLayer->addChild(person);
+    _personLayer->setContentSize(person->getContentSize());
+    Sprite * anotherPerson = nullptr;
+    if (_showAnotherPerson)
+    {
+        anotherPerson = Sprite::create(sstr.str());
+        anotherPerson->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _personLayer->setContentSize(person->getContentSize() + anotherPerson->getContentSize());
+        _personLayer->addChild(anotherPerson);
+    }
+    prevPosition -= Vec2(_personLayer->getContentSize().width, 0.0);
+    beforeCrate -= Vec2(_personLayer->getContentSize().width, 0.0);
+    if (force == 0)
+    {
+        _personLayer->setPosition(prevPosition);
+        person->setPosition(Vec2(0.0, 0.0));
+        if (_showAnotherPerson)
+            anotherPerson->setPosition(Vec2(person->getContentSize().width + 10, 0.0));
+    }
     else
-        _person->setPosition(prevPosition);
+    {
+        if (force > 0)
+        {
+            _personLayer->setPosition(beforeCrate);
+            person->setPosition(Vec2(person->getContentSize().width, 0.0));
+            if (_showAnotherPerson)
+                anotherPerson->setPosition(Vec2(person->getContentSize().width - 10, 0.0));
+        }
+        else if (force < 0)
+        {
+            _personLayer->setPosition(afterCrate);
+            person->setPosition(Vec2(0.0, 0.0));
+            if (_showAnotherPerson)
+                anotherPerson->setPosition(Vec2(10, 0.0));
+        }
+    }
 
     if (reflect)
-        _person->setFlippedX(true);
-    addChild(_person);
+    {
+        person->setFlippedX(true);
+        if (_sumOfForcesValue)
+            anotherPerson->setFlippedX(true);
+    }
+    addChild(_personLayer);
     if (force == 0)
         _personPushing = false;
 }
@@ -301,7 +335,7 @@ void SpriteLayer::update(float dt)
     {
         _moveCB(dx);
         if(!_personPushing)
-            _person->runAction(Place::create(_person->getPosition() + Vec2(-dx, 0.0)));
+            _personLayer->runAction(Place::create(_personLayer->getPosition() + Vec2(-dx, 0.0)));
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
@@ -310,6 +344,8 @@ void SpriteLayer::update(float dt)
 
 void SpriteLayer::addAnotherPerson()
 {
+    _showAnotherPerson = true;
+    addPersonOfForce(getExternalForceValue());
 }
 
 SpriteLayer::~SpriteLayer()

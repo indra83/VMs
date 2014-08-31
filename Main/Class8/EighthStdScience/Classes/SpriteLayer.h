@@ -13,8 +13,8 @@ private :
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
     ValueArrow * _sumOfForces; 
-    cocos2d::Layer *_crate;
-    cocos2d::Sprite *_person;
+    cocos2d::Layer * _crate;
+    cocos2d::Layer * _personLayer;
     bool _personPushing;
     std::function< void (float) > _moveCB;
     cocos2d::MenuItemLabel * _speedLabel;
@@ -26,13 +26,14 @@ private :
     float _velocity;
     float _mass;
     float _frictionCoefficient;
+    bool _showAnotherPerson;
 public :  
     SpriteLayer() : 
        _forceFriction(nullptr),
        _forceExternal(nullptr),
        _sumOfForces(nullptr),
        _crate(nullptr), 
-       _person(nullptr),
+       _personLayer(nullptr),
        _personPushing(false),
        _speedLabel(nullptr),
        _massLabel(nullptr),
@@ -42,7 +43,8 @@ public :
        _prevSumOfForcesValue(0.0),
        _velocity(0.0),
        _mass(0.0),
-       _frictionCoefficient(0.0) {}
+       _frictionCoefficient(0.0),
+       _showAnotherPerson(false) {}
 
     ~SpriteLayer();
 
