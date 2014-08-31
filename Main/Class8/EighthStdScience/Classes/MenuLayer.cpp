@@ -142,67 +142,12 @@ void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
 
 void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)> &cb)
 {
-    item->setCallback(
-            [cb, this]( Ref * sender) -> void
-            {
-                if (isShowingPopupMenu())
-                    return;
-                cb(sender);    
-            });
+    item->setCallback(cb);
     item->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
     _topMenuOffsetX -= PADDING;
     item->setPosition(_topMenuOffsetX, -PADDING);
     _topMenuOffsetX -= item->getContentSize().width * item->getScale();
     _topMenu->addChild(item);
-}
-
-void MenuLayer::addPopupMenu(const std::string &title, const std::string & caption, std::function< bool () > cb )
-{
-    if (!_popupLayer)
-    {
-        Size visibleSize = Director::getInstance()->getVisibleSize();
-        Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-        auto bgLayer = LayerColor::create(GREENISH, visibleSize.width/2, visibleSize.height/2);
-        //bgLayer->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        bgLayer->setPosition(Vec2(visibleSize.width/4, visibleSize.height/4));
-
-        auto inf_wd = bgLayer->getContentSize().width;
-        auto inf_ht = bgLayer->getContentSize().height;
-
-        auto close = MenuItemImage::create("close.png",
-                "close.png", 
-                [=](Ref * sender) -> void
-                {
-                    cb();
-                });
-        auto menu = Menu::create(close , nullptr);
-        menu->setPosition(Vec2(inf_wd, inf_ht));
-        bgLayer->addChild(menu, 1);
-
-        _popupLabelTitle = LabelTTF::create("", "fonts/EraserDust.ttf", 40);
-        _popupLabelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
-        _popupLabelTitle->setPosition(Vec2(inf_wd/2, inf_ht - 20.0 ));
-        bgLayer->addChild(_popupLabelTitle, 2);
-        _popupLabelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30 , Size(visibleSize.width/3, visibleSize.height/4));
-        _popupLabelCaption->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-        _popupLabelCaption->setPosition(Vec2(inf_wd/2, inf_ht/2));
-        bgLayer->addChild(_popupLabelCaption, 2);
-
-        _popupLayer = bgLayer;
-        this->addChild(_popupLayer, 1);
-    }
-
-    // TODO: Change Size according to message
-    // TODO: warp text
-    _popupLabelTitle->setString(title);
-    _popupLabelCaption->setString(caption);
-}
-
-void MenuLayer::disablePopUpMenu()
-{
-    this->removeChild(_popupLayer);
-    _popupLayer = nullptr;
 }
 
 MenuLayer::~MenuLayer()

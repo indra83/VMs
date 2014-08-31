@@ -3,6 +3,7 @@
 #include "SimpleAudioEngine.h"
 #include "ChallengeMenuScene.h"
 #include "NativeHelper.h"
+#include "Util.h"
 
 #define BG_ZINDEX 0
 #define SP_ZINDEX 1
@@ -129,9 +130,13 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     }
     else
     {
-        auto scene = ChallengeMenu::createScene(false);
-        auto transition = TransitionMoveInT::create(0.2 , scene);
-        Director::getInstance()->replaceScene(transition);
+        captureScreenAsSprite(
+                [](Sprite * sprite) -> void
+                {
+                    auto scene = ChallengeMenu::createScene(false, sprite);
+                    auto transition = TransitionMoveInT::create(0.2 , scene);
+                    Director::getInstance()->replaceScene(transition);
+                });
     }
 }
 

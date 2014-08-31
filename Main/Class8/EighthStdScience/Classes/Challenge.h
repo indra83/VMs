@@ -15,8 +15,7 @@ public:
     Challenge() :
         _spriteLayer(nullptr),
         _bgLayer(nullptr),
-        _menuLayer(nullptr),
-        _challengeOver(false) {}
+        _menuLayer(nullptr) {}
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static cocos2d::Scene* createScene();
@@ -28,7 +27,7 @@ public:
     static Derived * create();
 
     void setBackCallBack( std::function< bool ()> cb ) { _backCB = cb; }
-    void addPopupMenu(const std::string & title, const std::string & caption);
+    void addPopupMenu(const std::string & title, const std::string & caption, bool replace = false);
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
@@ -40,7 +39,6 @@ protected:
     SpriteLayer * _spriteLayer;
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
-    bool _challengeOver;
     std::function<bool ()> _backCB;
 };
 

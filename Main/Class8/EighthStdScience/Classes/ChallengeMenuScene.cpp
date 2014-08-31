@@ -11,7 +11,7 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-Scene* ChallengeMenu::createScene(bool fromChallenge)
+Scene* ChallengeMenu::createScene(bool fromChallenge, Sprite * sprite)
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
@@ -22,7 +22,12 @@ Scene* ChallengeMenu::createScene(bool fromChallenge)
     layer->_fromChallenge = fromChallenge;
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
-    scene->addChild(layer);
+    scene->addChild(layer, 1);
+    if (sprite)
+    {
+        sprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        scene->addChild(sprite, 0);
+    }
 
     // return the scene
     return scene;

@@ -19,6 +19,8 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
                    ../../Classes/GameLayerScene.cpp \
                    ../../Classes/BackGroundLayer.cpp \
                    ../../Classes/MenuLayer.cpp \
+                   ../../Classes/Util.cpp \
+                   ../../Classes/PopUpScene.cpp \
                    ../../Classes/SpriteLayer.cpp
                
 

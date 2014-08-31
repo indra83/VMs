@@ -5,6 +5,8 @@
 #include "ChallengeMenuScene.h"
 #include "SimpleAudioEngine.h"
 #include "NativeHelper.h"
+#include "PopUpScene.h"
+#include "Util.h"
 
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
@@ -108,7 +110,7 @@ bool Challenge<Derived>::init()
     _menuLayer->addToTopMenu(list,
                              [](Ref * sender) -> void
                              {
-                                Director::getInstance()->pushScene(ChallengeMenu::createScene(true));
+                                Director::getInstance()->pushScene(ChallengeMenu::createScene(true, nullptr));
                              });
 
     this->addChild(_menuLayer, MN_ZINDEX);
@@ -123,35 +125,26 @@ bool Challenge<Derived>::init()
 
 
 template< class Derived >
-void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption)
+void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption, bool replace)
 {
-    auto closeCb = [this]() -> bool
-    {
-        if (_menuLayer->isShowingPopupMenu())  
-        {
-            _menuLayer->disablePopUpMenu();
-            setBackCallBack(std::function<bool ()>());
-            if (_challengeOver)
-                Director::getInstance()->popScene();
-            return true;
-        }
-        return false;
-    };
-
-    setBackCallBack(closeCb);
-    _menuLayer->addPopupMenu(title, caption, closeCb);
+    captureScreenAsSprite(
+                [=](Sprite * sprite) -> void
+                {
+                    auto scene = PopUp::createScene(title, caption, sprite);
+                    if (replace)
+                        Director::getInstance()->replaceScene(scene);
+                    else
+                        Director::getInstance()->pushScene(scene);
+                });
 }
 
 template< class Derived >
 void Challenge<Derived>::done()
 {
-    if ( !_challengeOver )
-    {
-        _challengeOver = true;
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
-        NativeHelper::vibrate(500);
-        addPopupMenu("Challenge Complete", "Congrats!!");
-    }
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
+    NativeHelper::vibrate(500);
+    _spriteLayer->pause();
+    addPopupMenu("Challenge Complete", "Congrats!!", true);
 }
 
 template< class Derived >
