@@ -11,7 +11,7 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-Scene* ChallengeMenu::createScene()
+Scene* ChallengeMenu::createScene(bool fromChallenge)
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
@@ -19,6 +19,7 @@ Scene* ChallengeMenu::createScene()
     // 'layer' is an autorelease object
     auto layer = ChallengeMenu::create();
 
+    layer->_fromChallenge = fromChallenge;
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
     scene->addChild(layer);
@@ -112,6 +113,12 @@ void ChallengeMenu::touchDownAction(Ref *sender)
     int sceneId = dynamic_cast<Node *>(sender)->getTag();
     auto scene = Challenge1::createScene();
     // TODO: this should be conditional on how we got to the challengescreen
-    Director::getInstance()->pushScene(scene);
+    if (_fromChallenge)
+    {
+        Director::getInstance()->popScene();
+        Director::getInstance()->replaceScene(scene);
+    }
+    else
+        Director::getInstance()->pushScene(scene);
 }
 

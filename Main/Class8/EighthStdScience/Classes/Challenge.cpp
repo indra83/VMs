@@ -104,7 +104,7 @@ bool Challenge<Derived>::init()
     _menuLayer->addToTopMenu(list,
                              [&](Ref * sender) -> void
                              {
-                                Director::getInstance()->pushScene(ChallengeMenu::createScene());
+                                Director::getInstance()->pushScene(ChallengeMenu::createScene(true));
                              });
 
     this->addChild(_menuLayer, MN_ZINDEX);
@@ -144,6 +144,7 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 
 //////////////////////////////
 // challenge1
+//////////////////////////////
 
 Scene* Challenge1::createScene()
 {
