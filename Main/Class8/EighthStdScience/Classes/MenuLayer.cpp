@@ -156,9 +156,8 @@ void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)>
     _topMenu->addChild(item);
 }
 
-void MenuLayer::addPopupMenu(const std::string &title, const std::string & caption)
+void MenuLayer::addPopupMenu(const std::string &title, const std::string & caption, std::function< bool () > cb )
 {
-
     if (!_popupLayer)
     {
         Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -173,9 +172,9 @@ void MenuLayer::addPopupMenu(const std::string &title, const std::string & capti
 
         auto close = MenuItemImage::create("close.png",
                 "close.png", 
-                [&](Ref * sender) -> void
+                [=](Ref * sender) -> void
                 {
-                    this->disablePopUpMenu();
+                    cb();
                 });
         auto menu = Menu::create(close , nullptr);
         menu->setPosition(Vec2(inf_wd, inf_ht));

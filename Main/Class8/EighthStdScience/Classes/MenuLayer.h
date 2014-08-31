@@ -35,7 +35,7 @@ public :
 
     CREATE_FUNC(MenuLayer);
 
-    void addPopupMenu(const std::string & title, const std::string & caption);
+    void addPopupMenu(const std::string & title, const std::string & caption, std::function< bool () > cb);
     void addToTopMenu(cocos2d::MenuItem * item, const std::function< void (cocos2d::Ref *)> &cb);
 
     void disablePopUpMenu();

@@ -11,11 +11,13 @@ class MenuLayer;
 template< class Derived >
 class Challenge: public cocos2d::Layer
 {
+    static std::function<bool ()> RETURN_FALSE;
 public:
     Challenge() :
         _spriteLayer(nullptr),
         _bgLayer(nullptr),
         _menuLayer(nullptr),
+        _backCB(RETURN_FALSE),
         _challengeOver(false) {}
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
@@ -27,6 +29,8 @@ public:
     // implement the "static create()" method manually
     static Derived * create();
 
+    void setBackCallBack( std::function< bool ()> cb ) { _backCB = cb; }
+    void addPopupMenu(const std::string & title, const std::string & caption);
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
@@ -39,7 +43,7 @@ protected:
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
     bool _challengeOver;
-
+    std::function<bool ()> _backCB;
 };
 
 class Challenge1: public Challenge<Challenge1>

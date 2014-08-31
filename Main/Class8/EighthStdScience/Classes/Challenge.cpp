@@ -13,6 +13,9 @@ USING_NS_CC;
 USING_NS_CC_EXT;
 
 template< class Derived >
+std::function<bool ()> Challenge<Derived>::RETURN_FALSE([]()-> bool { return false; });
+
+template< class Derived >
 Derived * Challenge<Derived>::create()
 {
     auto *pRet = new Derived();
@@ -69,7 +72,7 @@ bool Challenge<Derived>::init()
     _spriteLayer->setMass(30.0);
     _spriteLayer->setFrictionCoefficient(0.5);
     _spriteLayer->setMoveCB(
-            [&](float deltaX) -> void
+            [this](float deltaX) -> void
             {
                 _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Vec2(-deltaX, 0.0)));
             });
@@ -84,7 +87,7 @@ bool Challenge<Derived>::init()
     auto restart_scene = MenuItemImage::create("reset_normal.png", "reset_normal.png");
     restart_scene->setScale(0.8);
     _menuLayer->addToTopMenu(restart_scene,
-                             [&](Ref * sender) -> void
+                             [](Ref * sender) -> void
                              {
                                 Director::getInstance()->replaceScene(Derived::createScene());
                              });
@@ -93,16 +96,16 @@ bool Challenge<Derived>::init()
     auto info = MenuItemImage::create("info.png", "info.png");
     info->setScale(0.8);
     _menuLayer->addToTopMenu(info,
-                             [&](Ref * sender) -> void
+                             [this](Ref * sender) -> void
                              {
-                                _menuLayer->addPopupMenu("Objective", "Try to move the crate by changing the force applied");
+                                addPopupMenu("Objective", "Try to move the crate by changing the force applied");
                              });
 
     // add the challenges menu
     auto list = MenuItemImage::create("list.png", "list.png");
     list->setScale(0.2);
     _menuLayer->addToTopMenu(list,
-                             [&](Ref * sender) -> void
+                             [](Ref * sender) -> void
                              {
                                 Director::getInstance()->pushScene(ChallengeMenu::createScene(true));
                              });
@@ -117,10 +120,30 @@ bool Challenge<Derived>::init()
 
 
 template< class Derived >
+void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption)
+{
+    auto closeCb = [this]() -> bool
+    {
+        if (_menuLayer->isShowingPopupMenu())  
+        {
+            _menuLayer->disablePopUpMenu();
+            setBackCallBack(Challenge::RETURN_FALSE);
+            if (_challengeOver)
+                Director::getInstance()->popScene();
+            return true;
+        }
+        return false;
+    };
+
+    setBackCallBack(closeCb);
+    _menuLayer->addPopupMenu(title, caption, closeCb);
+}
+
+template< class Derived >
 void Challenge<Derived>::done()
 {
     _challengeOver = true;
-    _menuLayer->addPopupMenu("Challenge Complete", "Congrats!!");
+    addPopupMenu("Challenge Complete", "Congrats!!");
 }
 
 template< class Derived >
@@ -140,13 +163,7 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 template< class Derived >
 void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
 {
-    if (_menuLayer->isShowingPopupMenu())
-    {
-        _menuLayer->disablePopUpMenu();
-        if (_challengeOver)
-            Director::getInstance()->popScene();
-    }
-    else
+    if (!_backCB())
     {
         Director::getInstance()->popScene();
     }
@@ -184,9 +201,10 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
     Challenge<Challenge1>::forceValueChanged(sender, controlEvent);
     if ( !_friendHelpShown && 
          fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE && 
-         prevValue != _spriteLayer->getExternalForceValue() && ++_numMaxHits > SHOW_AFTER)
+         prevValue != _spriteLayer->getExternalForceValue() && ++_numMaxHits >= SHOW_AFTER)
     {
-        _menuLayer->addPopupMenu("Ask for Help", "Not enough force, ask a friend to help out, by clicking the friend button on the top right");
+        addPopupMenu("Ask for Help", 
+                     "Not enough force, ask a friend to help out, by clicking the friend button on the top right"); 
 
         auto friendButton = MenuItemImage::create("help.png", "help.png");
         friendButton->setScale(0.25);
