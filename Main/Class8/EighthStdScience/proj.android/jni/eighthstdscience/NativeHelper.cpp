@@ -9,10 +9,12 @@ USING_NS_CC;
 
 void NativeHelper::vibrate(ssize_t milliseconds)
 {
+#ifdef USE_VIBRATE    
     JniMethodInfo minfo;
     CCAssert(JniHelper::getStaticMethodInfo(minfo, NATIVE_HELPER_CLASS, "vibrate", "(J)V"), "Function doesn't exist");
     minfo.env->CallStaticVoidMethod(minfo.classID, minfo.methodID, (jlong)milliseconds);
     minfo.env->DeleteLocalRef(minfo.classID);
+#endif
 }
 
 void NativeHelper::vibrate(std::vector<ssize_t> milliseconds, int repeat)

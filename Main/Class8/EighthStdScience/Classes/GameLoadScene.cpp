@@ -123,10 +123,8 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
         // TODO: this should ideally have been based on the current impulse
         if (_vibration_length > 0)
         {
-#ifdef USE_VIBRATE
             NativeHelper::vibrate(_vibration_length);
             _vibration_length -= DELTA_VIBRATION;
-#endif
         }
     }
     else
