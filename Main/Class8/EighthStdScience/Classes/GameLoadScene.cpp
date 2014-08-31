@@ -53,7 +53,7 @@ bool GameLoad::init()
     _effects_volume = INITIAL_VOLUME;
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 
     /////////////////////////////
@@ -72,7 +72,7 @@ bool GameLoad::init()
 
     // ground layer with physics properties
     auto ground_node = Node::create();
-    ground_node->setAnchorPoint(Point::ZERO);
+    ground_node->setAnchorPoint(Vec2::ZERO);
     ground_node->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + 5*visibleSize.height/6 + 12));
 
     auto ground_body = PhysicsBody::createEdgeBox(visibleSize, PhysicsMaterial(1, INITIAL_RESTITUTION, 0.5), 3);
@@ -131,7 +131,7 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     }
     else
     {
-        auto scene = ChallengeMenu::createScene();
+        auto scene = ChallengeMenu::createScene(false);
         auto transition = TransitionMoveInT::create(0.2 , scene);
         Director::getInstance()->replaceScene(transition);
     }

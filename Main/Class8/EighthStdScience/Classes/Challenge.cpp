@@ -2,16 +2,18 @@
 #include "BackGroundLayer.h"
 #include "MenuLayer.h"
 #include "SpriteLayer.h"
+#include "ChallengeMenuScene.h"
 
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 static const int INF_ZINDEX=3;
 
-#define BUF_HT 15
-
 USING_NS_CC;
 USING_NS_CC_EXT;
+
+template< class Derived >
+std::function<bool ()> Challenge<Derived>::RETURN_FALSE([]()-> bool { return false; });
 
 template< class Derived >
 Derived * Challenge<Derived>::create()
@@ -20,14 +22,13 @@ Derived * Challenge<Derived>::create()
     if (pRet && pRet->init())
     {
         pRet->autorelease();
-        return pRet;
     }
     else
     {
         delete pRet;
-        pRet = NULL;
-        return NULL;
+        pRet = nullptr;
     }
+    return pRet;
 }
 
 template< class Derived >
@@ -58,7 +59,7 @@ bool Challenge<Derived>::init()
     }
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     /////////////////////////////
     // 1. add the background layer
@@ -71,9 +72,9 @@ bool Challenge<Derived>::init()
     _spriteLayer->setMass(30.0);
     _spriteLayer->setFrictionCoefficient(0.5);
     _spriteLayer->setMoveCB(
-            [&](float deltaX) -> void
+            [this](float deltaX) -> void
             {
-                _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Point(-deltaX, 0.0)));
+                _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Vec2(-deltaX, 0.0)));
             });
     _spriteLayer->changeForceValue(0.0);
     this->addChild(_spriteLayer, SP_ZINDEX);
@@ -83,28 +84,66 @@ bool Challenge<Derived>::init()
     _menuLayer = MenuLayer::create();
 
     // add the reset button
-    auto restart_scene = MenuItemImage::create("reset_normal.png",
-                                               "reset_normal.png",
-                                               CC_CALLBACK_1(Challenge::restartScene , this));
+    auto restart_scene = MenuItemImage::create("reset_normal.png", "reset_normal.png");
     restart_scene->setScale(0.8);
-    restart_scene->setPosition(-restart_scene->getContentSize().width/2, -restart_scene->getContentSize().height/2);
-    _menuLayer->addToTopMenu(restart_scene);
+    _menuLayer->addToTopMenu(restart_scene,
+                             [](Ref * sender) -> void
+                             {
+                                Director::getInstance()->replaceScene(Derived::createScene());
+                             });
+
+    // add the info button
+    auto info = MenuItemImage::create("info.png", "info.png");
+    info->setScale(0.8);
+    _menuLayer->addToTopMenu(info,
+                             [this](Ref * sender) -> void
+                             {
+                                addPopupMenu("Objective", "Try to move the crate by changing the force applied");
+                             });
+
+    // add the challenges menu
+    auto list = MenuItemImage::create("list.png", "list.png");
+    list->setScale(0.2);
+    _menuLayer->addToTopMenu(list,
+                             [](Ref * sender) -> void
+                             {
+                                Director::getInstance()->pushScene(ChallengeMenu::createScene(true));
+                             });
 
     this->addChild(_menuLayer, MN_ZINDEX);
-
-    auto info = MenuItemImage::create("info.png" , "info.png" , CC_CALLBACK_1(Challenge::showInfo , this));
-    info->setScale(0.8);
-    info->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-    info->setPosition(Vec2(origin.x  + BUF_HT , origin.y + visibleSize.height - BUF_HT));
-
-    auto menu = Menu::create(info , NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu , INF_ZINDEX);
 
     // enable keypress cbs
     this->setKeypadEnabled(true);
 
     return true;
+}
+
+
+template< class Derived >
+void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption)
+{
+    auto closeCb = [this]() -> bool
+    {
+        if (_menuLayer->isShowingPopupMenu())  
+        {
+            _menuLayer->disablePopUpMenu();
+            setBackCallBack(Challenge::RETURN_FALSE);
+            if (_challengeOver)
+                Director::getInstance()->popScene();
+            return true;
+        }
+        return false;
+    };
+
+    setBackCallBack(closeCb);
+    _menuLayer->addPopupMenu(title, caption, closeCb);
+}
+
+template< class Derived >
+void Challenge<Derived>::done()
+{
+    _challengeOver = true;
+    addPopupMenu("Challenge Complete", "Congrats!!");
 }
 
 template< class Derived >
@@ -122,51 +161,17 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 }
 
 template< class Derived >
-void Challenge<Derived>::restartScene(Ref* pSender)
-{
-	Director::getInstance()->replaceScene(Derived::createScene());
-}
-
-template< class Derived >
 void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
 {
-	Director::getInstance()->popScene();
-}
-
-template< class Derived >
-void Challenge<Derived>::showInfo(cocos2d::Ref *pSender)
-{
-	count +=1;
-
-	if(count == 1)
-	{
-		Size visibleSize = Director::getInstance()->getVisibleSize();
-		Point origin = Director::getInstance()->getVisibleOrigin();
-
-		auto info_layer = MenuItemImage::create("HelloWorld.png" , "HelloWorld.png");
-		info_layer->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
-
-		auto inf_wd = info_layer->getContentSize().width;
-		auto inf_ht = info_layer->getContentSize().height;
-
-		auto close = MenuItemImage::create("close.png" , "close.png" , CC_CALLBACK_1(Challenge::destroyInfo , this));
-		close->setPosition(Vec2(origin.x + visibleSize.width/2 + inf_wd/2 , origin.y + visibleSize.height/2 + inf_ht/2));
-
-		auto menu = Menu::create(info_layer , close , NULL);
-		menu->setPosition(Vec2::ZERO);
-		this->addChild(menu , INF_ZINDEX);
-	}
-}
-
-template< class Derived >
-void Challenge<Derived>::destroyInfo(cocos2d::Ref *pSender)
-{
-	// TODO: call to destruct the menu only
-	CC_SAFE_DELETE(pSender);
+    if (!_backCB())
+    {
+        Director::getInstance()->popScene();
+    }
 }
 
 //////////////////////////////
 // challenge1
+//////////////////////////////
 
 Scene* Challenge1::createScene()
 {
@@ -189,22 +194,29 @@ bool Challenge1::init()
     return true;
 }
 
+#define SHOW_AFTER 3
 void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 {
+    static float prevValue=0.0;
     Challenge<Challenge1>::forceValueChanged(sender, controlEvent);
-    if ( !_friendHelpShown && fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE)
+    if ( !_friendHelpShown && 
+         fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE && 
+         prevValue != _spriteLayer->getExternalForceValue() && ++_numMaxHits >= SHOW_AFTER)
     {
-        //_menuLayer->addPopup("ask friend's help");
-        auto help = MenuItemImage::create("help.png", "help.png", CC_CALLBACK_1(Challenge1::helpClickedAction, this));
-        auto menu = Menu::create(help, nullptr);
-        //_menuLayer->addPopupButton(menu);
-        _spriteLayer->showAnotherPerson(_spriteLayer->getExternalForceValue() > 0.0);
+        addPopupMenu("Ask for Help", 
+                     "Not enough force, ask a friend to help out, by clicking the friend button on the top right"); 
+
+        auto friendButton = MenuItemImage::create("help.png", "help.png");
+        friendButton->setScale(0.25);
+        _menuLayer->addToTopMenu(friendButton,
+                                 [&](Ref * sender)-> void 
+                                 {
+                                    dynamic_cast< MenuItemImage * >( sender )->setEnabled(false);
+                                    this->_menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE*2, SpriteLayer::MAX_FORCE*2, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
+                                    this->_spriteLayer->addAnotherPerson();
+                                 }); 
+        friendButton->retain();
         _friendHelpShown = true;
     }
-}
-
-void Challenge1::helpClickedAction(Ref * sender)
-{
-    //_menuLayer->dropPopUp();
-    _spriteLayer->addAnotherPerson();
+    prevValue = _spriteLayer->getExternalForceValue();
 }

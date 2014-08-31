@@ -6,9 +6,15 @@
 USING_NS_CC;
 
 static const int SPRITE_ZINDEX = 0;
+<<<<<<< HEAD
 static const int LABEL_ZINDEX = 1;
 static const int DIAL_ZINDEX = 2;
 static const int NEEDLE_ZINDEX = 3;
+=======
+static const int PERSON_ZINDEX = 0;
+
+static const int LABEL_ZINDEX = 2;
+>>>>>>> origin/master
 static const Color3B BLACK(0, 0, 0);
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
@@ -64,22 +70,22 @@ public :
         auto val = _val;
         if (_val < 0)
             val = -_val;
-        setAnchorPoint(_val < 0.0 ? Point::ANCHOR_BOTTOM_RIGHT : Point::ANCHOR_BOTTOM_LEFT);
+        setAnchorPoint(_val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT);
 
         if( _showValues && !_label) 
         {
             _label = MenuItemLabel::create(getLabel());
             _label->setColor(Color3B(255,255,255));
-            _label->setAnchorPoint(Point(0.5, 0.0));
-            _label->setPosition(Point(getContentSize().width /** getScaleX()/2 */, 65.0));
+            _label->setAnchorPoint(Vec2(0.5, 0.0));
+            _label->setPosition(Vec2(getContentSize().width /** getScaleX()/2 */, 65.0));
             // add the mass label
             addChild(_label);
         }
 
         if (_label)
         {
-            _label->setAnchorPoint(Point(0.5, 0.0));
-            _label->setPosition(Point(getContentSize().width * getScaleX()/2 , 65.0));
+            _label->setAnchorPoint(Vec2(0.5, 0.0));
+            _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 65.0));
         }
         setFlippedX(_val < 0);
 
@@ -117,17 +123,17 @@ bool SpriteLayer::init()
     }
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     //////////////////////////////
     // 2. add crate
     _crate = Layer::create();
-    _crate->setAnchorPoint(Point::ANCHOR_MIDDLE_BOTTOM);
-    _crate->setPosition(Point(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
+    _crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    _crate->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
 
     auto crate = Sprite::create("crate.png");
-    crate->setAnchorPoint(Point::ANCHOR_MIDDLE_BOTTOM);
-    crate->setPosition(Point::ZERO);
+    crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    crate->setPosition(Vec2::ZERO);
     _crate->setContentSize(crate->getContentSize());
     _crate->addChild(crate, SPRITE_ZINDEX);
 
@@ -135,21 +141,21 @@ bool SpriteLayer::init()
     // 3. add mass label
     _massLabel = MenuItemLabel::create(getMassLabel());
     _massLabel->setColor(BLACK);
-    _massLabel->setAnchorPoint(Point::ANCHOR_BOTTOM_LEFT);
-    _massLabel->setPosition(Point(-crate->getContentSize().width/2, 0.0));
+    _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    _massLabel->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
     _crate->addChild(_massLabel, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);
 
     //////////////////////////////
     // 3. add the force arrows
-    Point curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
+    Vec2 curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
     auto addArrow = [&](const std::string & fileName) -> ValueArrow *
     {
         auto arrow = ValueArrow::create("arrow.png");
         arrow->setScaleY(0.25);
         arrow->setPosition(curr); 
-        curr = curr + Point(0, arrow->getContentSize().height / 4);
+        curr = curr + Vec2(0, arrow->getContentSize().height / 4);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
     };
@@ -162,8 +168,8 @@ bool SpriteLayer::init()
     // 4. add the speedLabel
     _speedLabel = MenuItemLabel::create(getSpeedLabel());
     _speedLabel->setColor(BLACK);
-    _speedLabel->setAnchorPoint(Point::ANCHOR_BOTTOM_RIGHT);
-    _speedLabel->setPosition(Point(visibleSize.width, visibleSize.height/3));
+    _speedLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    _speedLabel->setPosition(Vec2(visibleSize.width, visibleSize.height/3));
     addChild(_speedLabel);
 
     // 5. add the dial and needle for speedometer
@@ -193,55 +199,91 @@ int getIndexFromForce(float force)
 {
     static const int DELTA = SpriteLayer::MAX_FORCE/NUM_IMAGES;
     auto val = floor(force/DELTA);
-    if (val > 14) val = 14; // for the exactly MAX_FORCE case
+    if (val >= NUM_IMAGES) val = NUM_IMAGES - 1; // for the exactly MAX_FORCE case
     return val;
 }
 
 void SpriteLayer::addPersonOfForce(float force)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    auto beforeCrate = Point(visibleSize.width/2 + origin.x - _crate->getContentSize().width/2,
+    auto beforeCrate = Vec2(visibleSize.width/2 + origin.x - _crate->getContentSize().width/2,
                     visibleSize.height/3 + 15 +origin.y);
-    auto afterCrate = Point(visibleSize.width/2 + origin.x + _crate->getContentSize().width/2,
+    auto afterCrate = Vec2(visibleSize.width/2 + origin.x + _crate->getContentSize().width/2,
                     visibleSize.height/3 + 15 +origin.y);
 
     auto prevPosition = beforeCrate;
-    if (_person)
+    auto prevAnchorPoint = Vec2::ANCHOR_BOTTOM_RIGHT;
+    if (_personLayer)
     {
-        prevPosition = _person->getPosition() + Point(_person->getContentSize().width, 0.0); 
-        _personPushing = true;
-        removeChild(_person);
+        prevPosition = _personLayer->getPosition();
+        prevAnchorPoint = _personLayer->getAnchorPoint();
+        removeChild(_personLayer);
     }
 
-    bool reflect = false;
     std::stringstream sstr;
     if (force == 0)
         sstr << "pusher_straight_on.png";
     else
     {
-        sstr << "pusher_" << getIndexFromForce(fabs(force)) << ".png";
-        if (force < 0)
-            reflect = true;
+        sstr << "pusher_" << getIndexFromForce(fabs(_showAnotherPerson ? force/2 : force)) << ".png";
     }
 
-    _person = Sprite::create(sstr.str());
-    _person->setAnchorPoint(Point(0.0, 0.0));
-    prevPosition -= Point(_person->getContentSize().width, 0.0);
-    beforeCrate -= Point(_person->getContentSize().width, 0.0);
-    if (force > 0)
-        _person->setPosition(beforeCrate);
-    else if (force < 0)
-        _person->setPosition(afterCrate);
-    else
-        _person->setPosition(prevPosition);
+    _personLayer = Layer::create();
+    _personLayer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
-    if (reflect)
-        _person->setFlippedX(true);
-    addChild(_person);
+    auto person = Sprite::create(sstr.str());
+    _personLayer->addChild(person);
+    _personLayer->setContentSize(person->getContentSize());
+
+    Sprite * anotherPerson = nullptr;
+    if (_showAnotherPerson)
+    {
+        anotherPerson = Sprite::create(sstr.str());
+        anotherPerson->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _personLayer->setContentSize(person->getContentSize() + anotherPerson->getContentSize());
+        _personLayer->addChild(anotherPerson);
+    }
+
     if (force == 0)
-        _personPushing = false;
+    {
+        _personLayer->setPosition(prevPosition);
+        _personLayer->setAnchorPoint(prevAnchorPoint);
+        person->setPosition(Vec2(0.0, 0.0));
+        person->setAnchorPoint(prevAnchorPoint);
+        if (anotherPerson)
+        {
+            anotherPerson->setAnchorPoint(prevAnchorPoint);
+            auto direction = prevAnchorPoint == Vec2::ANCHOR_BOTTOM_RIGHT ? -1 : 1;
+            anotherPerson->setPosition(Vec2(direction * ( person->getContentSize().width + 10 ), 0.0));
+        }
+    }
+    else
+    {
+        _personLayer->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+        _personLayer->setPosition( force > 0 ? beforeCrate : afterCrate);
+
+        person->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+        person->setPosition(Vec2::ZERO);
+
+        if (anotherPerson)
+        {
+            anotherPerson->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+            auto direction = force > 0 ? -1 : 1;
+            anotherPerson->setPosition(Vec2( direction * 10, 0.0));
+        }
+    }
+
+    if (force < 0)
+    {
+        person->setFlippedX(true);
+        if (_showAnotherPerson)
+            anotherPerson->setFlippedX(true);
+    }
+
+    addChild(_personLayer, PERSON_ZINDEX);
+    _personPushing = !(force == 0);
 }
 
 float SpriteLayer::getFrictionalForce()
@@ -271,7 +313,8 @@ void SpriteLayer::readjustForces()
 
 void SpriteLayer::changeForceValue(float value)
 {
-    addPersonOfForce(value);
+    if(value != _forceExternalValue)
+        addPersonOfForce(value);
 
     _forceExternalValue = value;
     _forceExternal->setValue(_forceExternalValue);
@@ -324,7 +367,7 @@ void SpriteLayer::update(float dt)
     {
         _moveCB(dx);
         if(!_personPushing)
-            _person->runAction(Place::create(_person->getPosition() + Point(-dx, 0.0)));
+            _personLayer->runAction(Place::create(_personLayer->getPosition() + Vec2(-dx, 0.0)));
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
@@ -337,12 +380,10 @@ void SpriteLayer::update(float dt)
     Node::update(dt);
 }
 
-void SpriteLayer::showAnotherPerson(bool right)
-{
-}
-
 void SpriteLayer::addAnotherPerson()
 {
+    _showAnotherPerson = true;
+    addPersonOfForce(getExternalForceValue());
 }
 
 SpriteLayer::~SpriteLayer()

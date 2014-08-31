@@ -12,10 +12,21 @@ class MenuLayer : public cocos2d::Layer
 private :    
     SpriteLayer * _spriteLayer;
     cocos2d::Menu * _topMenu;
+    float _topMenuOffsetX;
+    cocos2d::Layer * _forceSlider;
+    cocos2d::Layer * _popupLayer;
+    cocos2d::LabelTTF * _popupLabelTitle;
+    cocos2d::LabelTTF * _popupLabelCaption;
+
 public :  
     MenuLayer() 
         : _spriteLayer(nullptr), 
-          _topMenu(nullptr)
+          _topMenu(nullptr),
+          _topMenuOffsetX(0.0),
+          _forceSlider(nullptr),
+          _popupLayer(nullptr),
+          _popupLabelTitle(nullptr),
+          _popupLabelCaption(nullptr)
     {}
     virtual bool init();  
 
@@ -24,9 +35,12 @@ public :
 
     CREATE_FUNC(MenuLayer);
 
-    void setSpriteLayer(SpriteLayer * layer);
+    void addPopupMenu(const std::string & title, const std::string & caption, std::function< bool () > cb);
+    void addToTopMenu(cocos2d::MenuItem * item, const std::function< void (cocos2d::Ref *)> &cb);
 
-    void addToTopMenu(cocos2d::MenuItem * item);
+    void disablePopUpMenu();
+
+    bool isShowingPopupMenu() { return _popupLayer != nullptr; }
 
     ~MenuLayer();
 };

@@ -11,11 +11,14 @@ class MenuLayer;
 template< class Derived >
 class Challenge: public cocos2d::Layer
 {
+    static std::function<bool ()> RETURN_FALSE;
 public:
     Challenge() :
         _spriteLayer(nullptr),
         _bgLayer(nullptr),
-        _menuLayer(nullptr) {}
+        _menuLayer(nullptr),
+        _backCB(RETURN_FALSE),
+        _challengeOver(false) {}
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static cocos2d::Scene* createScene();
@@ -26,36 +29,33 @@ public:
     // implement the "static create()" method manually
     static Derived * create();
 
-    virtual void restartScene(cocos2d::Ref* pSender);
+    void setBackCallBack( std::function< bool ()> cb ) { _backCB = cb; }
+    void addPopupMenu(const std::string & title, const std::string & caption);
+    void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 
-    // show info
-    void showInfo(cocos2d::Ref *pSender);
-
-    // destroy info
-    void destroyInfo(cocos2d::Ref *pSender);
 protected:
 
     SpriteLayer * _spriteLayer;
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
-
-    int count = 0;
+    bool _challengeOver;
+    std::function<bool ()> _backCB;
 };
 
 class Challenge1: public Challenge<Challenge1>
 {
 public:
-    Challenge1() : _friendHelpShown(false) {}
+    Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
     virtual bool init();
     static cocos2d::Scene* createScene();
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
-    void helpClickedAction(cocos2d::Ref * sender);
 private:
     bool _friendHelpShown;
+    int _numMaxHits;
 };
 
 #endif // __CHALLENGE_H__
