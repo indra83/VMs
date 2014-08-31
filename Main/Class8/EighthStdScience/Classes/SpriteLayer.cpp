@@ -168,6 +168,7 @@ bool SpriteLayer::init()
     _speedLabel->setPosition(Vec2(visibleSize.width, visibleSize.height/3));
     addChild(_speedLabel);
 
+    //////////////////////////////
     // 5. add the dial and needle for speedometer
     // dial
     _dial = Sprite::create("dial.png");

@@ -111,7 +111,18 @@ void ChallengeMenu::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , coco
 void ChallengeMenu::touchDownAction(Ref *sender)
 {
     int sceneId = dynamic_cast<Node *>(sender)->getTag();
-    auto scene = Challenge1::createScene();
+    Scene * scene = nullptr;
+    switch(sceneId) {
+        case 1 :
+            scene = Challenge1::createScene();
+            break;
+        case 2 :
+        case 3 :    
+        case 4 :
+        default :
+            scene = Challenge4::createScene();
+    };
+
     if (_fromChallenge)
     {
         Director::getInstance()->popScene();

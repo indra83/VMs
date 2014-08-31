@@ -56,4 +56,13 @@ private:
     int _numMaxHits;
 };
 
+class Challenge4: public Challenge<Challenge4>
+{
+public:
+    Challenge4(){}
+    virtual bool init();
+    static cocos2d::Scene* createScene();
+private:
+};
+
 #endif // __CHALLENGE_H__

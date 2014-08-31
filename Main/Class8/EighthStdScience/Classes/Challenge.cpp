@@ -237,3 +237,24 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
     }
     prevValue = _spriteLayer->getExternalForceValue();
 }
+
+//////////////////////////////
+// challenge4
+//////////////////////////////
+
+bool Challenge4::init()
+{
+    //////////////////////////////
+    // 1. super init first
+    if ( !Challenge::init() )
+    {
+        return false;
+    }
+    return true;
+}
+ 
+Scene* Challenge4::createScene()
+{
+    return Challenge<Challenge4>::createScene();
+}
+
