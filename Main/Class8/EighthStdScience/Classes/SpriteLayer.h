@@ -9,6 +9,7 @@ class SpriteLayer : public cocos2d::Layer
 public :
     // per person
     static const float MAX_FORCE;
+    static const int PTM_RATIO;
 private :
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
@@ -17,6 +18,7 @@ private :
     cocos2d::Layer * _personLayer;
     bool _personPushing;
     std::function< void (float) > _moveCB;
+    std::function< void () > _periodicCB;
     cocos2d::MenuItemLabel * _speedLabel;
     cocos2d::MenuItemLabel * _massLabel;
     cocos2d::Sprite * _dial;
@@ -65,6 +67,7 @@ public :
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
     void setMoveCB( std::function< void (float) > cb ) { _moveCB = cb; }
+    void setPeriodicCB( std::function< void () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
 

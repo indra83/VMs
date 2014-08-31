@@ -27,7 +27,7 @@ static const int NUM_IMAGES=15;
 const float SpriteLayer::MAX_FORCE=100;
 
 // TODO: base it on the crate size.. assuming the crate is 1m wide
-static const int PTM_RATIO = 150;
+const int SpriteLayer::PTM_RATIO = 150;
 
 class ValueArrow : public Sprite
 {
@@ -353,6 +353,8 @@ void SpriteLayer::setMass(float mass)
 
 void SpriteLayer::update(float dt)
 {
+    if (_periodicCB)
+        _periodicCB();
     readjustForces();
 
     float acc = _prevSumOfForcesValue / _mass;

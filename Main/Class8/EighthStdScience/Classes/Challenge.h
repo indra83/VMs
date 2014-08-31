@@ -11,13 +11,11 @@ class MenuLayer;
 template< class Derived >
 class Challenge: public cocos2d::Layer
 {
-    static std::function<bool ()> RETURN_FALSE;
 public:
     Challenge() :
         _spriteLayer(nullptr),
         _bgLayer(nullptr),
         _menuLayer(nullptr),
-        _backCB(RETURN_FALSE),
         _challengeOver(false) {}
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer

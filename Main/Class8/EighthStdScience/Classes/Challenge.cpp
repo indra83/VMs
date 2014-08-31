@@ -3,17 +3,18 @@
 #include "MenuLayer.h"
 #include "SpriteLayer.h"
 #include "ChallengeMenuScene.h"
+#include "SimpleAudioEngine.h"
+#include "NativeHelper.h"
 
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 static const int INF_ZINDEX=3;
 
+static const std::string CHIME("audio/notification.mp3");
+
 USING_NS_CC;
 USING_NS_CC_EXT;
-
-template< class Derived >
-std::function<bool ()> Challenge<Derived>::RETURN_FALSE([]()-> bool { return false; });
 
 template< class Derived >
 Derived * Challenge<Derived>::create()
@@ -112,6 +113,8 @@ bool Challenge<Derived>::init()
 
     this->addChild(_menuLayer, MN_ZINDEX);
 
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME.c_str());
+    CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(1.0);
     // enable keypress cbs
     this->setKeypadEnabled(true);
 
@@ -127,7 +130,7 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
         if (_menuLayer->isShowingPopupMenu())  
         {
             _menuLayer->disablePopUpMenu();
-            setBackCallBack(Challenge::RETURN_FALSE);
+            setBackCallBack(std::function<bool ()>());
             if (_challengeOver)
                 Director::getInstance()->popScene();
             return true;
@@ -142,8 +145,13 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
 template< class Derived >
 void Challenge<Derived>::done()
 {
-    _challengeOver = true;
-    addPopupMenu("Challenge Complete", "Congrats!!");
+    if ( !_challengeOver )
+    {
+        _challengeOver = true;
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
+        NativeHelper::vibrate(500);
+        addPopupMenu("Challenge Complete", "Congrats!!");
+    }
 }
 
 template< class Derived >
@@ -163,7 +171,7 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 template< class Derived >
 void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
 {
-    if (!_backCB())
+    if (!_backCB || !_backCB())
     {
         Director::getInstance()->popScene();
     }
@@ -190,6 +198,13 @@ bool Challenge1::init()
 
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
+
+    Vec2 originalPos = _bgLayer->getPosition();
+    _spriteLayer->setPeriodicCB([this, originalPos] () -> void
+    {
+        if( fabs(_bgLayer->getPosition().x - originalPos.x) >= 10*SpriteLayer::PTM_RATIO )
+            done();
+    });
 
     return true;
 }
