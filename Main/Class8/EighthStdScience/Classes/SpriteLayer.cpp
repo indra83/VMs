@@ -227,7 +227,8 @@ void SpriteLayer::addPersonOfForce(float force)
         if (anotherPerson)
         {
             anotherPerson->setAnchorPoint(prevAnchorPoint);
-            anotherPerson->setPosition(Vec2(person->getContentSize().width + 10, 0.0));
+            auto direction = prevAnchorPoint == Vec2::ANCHOR_BOTTOM_RIGHT ? -1 : 1;
+            anotherPerson->setPosition(Vec2(direction * ( person->getContentSize().width + 10 ), 0.0));
         }
     }
     else
@@ -241,7 +242,8 @@ void SpriteLayer::addPersonOfForce(float force)
         if (anotherPerson)
         {
             anotherPerson->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
-            anotherPerson->setPosition(Vec2(10, 0.0));
+            auto direction = force > 0 ? -1 : 1;
+            anotherPerson->setPosition(Vec2( direction * 10, 0.0));
         }
     }
 
