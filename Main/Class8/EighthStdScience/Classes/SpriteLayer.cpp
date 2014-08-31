@@ -6,7 +6,9 @@
 USING_NS_CC;
 
 static const int SPRITE_ZINDEX = 0;
-static const int LABEL_ZINDEX = 1;
+static const int PERSON_ZINDEX = 0;
+
+static const int LABEL_ZINDEX = 2;
 static const Color3B BLACK(0, 0, 0);
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
@@ -184,30 +186,29 @@ void SpriteLayer::addPersonOfForce(float force)
                     visibleSize.height/3 + 15 +origin.y);
 
     auto prevPosition = beforeCrate;
+    auto prevAnchorPoint = Vec2::ANCHOR_BOTTOM_RIGHT;
     if (_personLayer)
     {
-        prevPosition = _personLayer->getPosition() + Vec2(_personLayer->getContentSize().width, 0.0); 
-        _personPushing = true;
+        prevPosition = _personLayer->getPosition();
+        prevAnchorPoint = _personLayer->getAnchorPoint();
         removeChild(_personLayer);
     }
 
-    bool reflect = false;
     std::stringstream sstr;
     if (force == 0)
         sstr << "pusher_straight_on.png";
     else
     {
         sstr << "pusher_" << getIndexFromForce(fabs(_showAnotherPerson ? force/2 : force)) << ".png";
-        if (force < 0)
-            reflect = true;
     }
 
     _personLayer = Layer::create();
     _personLayer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+
     auto person = Sprite::create(sstr.str());
-    person->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     _personLayer->addChild(person);
     _personLayer->setContentSize(person->getContentSize());
+
     Sprite * anotherPerson = nullptr;
     if (_showAnotherPerson)
     {
@@ -216,42 +217,43 @@ void SpriteLayer::addPersonOfForce(float force)
         _personLayer->setContentSize(person->getContentSize() + anotherPerson->getContentSize());
         _personLayer->addChild(anotherPerson);
     }
-    prevPosition -= Vec2(_personLayer->getContentSize().width, 0.0);
-    beforeCrate -= Vec2(_personLayer->getContentSize().width, 0.0);
+
     if (force == 0)
     {
         _personLayer->setPosition(prevPosition);
+        _personLayer->setAnchorPoint(prevAnchorPoint);
         person->setPosition(Vec2(0.0, 0.0));
-        if (_showAnotherPerson)
+        person->setAnchorPoint(prevAnchorPoint);
+        if (anotherPerson)
+        {
+            anotherPerson->setAnchorPoint(prevAnchorPoint);
             anotherPerson->setPosition(Vec2(person->getContentSize().width + 10, 0.0));
+        }
     }
     else
     {
-        if (force > 0)
+        _personLayer->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+        _personLayer->setPosition( force > 0 ? beforeCrate : afterCrate);
+
+        person->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+        person->setPosition(Vec2::ZERO);
+
+        if (anotherPerson)
         {
-            _personLayer->setPosition(beforeCrate);
-            person->setPosition(Vec2(person->getContentSize().width, 0.0));
-            if (_showAnotherPerson)
-                anotherPerson->setPosition(Vec2(person->getContentSize().width - 10, 0.0));
-        }
-        else if (force < 0)
-        {
-            _personLayer->setPosition(afterCrate);
-            person->setPosition(Vec2(0.0, 0.0));
-            if (_showAnotherPerson)
-                anotherPerson->setPosition(Vec2(10, 0.0));
+            anotherPerson->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+            anotherPerson->setPosition(Vec2(10, 0.0));
         }
     }
 
-    if (reflect)
+    if (force < 0)
     {
         person->setFlippedX(true);
-        if (_sumOfForcesValue)
+        if (_showAnotherPerson)
             anotherPerson->setFlippedX(true);
     }
-    addChild(_personLayer);
-    if (force == 0)
-        _personPushing = false;
+
+    addChild(_personLayer, PERSON_ZINDEX);
+    _personPushing = !(force == 0);
 }
 
 float SpriteLayer::getFrictionalForce()
