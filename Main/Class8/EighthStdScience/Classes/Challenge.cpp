@@ -181,6 +181,9 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 // challenge1
 //////////////////////////////
 
+static const int SHOW_AFTER = 3;
+static const int TARGET_METRES = 50;
+
 Scene* Challenge1::createScene()
 {
     return Challenge<Challenge1>::createScene();
@@ -202,14 +205,13 @@ bool Challenge1::init()
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([this, originalPos] () -> void
     {
-        if( fabs(_bgLayer->getPosition().x - originalPos.x) >= 10*SpriteLayer::PTM_RATIO )
+        if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_METRES * SpriteLayer::PTM_RATIO )
             done();
     });
 
     return true;
 }
 
-#define SHOW_AFTER 3
 void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 {
     static float prevValue=0.0;
