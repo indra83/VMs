@@ -87,7 +87,7 @@ public :
 
         // Stretches content proportional to newLevel
         float scale = val/SpriteLayer::MAX_FORCE;
-        setScaleX(scale);
+        setScaleX(scale/1.7);
     }
 
     LabelTTF * getLabel()
@@ -169,7 +169,7 @@ bool SpriteLayer::init()
     addChild(_speedLabel);
 
     //////////////////////////////
-    // 5. add the dial and needle for speedometer
+    // 5. add the dial and needle for speed-o-meter
     // dial
     _dial = Sprite::create("dial.png");
     _dial->setPosition(Vec2(origin.x + visibleSize.width/6 , origin.y + visibleSize.height/6));
@@ -182,8 +182,6 @@ bool SpriteLayer::init()
     _needle->setPosition(Vec2(origin.x + visibleSize.width/6 , origin.y + visibleSize.height/6));
     _needle->setScale(0.8);
     this->addChild(_needle , NEEDLE_ZINDEX);
-    auto action = RotateTo::create(0.1,-OFFSET);
-    _needle->runAction(action);
 
 
     this->addPersonOfForce(0.0);
@@ -371,10 +369,10 @@ void SpriteLayer::update(float dt)
 
     _prevSumOfForcesValue = _sumOfForcesValue;
 
-    // speedometer implementation
+    // speed-o-meter implementation
     _angle = _velocity * (MAX_ANGLE/MAX_SPEED);
-    auto action = RotateBy::create(0.1 , _angle);
-    _needle->runAction(action);
+    _action = RotateBy::create(0.1 , _angle);
+    _needle->runAction(_action);
 
     Node::update(dt);
 }

@@ -12,6 +12,7 @@ static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 static const int INF_ZINDEX=3;
+static const int DEST_ZINDEX=4;
 
 static const std::string CHIME("audio/notification.mp3");
 
@@ -201,6 +202,16 @@ bool Challenge1::init()
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_METRES * SpriteLayer::PTM_RATIO )
             done();
     });
+
+    // adding destination sprite at 100 meters away from current screen
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    auto dest = Sprite::create("destination.png");
+    dest->setScale(0.8);
+    dest->setAnchorPoint(Vec2::ZERO);
+    dest->setPosition(Vec2(5*SpriteLayer::PTM_RATIO , visibleSize.height/3 + origin.y + 10));
+    this->addChild(dest , DEST_ZINDEX);
 
     return true;
 }
