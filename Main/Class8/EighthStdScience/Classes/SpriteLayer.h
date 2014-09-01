@@ -16,7 +16,7 @@ private :
     ValueArrow * _sumOfForces; 
     cocos2d::Layer * _crate;
     cocos2d::Layer * _personLayer;
-    std::function< void () > _periodicCB;
+    std::function< bool () > _periodicCB;
     cocos2d::MenuItemLabel * _speedLabel;
     cocos2d::MenuItemLabel * _massLabel;
     cocos2d::Sprite * _dial;
@@ -65,7 +65,7 @@ public :
     void update(float) override;
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
-    void setPeriodicCB( std::function< void () > cb ) { _periodicCB = cb; }
+    void setPeriodicCB( std::function< bool () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
     void addStationaryChild( cocos2d::Node * node);

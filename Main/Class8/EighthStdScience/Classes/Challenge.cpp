@@ -161,10 +161,7 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 template< class Derived >
 void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
 {
-    if (!_backCB || !_backCB())
-    {
-        Director::getInstance()->popScene();
-    }
+    Director::getInstance()->popScene();
 }
 
 //////////////////////////////
@@ -211,10 +208,14 @@ bool Challenge1::init()
     addDestination(false);
  
     Vec2 originalPos = _bgLayer->getPosition();
-    _spriteLayer->setPeriodicCB([this, originalPos] () -> void
+    _spriteLayer->setPeriodicCB([this, originalPos] () -> bool
     {
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_METRES * SpriteLayer::PTM_RATIO )
+        {
             done();
+            return false;
+        }
+        return true;
     });
    return true;
 }

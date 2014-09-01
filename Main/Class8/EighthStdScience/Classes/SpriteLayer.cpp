@@ -351,8 +351,9 @@ void SpriteLayer::setMass(float mass)
 
 void SpriteLayer::update(float dt)
 {
-    if (_periodicCB)
-        _periodicCB();
+    if (_periodicCB && !_periodicCB())
+        return;
+
     readjustForces();
 
     float acc = _prevSumOfForcesValue / _mass;

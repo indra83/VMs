@@ -26,7 +26,6 @@ public:
     // implement the "static create()" method manually
     static Derived * create();
 
-    void setBackCallBack( std::function< bool ()> cb ) { _backCB = cb; }
     void addPopupMenu(const std::string & title, const std::string & caption, bool replace = false);
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
@@ -39,7 +38,6 @@ protected:
     SpriteLayer * _spriteLayer;
     BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
-    std::function<bool ()> _backCB;
 };
 
 class Challenge1: public Challenge<Challenge1>
