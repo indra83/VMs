@@ -184,7 +184,7 @@ void MenuLayer::addPopupMenu(const std::string &title, const std::string & capti
         _popupLabelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
         _popupLabelTitle->setPosition(Vec2(inf_wd/2, inf_ht - 20.0 ));
         bgLayer->addChild(_popupLabelTitle, 2);
-        _popupLabelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30);
+        _popupLabelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30 , Size(visibleSize.width/3, visibleSize.height/4));
         _popupLabelCaption->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
         _popupLabelCaption->setPosition(Vec2(inf_wd/2, inf_ht/2));
         bgLayer->addChild(_popupLabelCaption, 2);
