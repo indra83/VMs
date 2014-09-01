@@ -19,13 +19,13 @@ public:
         _menuLayer(nullptr) {}
 
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
-    static cocos2d::Scene* createScene();
+    static cocos2d::Scene* createScene(bool showInfo);
 
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
-    virtual bool init();
+    virtual bool init(bool showInfo);
 
     // implement the "static create()" method manually
-    static Derived * create();
+    static Derived * create(bool showInfo);
 
     void showInfoPopUp();
     void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
@@ -46,8 +46,8 @@ class Challenge1: public Challenge<Challenge1>
 {
 public:
     Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
-    virtual bool init();
-    static cocos2d::Scene* createScene();
+    virtual bool init(bool showInfo) override;
+    static cocos2d::Scene* createScene(bool showInfo);
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
 private:
     bool _friendHelpShown;
@@ -58,8 +58,8 @@ class Challenge4: public Challenge<Challenge4>
 {
 public:
     Challenge4(){}
-    virtual bool init();
-    static cocos2d::Scene* createScene();
+    virtual bool init(bool showInfo) override;
+    static cocos2d::Scene* createScene(bool showInfo);
 private:
 };
 

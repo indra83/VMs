@@ -20,10 +20,10 @@ USING_NS_CC;
 USING_NS_CC_EXT;
 
 template< class Derived >
-Derived * Challenge<Derived>::create()
+Derived * Challenge<Derived>::create(bool showInfo)
 {
     auto *pRet = new Derived();
-    if (pRet && pRet->init())
+    if (pRet && pRet->init(showInfo))
     {
         pRet->autorelease();
     }
@@ -36,13 +36,13 @@ Derived * Challenge<Derived>::create()
 }
 
 template< class Derived >
-Scene* Challenge<Derived>::createScene()
+Scene* Challenge<Derived>::createScene(bool showInfo)
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
     
     // 'layer' is an autorelease object
-    auto layer = Challenge<Derived>::create();
+    auto layer = Challenge<Derived>::create(showInfo);
     // add layer as a child to scene
     // attaches all the children to the existing physics world as well
     scene->addChild(layer);
@@ -53,7 +53,7 @@ Scene* Challenge<Derived>::createScene()
 
 // on "init" you need to initialize your instance
 template< class Derived >
-bool Challenge<Derived>::init()
+bool Challenge<Derived>::init(bool showInfo)
 {
     //////////////////////////////
     // 1. super init first
@@ -89,7 +89,7 @@ bool Challenge<Derived>::init()
     _menuLayer->addToTopMenu(restart_scene,
                              [](Ref * sender) -> void
                              {
-                                Director::getInstance()->replaceScene(Derived::createScene());
+                                Director::getInstance()->replaceScene(Derived::createScene(false));
                              });
 
     // add the info button
@@ -116,6 +116,10 @@ bool Challenge<Derived>::init()
     CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(1.0);
     // enable keypress cbs
     this->setKeypadEnabled(true);
+
+    // show initial info popup
+    if (showInfo)
+        showInfoPopUp();
 
     return true;
 }
@@ -179,19 +183,19 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 //////////////////////////////
 
 static const int SHOW_AFTER = 2;
-static const int TARGET_METRES = 50;
+static const int TARGET_METRES = 5;
 
-Scene* Challenge1::createScene()
+Scene* Challenge1::createScene(bool showInfo)
 {
-    return Challenge<Challenge1>::createScene();
+    return Challenge<Challenge1>::createScene(showInfo);
 }
 
 // on "init" you need to initialize your instance
-bool Challenge1::init()
+bool Challenge1::init(bool showInfo)
 {
     //////////////////////////////
     // 1. super init first
-    if ( !Challenge::init() )
+    if ( !Challenge::init(showInfo) )
     {
         return false;
     }
@@ -201,7 +205,6 @@ bool Challenge1::init()
 
     // adding destination sprite at 100 meters away from current screen
     Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // add destinations on both sides
     auto addDestination = [this, visibleSize] ( bool right ) -> void
@@ -227,9 +230,6 @@ bool Challenge1::init()
         }
         return true;
     });
-
-    // show initial info popup
-    showInfoPopUp();
 
    return true;
 }
@@ -276,16 +276,16 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 // challenge4
 //////////////////////////////
  
-Scene* Challenge4::createScene()
+Scene* Challenge4::createScene(bool showInfo)
 {
-    return Challenge<Challenge4>::createScene();
+    return Challenge<Challenge4>::createScene(showInfo);
 }
 
-bool Challenge4::init()
+bool Challenge4::init(bool showInfo)
 {
     //////////////////////////////
     // 1. super init first
-    if ( !Challenge::init() )
+    if ( !Challenge::init(showInfo) )
     {
         return false;
     }

@@ -108,7 +108,7 @@ bool ChallengeMenu::init()
 
 void ChallengeMenu::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
-        Director::getInstance()->popScene();
+    Director::getInstance()->popScene();
 }
 
 void ChallengeMenu::touchDownAction(Ref *sender)
@@ -117,13 +117,13 @@ void ChallengeMenu::touchDownAction(Ref *sender)
     Scene * scene = nullptr;
     switch(sceneId) {
         case 1 :
-            scene = Challenge1::createScene();
+            scene = Challenge1::createScene(true);
             break;
         case 2 :
         case 3 :    
         case 4 :
         default :
-            scene = Challenge4::createScene();
+            scene = Challenge4::createScene(true);
     };
 
     if (_fromChallenge)
