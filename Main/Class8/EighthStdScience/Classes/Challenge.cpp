@@ -144,7 +144,7 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
 template< class Derived >
 void Challenge<Derived>::showInfoPopUp()
 {
-    addPopupMenu("Objective", "Try to move the crate by changing the force applied");
+    addPopupMenu("Objective", "Try to move the crate by changing the force applied", false);
 }
 
 template< class Derived >
@@ -275,6 +275,11 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 //////////////////////////////
 // challenge4
 //////////////////////////////
+ 
+Scene* Challenge4::createScene()
+{
+    return Challenge<Challenge4>::createScene();
+}
 
 bool Challenge4::init()
 {
@@ -285,10 +290,5 @@ bool Challenge4::init()
         return false;
     }
     return true;
-}
- 
-Scene* Challenge4::createScene()
-{
-    return Challenge<Challenge4>::createScene();
 }
 
