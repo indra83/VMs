@@ -1,12 +1,10 @@
 #include "ChallengeMenuScene.h"
 #include "GameLoadScene.h"
 #include "Challenge.h"
+#include "Util.h"
 //#include "SimpleAudioEngine.h"
 
 #include "extensions/cocos-ext.h"
-
-#define GREENISH Color4B(64,102,24,255)
-//#define CHIME "audio/notification.mp3"
 
 USING_NS_CC;
 USING_NS_CC_EXT;

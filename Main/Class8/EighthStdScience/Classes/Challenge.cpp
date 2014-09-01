@@ -245,16 +245,28 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
         addPopupMenu("Ask for Help", 
                      "Not enough force, ask a friend to help out, by clicking the friend button on the top right", true, false); 
 
-        auto friendButton = MenuItemImage::create("help.png", "help.png");
-        friendButton->setScale(0.8);
-        _menuLayer->addToTopMenu(friendButton,
-                                 [&](Ref * sender)-> void 
-                                 {
-                                    dynamic_cast< MenuItemImage * >( sender )->setEnabled(false);
-                                    this->_menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE*2, SpriteLayer::MAX_FORCE*2, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
-                                    this->_spriteLayer->addAnotherPerson();
-                                 }); 
-        friendButton->retain();
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+
+        auto menu = Menu::create();
+        auto sprite = LayerColor::create(GREENISH, visibleSize.width/4, visibleSize.height/4);
+        auto label = LabelTTF::create("Ask Help", "fonts/EraserDust.ttf", 20);
+        sprite->addChild(label);
+
+        auto friendButton = MenuItemSprite::create(sprite, sprite);
+        friendButton->setCallback([this, menu](Ref * sender)-> void 
+                                  {
+                                        _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE*2, 
+                                                                 SpriteLayer::MAX_FORCE*2, 
+                                                                 0, this, cccontrol_selector(Challenge1::forceValueChanged));
+                                        _spriteLayer->addAnotherPerson();
+                                        _menuLayer->removeChild(menu);
+                                  });
+
+        friendButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        friendButton->setPosition(Vec2(visibleSize.width/2 - 100, visibleSize.height/3 + 10));
+        menu->addChild(friendButton);
+        _menuLayer->addChild(menu);
+
         _friendHelpShown = true;
     }
     prevValue = _spriteLayer->getExternalForceValue();

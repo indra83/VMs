@@ -1,9 +1,8 @@
 #include "PopUpScene.h"
+#include "Util.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
-
-static const Color4B GREENISH(64,102,24,255);
 
 Scene* PopUp::createScene(const std::string &title, const std::string &caption, Sprite * sprite)
 {

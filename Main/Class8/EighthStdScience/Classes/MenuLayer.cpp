@@ -7,7 +7,6 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-static const Color4B GREENISH(64,102,24,255);
 static const int LAB_ZINDEX=0;
 static const int POP_ZINDEX=1;
 static const int SURF_ZINDEX=2;

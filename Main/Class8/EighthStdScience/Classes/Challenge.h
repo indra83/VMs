@@ -8,6 +8,7 @@ class BackGroundLayer;
 class SpriteLayer;
 class MenuLayer;
 
+
 template< class Derived >
 class Challenge: public cocos2d::Layer
 {
