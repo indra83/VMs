@@ -19,9 +19,7 @@ private :
     std::function< bool () > _periodicCB;
     cocos2d::MenuItemLabel * _speedLabel;
     cocos2d::MenuItemLabel * _massLabel;
-    cocos2d::Sprite * _dial;
     cocos2d::Sprite * _needle;
-    cocos2d::Action * _action;
     float _forceExternalValue;
     float _forceFrictionValue;
     float _sumOfForcesValue;

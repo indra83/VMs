@@ -16,9 +16,9 @@ static const Color3B BLACK(0, 0, 0);
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
 
-#define MAX_ANGLE 300
-#define MAX_SPEED 100
-#define OFFSET 45
+static const float MAX_ANGLE=270.0;
+static const float OFFSET_ANGLE=-45.0;
+static const float MAX_SPEED=50.0;
 
 // per person;
 const float SpriteLayer::MAX_FORCE=100;
@@ -172,18 +172,17 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 5. add the dial and needle for speed-o-meter
     // dial
-    _dial = Sprite::create("dial.png");
-    _dial->setPosition(Vec2(origin.x + visibleSize.width/6 , origin.y + visibleSize.height/6));
-    _dial->setScale(0.8);
-    this->addChild(_dial , DIAL_ZINDEX);
+    auto dial = Sprite::create("dial.png");
+    dial->setPosition(Vec2(visibleSize.width/6 ,visibleSize.height/6));
+    dial->setScale(0.8);
+    this->addChild(dial, DIAL_ZINDEX);
 
     // needle
     _needle = Sprite::create("needle.png");
     _needle->setAnchorPoint(Vec2(0.85, 0.5));
-    _needle->setPosition(Vec2(origin.x + visibleSize.width/6 , origin.y + visibleSize.height/6));
+    _needle->setPosition(Vec2(visibleSize.width/6, visibleSize.height/6));
     _needle->setScale(0.8);
     this->addChild(_needle , NEEDLE_ZINDEX);
-
 
     this->addPersonOfForce(0.0);
     this->scheduleUpdate();
@@ -373,9 +372,8 @@ void SpriteLayer::update(float dt)
     _prevSumOfForcesValue = _sumOfForcesValue;
 
     // speed-o-meter implementation
-    _angle = _velocity * (MAX_ANGLE/MAX_SPEED);
-    _action = RotateBy::create(0.1 , _angle);
-    _needle->runAction(_action);
+    auto angle = ( ( fabs(_velocity) / MAX_SPEED ) * MAX_ANGLE ) + OFFSET_ANGLE;
+    _needle->setRotation(angle);
 
     Node::update(dt);
 }
