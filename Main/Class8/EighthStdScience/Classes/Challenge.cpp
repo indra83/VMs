@@ -98,7 +98,7 @@ bool Challenge<Derived>::init()
     _menuLayer->addToTopMenu(info,
                              [this](Ref * sender) -> void
                              {
-                                addPopupMenu("Objective", "Try to move the crate by changing the force applied");
+                                showInfoPopUp();
                              });
 
     // add the challenges menu
@@ -138,6 +138,13 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
                     else
                         Director::getInstance()->pushScene(scene);
                 });
+}
+
+
+template< class Derived >
+void Challenge<Derived>::showInfoPopUp()
+{
+    addPopupMenu("Objective", "Try to move the crate by changing the force applied");
 }
 
 template< class Derived >
@@ -220,6 +227,10 @@ bool Challenge1::init()
         }
         return true;
     });
+
+    // show initial info popup
+    showInfoPopUp();
+
    return true;
 }
 
