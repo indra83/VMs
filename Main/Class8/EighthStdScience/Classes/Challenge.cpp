@@ -103,7 +103,7 @@ bool Challenge<Derived>::init()
                              });
 
     // add the challenges menu
-    auto list = MenuItemImage::create("list.png", "list.png");
+    auto list = MenuItemImage::create("menu.png", "menu.png");
     list->setScale(0.8);
     _menuLayer->addToTopMenu(list,
                              [](Ref * sender) -> void
@@ -222,7 +222,7 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
                      "Not enough force, ask a friend to help out, by clicking the friend button on the top right"); 
 
         auto friendButton = MenuItemImage::create("help.png", "help.png");
-        friendButton->setScale(0.7);
+        friendButton->setScale(0.8);
         _menuLayer->addToTopMenu(friendButton,
                                  [&](Ref * sender)-> void 
                                  {
