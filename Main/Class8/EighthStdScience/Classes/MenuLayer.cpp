@@ -10,6 +10,7 @@ USING_NS_CC_EXT;
 static const Color4B GREENISH(64,102,24,255);
 static const int LAB_ZINDEX=0;
 static const int POP_ZINDEX=1;
+static const int SURF_ZINDEX=2;
 static const float PADDING = 10.0;
 
 class ControlSliderRollBack : public ControlSlider
@@ -102,6 +103,20 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     labelH->setPosition(Vec2(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
     _forceSlider->addChild(labelH);
     addChild(_forceSlider);
+
+    // surface selection section
+    auto surf_label = LabelTTF::create("Set Friction :" , "fonts/Marker Felt.ttf" , 30);
+    surf_label->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/6));
+    this->addChild(surf_label , SURF_ZINDEX);
+
+    auto surf_ice = MenuItemImage::create("low-fric.png" , "low-fric.png");
+    auto surf_grass = MenuItemImage::create("med-fric.png" , "med-fric.png");
+    auto surf_gravel = MenuItemImage::create("high-fric.png" , "high-fric.png");
+
+    auto menu = Menu::create(surf_ice , surf_grass , surf_gravel , NULL);
+    menu->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/13));
+    menu->alignItemsHorizontally();
+    this->addChild(menu , SURF_ZINDEX);
 }
 
 void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
