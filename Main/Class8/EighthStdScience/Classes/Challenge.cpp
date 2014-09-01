@@ -248,8 +248,9 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
         Size visibleSize = Director::getInstance()->getVisibleSize();
 
         auto menu = Menu::create();
-        auto sprite = LayerColor::create(GREENISH, visibleSize.width/4, visibleSize.height/4);
+        auto sprite = LayerColor::create(GREENISH, visibleSize.width/8, visibleSize.height/8);
         auto label = LabelTTF::create("Ask Help", "fonts/EraserDust.ttf", 20);
+        label->setPosition(Vec2(visibleSize.width/16, visibleSize.height/16));
         sprite->addChild(label);
 
         auto friendButton = MenuItemSprite::create(sprite, sprite);
@@ -262,8 +263,8 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
                                         _menuLayer->removeChild(menu);
                                   });
 
-        friendButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        friendButton->setPosition(Vec2(visibleSize.width/2 - 100, visibleSize.height/3 + 10));
+        friendButton->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
+        friendButton->setPosition(Vec2(-visibleSize.width/4, 0));
         menu->addChild(friendButton);
         _menuLayer->addChild(menu);
 
