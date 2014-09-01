@@ -5,10 +5,11 @@
 
 USING_NS_CC;
 
-static const int SPRITE_ZINDEX = 0;
-static const int PERSON_ZINDEX = 1;
-static const int LABEL_ZINDEX = 2;
-static const int DIAL_ZINDEX = 3;
+static const int STATIONARY_ZINDEX = 0;
+static const int SPRITE_ZINDEX = 1;
+static const int PERSON_ZINDEX = 2;
+static const int LABEL_ZINDEX = 3;
+static const int DIAL_ZINDEX = 3; //TODO
 static const int NEEDLE_ZINDEX = 4;
 
 static const Color3B BLACK(0, 0, 0);
@@ -214,6 +215,7 @@ void SpriteLayer::addPersonOfForce(float force)
     {
         prevPosition = _personLayer->getPosition();
         prevAnchorPoint = _personLayer->getAnchorPoint();
+        removeFromMovables(_personLayer);
         removeChild(_personLayer);
     }
 
@@ -278,7 +280,8 @@ void SpriteLayer::addPersonOfForce(float force)
     }
 
     addChild(_personLayer, PERSON_ZINDEX);
-    _personPushing = !(force == 0);
+    if (force == 0)
+        addToMovables(_personLayer);
 }
 
 float SpriteLayer::getFrictionalForce()
@@ -362,9 +365,8 @@ void SpriteLayer::update(float dt)
 
     if(fabs(dx) > 0.0)
     {
-        _moveCB(dx);
-        if(!_personPushing)
-            _personLayer->runAction(Place::create(_personLayer->getPosition() + Vec2(-dx, 0.0)));
+        for( auto node : _movables )
+            node->runAction(Place::create(node->getPosition() + Vec2(-dx, 0.0)));
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
@@ -375,6 +377,24 @@ void SpriteLayer::update(float dt)
     _needle->runAction(_action);
 
     Node::update(dt);
+}
+
+void SpriteLayer::addStationaryChild(Node * node)
+{
+    addChild( node, STATIONARY_ZINDEX);
+    addToMovables(node);
+}
+
+void SpriteLayer::addToMovables( Node * node )
+{
+    _movables.push_back(node);
+}
+
+void SpriteLayer::removeFromMovables( Node * node )
+{
+    auto f = std::find(_movables.begin(), _movables.end(), node); 
+    if (f != _movables.end())
+        _movables.erase(f); 
 }
 
 void SpriteLayer::addAnotherPerson()

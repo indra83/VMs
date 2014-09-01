@@ -75,11 +75,7 @@ bool Challenge<Derived>::init()
     _spriteLayer = SpriteLayer::create();
     _spriteLayer->setMass(30.0);
     _spriteLayer->setFrictionCoefficient(0.5);
-    _spriteLayer->setMoveCB(
-            [this](float deltaX) -> void
-            {
-                _bgLayer->runAction(Place::create(_bgLayer->getPosition() + Vec2(-deltaX, 0.0)));
-            });
+    _spriteLayer->addToMovables(_bgLayer);
     _spriteLayer->changeForceValue(0.0);
     this->addChild(_spriteLayer, SP_ZINDEX);
 
@@ -196,24 +192,31 @@ bool Challenge1::init()
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
 
+    // adding destination sprite at 100 meters away from current screen
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    // add destinations on both sides
+    auto addDestination = [this, visibleSize] ( bool right ) -> void
+    {
+        auto dest = Sprite::create("destination.png");
+        dest->setScale(0.8);
+        dest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        dest->setPosition(Vec2( (right ? 1 : -1) * TARGET_METRES * SpriteLayer::PTM_RATIO + visibleSize.width/2, 
+                                visibleSize.height/3 + 10));
+        _spriteLayer->addStationaryChild(dest);
+    };
+
+    addDestination(true);
+    addDestination(false);
+ 
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([this, originalPos] () -> void
     {
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_METRES * SpriteLayer::PTM_RATIO )
             done();
     });
-
-    // adding destination sprite at 100 meters away from current screen
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    auto dest = Sprite::create("destination.png");
-    dest->setScale(0.8);
-    dest->setAnchorPoint(Vec2::ZERO);
-    dest->setPosition(Vec2(5*SpriteLayer::PTM_RATIO , visibleSize.height/3 + origin.y + 10));
-    this->addChild(dest , DEST_ZINDEX);
-
-    return true;
+   return true;
 }
 
 void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)

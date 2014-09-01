@@ -16,8 +16,6 @@ private :
     ValueArrow * _sumOfForces; 
     cocos2d::Layer * _crate;
     cocos2d::Layer * _personLayer;
-    bool _personPushing;
-    std::function< void (float) > _moveCB;
     std::function< void () > _periodicCB;
     cocos2d::MenuItemLabel * _speedLabel;
     cocos2d::MenuItemLabel * _massLabel;
@@ -33,6 +31,8 @@ private :
     float _frictionCoefficient;
     float _angle;
     bool _showAnotherPerson;
+    std::vector< cocos2d::Node * > _movables;
+
 public :  
     SpriteLayer() : 
        _forceFriction(nullptr),
@@ -40,7 +40,6 @@ public :
        _sumOfForces(nullptr),
        _crate(nullptr), 
        _personLayer(nullptr),
-       _personPushing(false),
        _speedLabel(nullptr),
        _massLabel(nullptr),
        _forceExternalValue(0.0),
@@ -50,31 +49,34 @@ public :
        _velocity(0.0),
        _mass(0.0),
        _frictionCoefficient(0.0),
-       _showAnotherPerson(false) {}
+       _showAnotherPerson(false),
+       _periodicCB(),
+       _movables() {}
 
     ~SpriteLayer();
 
     CREATE_FUNC(SpriteLayer);
 
-    virtual bool init();  
+    virtual bool init() override;  
     void changeForceValue(float value);
     void changeFrictionValue(float value);
     void setBackGroundLayer(Layer *layer);
     void addPersonOfForce(float);
-    void update(float);
+    void update(float) override;
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
-    void setMoveCB( std::function< void (float) > cb ) { _moveCB = cb; }
     void setPeriodicCB( std::function< void () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
+    void addStationaryChild( cocos2d::Node * node);
+    void addToMovables( cocos2d::Node * node );
+    void removeFromMovables( cocos2d::Node * node );
 
 private :    
     cocos2d::LabelTTF * getSpeedLabel();
     cocos2d::LabelTTF * getMassLabel();
     float getFrictionalForce();
     void readjustForces();
-    
 };
 
 #endif // __SPRITE_LAYER_H__
