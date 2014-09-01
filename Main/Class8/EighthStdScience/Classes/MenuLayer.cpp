@@ -103,56 +103,31 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     labelH->setPosition(Vec2(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
     _forceSlider->addChild(labelH);
     addChild(_forceSlider);
+}
+
+void MenuLayer::addSurfaceMenu(std::function<void (Ref *)> cb)
+{
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // surface selection section
     auto surf_label = LabelTTF::create("Set Friction :" , "fonts/Marker Felt.ttf" , 30);
     surf_label->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/6));
     this->addChild(surf_label , SURF_ZINDEX);
 
-    auto surf_ice = MenuItemImage::create("low-fric.png" , "low-fric.png");
-    auto surf_grass = MenuItemImage::create("med-fric.png" , "med-fric.png");
-    auto surf_gravel = MenuItemImage::create("high-fric.png" , "high-fric.png");
+    auto surf_ice = MenuItemImage::create("low-fric.png" , "low-fric.png", cb);
+    surf_ice->setTag((int)MenuLayer::ICE);
 
-    auto menu = Menu::create(surf_ice , surf_grass , surf_gravel , NULL);
+    auto surf_grass = MenuItemImage::create("med-fric.png" , "med-fric.png", cb);
+    surf_grass->setTag((int)MenuLayer::GRASS);
+
+    auto surf_gravel = MenuItemImage::create("high-fric.png" , "high-fric.png", cb);
+    surf_gravel->setTag((int)MenuLayer::GRAVEL);
+
+    auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
     menu->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/13));
     menu->alignItemsHorizontally();
     this->addChild(menu , SURF_ZINDEX);
-}
-
-void MenuLayer::addFrictionMenu(Ref * target, Control::Handler handler)
-{
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    auto labelF = LabelTTF::create("Change Friction :", "fonts/Marker Felt.ttf", 30);
-    labelF->setPosition(Vec2(visibleSize.width/2, visibleSize.height/8));
-    addChild(labelF);
-
-    auto fSlider = ControlSlider::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png");
-    fSlider->setAnchorPoint(Vec2(0.5f, 0.5f));
-    fSlider->setMinimumValue(0.0f); // Sets the min value of range
-    fSlider->setMaximumValue(1.0f); // Sets the max value of range
-    fSlider->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/8 - 30));
-    fSlider->setValue(0.5f);
-    fSlider->setScale(0.75f);
-
-    // When the value of the slider will change, the given selector will be called
-    fSlider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
-    addChild(fSlider);
-
-    auto labelL1 = LabelTTF::create("Low", "fonts/Marker Felt.ttf", 24);
-    labelL1->setPosition(Vec2(fSlider->getPosition().x - fSlider->getContentSize().width*fSlider->getScale()/2, fSlider->getPosition().y - 20));
-    addChild(labelL1);
-     auto labelH1 = LabelTTF::create("High", "fonts/Marker Felt.ttf", 24);
-    labelH1->setPosition(Vec2(fSlider->getPosition().x + fSlider->getContentSize().width*fSlider->getScale()/2, fSlider->getPosition().y - 20));
-    addChild(labelH1);
- 
-    //////////////////////////////
-    // add label
-    auto label = LabelTTF::create("Friction", "fonts/Marker Felt.ttf", 30);
-    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
-    addChild(label);
 }
 
 void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)> &cb)

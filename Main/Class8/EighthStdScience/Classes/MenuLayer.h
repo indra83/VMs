@@ -15,7 +15,8 @@ private :
     float _topMenuOffsetX;
     cocos2d::Layer * _forceSlider;
 
-public :  
+public :
+    enum SurfaceType { ICE, GRASS, GRAVEL };
     MenuLayer() 
         : _spriteLayer(nullptr), 
           _topMenu(nullptr),
@@ -25,7 +26,7 @@ public :
     virtual bool init();  
 
     void addForceMenu(float min, float max, float start, cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
-    void addFrictionMenu(cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
+    void addSurfaceMenu(std::function<void (cocos2d::Ref *)> cb);
 
     CREATE_FUNC(MenuLayer);
 
