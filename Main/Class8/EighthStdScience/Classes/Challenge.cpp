@@ -122,8 +122,13 @@ bool Challenge<Derived>::init()
 
 
 template< class Derived >
-void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption, bool replace)
+void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption, bool loud, bool vibrate, bool replace)
 {
+    if (loud)
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
+    if (vibrate)
+        NativeHelper::vibrate(500);
+
     captureScreenAsSprite(
                 [=](Sprite * sprite) -> void
                 {
@@ -138,10 +143,8 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
 template< class Derived >
 void Challenge<Derived>::done()
 {
-    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
-    NativeHelper::vibrate(500);
     _spriteLayer->pause();
-    addPopupMenu("Challenge Complete", "Congrats!!", true);
+    addPopupMenu("Challenge Complete", "Congrats!!", true, true, true);
 }
 
 template< class Derived >
@@ -229,7 +232,7 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
          prevValue != _spriteLayer->getExternalForceValue() && ++_numMaxHits >= SHOW_AFTER)
     {
         addPopupMenu("Ask for Help", 
-                     "Not enough force, ask a friend to help out, by clicking the friend button on the top right"); 
+                     "Not enough force, ask a friend to help out, by clicking the friend button on the top right", true, false); 
 
         auto friendButton = MenuItemImage::create("help.png", "help.png");
         friendButton->setScale(0.8);

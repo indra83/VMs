@@ -26,7 +26,7 @@ public:
     // implement the "static create()" method manually
     static Derived * create();
 
-    void addPopupMenu(const std::string & title, const std::string & caption, bool replace = false);
+    void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
