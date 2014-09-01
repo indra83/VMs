@@ -17,8 +17,8 @@ private :
     cocos2d::Layer * _crate;
     cocos2d::Layer * _personLayer;
     std::function< bool () > _periodicCB;
-    cocos2d::MenuItemLabel * _speedLabel;
-    cocos2d::MenuItemLabel * _massLabel;
+    cocos2d::LabelTTF * _speedLabel;
+    cocos2d::LabelTTF * _massLabel;
     cocos2d::Sprite * _needle;
     float _forceExternalValue;
     float _forceFrictionValue;
@@ -71,8 +71,8 @@ public :
     void removeFromMovables( cocos2d::Node * node );
 
 private :    
-    cocos2d::LabelTTF * getSpeedLabel();
-    cocos2d::LabelTTF * getMassLabel();
+    std::string getMassString();
+    std::string getSpeedString();
     float getFrictionalForce();
     void readjustForces();
 };

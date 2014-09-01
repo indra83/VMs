@@ -136,11 +136,13 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 3. add mass label
-    _massLabel = MenuItemLabel::create(getMassLabel());
-    _massLabel->setColor(BLACK);
-    _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _massLabel->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
-    _crate->addChild(_massLabel, LABEL_ZINDEX);
+    _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
+    _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
+    auto menuLabel1 = MenuItemLabel::create(_massLabel);
+    menuLabel1->setColor(BLACK);
+    menuLabel1->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    menuLabel1->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
+    _crate->addChild(menuLabel1, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);
 
@@ -163,11 +165,14 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 4. add the speedLabel
-    _speedLabel = MenuItemLabel::create(getSpeedLabel());
-    _speedLabel->setColor(BLACK);
-    _speedLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-    _speedLabel->setPosition(Vec2(visibleSize.width, visibleSize.height/3));
-    addChild(_speedLabel);
+
+    _speedLabel = LabelTTF::create(getSpeedString().c_str(), "fonts/Marker Felt.ttf", 30);
+    _speedLabel->setHorizontalAlignment(TextHAlignment::LEFT);
+    auto menuLabel = MenuItemLabel::create(_speedLabel);
+    menuLabel->setColor(BLACK);
+    menuLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    menuLabel->setPosition(Vec2(visibleSize.width, visibleSize.height/3));
+    addChild(menuLabel);
 
     //////////////////////////////
     // 5. add the dial and needle for speed-o-meter
@@ -324,28 +329,24 @@ void SpriteLayer::changeFrictionValue(float value)
     _frictionCoefficient = value;
 }
 
-LabelTTF * SpriteLayer::getMassLabel()
+std::string SpriteLayer::getMassString()
 {
     std::stringstream sstr;
     sstr << _mass << " Kg";
-    auto labelTTF = LabelTTF::create(sstr.str().c_str(), "fonts/Marker Felt.ttf", 30);
-    labelTTF->setHorizontalAlignment(TextHAlignment::LEFT);
-    return labelTTF;
+    return sstr.str();
 }
 
-LabelTTF * SpriteLayer::getSpeedLabel()
+std::string SpriteLayer::getSpeedString()
 {
     std::stringstream sstr;
     sstr << "Speed - " << (int)_velocity << " m/sec";
-    auto labelTTF = LabelTTF::create(sstr.str().c_str(), "fonts/Marker Felt.ttf", 30);
-    labelTTF->setHorizontalAlignment(TextHAlignment::LEFT);
-    return labelTTF;
+    return sstr.str();
 }
 
 void SpriteLayer::setMass(float mass)
 {
     _mass = mass;
-    _massLabel->setLabel(getMassLabel());
+    _massLabel->setString(getMassString());
 }
 
 void SpriteLayer::update(float dt)
@@ -361,7 +362,7 @@ void SpriteLayer::update(float dt)
     float dx = 0.0;
     if(fabs(_velocity) > EPSILON)
         dx = _velocity * dt * PTM_RATIO;
-    _speedLabel->setLabel(getSpeedLabel());
+    _speedLabel->setString(getSpeedString());
 
     if(fabs(dx) > 0.0)
     {
