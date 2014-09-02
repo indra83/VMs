@@ -187,6 +187,7 @@ bool SpriteLayer::init()
     _needle->setAnchorPoint(Vec2(0.85, 0.5));
     _needle->setPosition(Vec2(visibleSize.width/6, visibleSize.height/6));
     _needle->setScale(0.8);
+    _needle->setRotation(OFFSET_ANGLE);
     this->addChild(_needle , NEEDLE_ZINDEX);
 
     this->addPersonOfForce(0.0);
