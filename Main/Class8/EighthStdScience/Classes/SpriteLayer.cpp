@@ -151,7 +151,7 @@ bool SpriteLayer::init()
     Vec2 curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
     auto addArrow = [&](const std::string & fileName) -> ValueArrow *
     {
-        auto arrow = ValueArrow::create("arrow.png");
+        auto arrow = ValueArrow::create(fileName);
         arrow->setScaleY(0.25);
         arrow->setPosition(curr); 
         curr = curr + Vec2(0, arrow->getContentSize().height / 4);
