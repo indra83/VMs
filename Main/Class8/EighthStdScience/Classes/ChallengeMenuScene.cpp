@@ -6,6 +6,8 @@
 
 #include "extensions/cocos-ext.h"
 
+#define LABEL_OFFSET 45
+
 USING_NS_CC;
 USING_NS_CC_EXT;
 
@@ -76,7 +78,8 @@ bool ChallengeMenu::init()
         std::stringstream sstr;
         sstr << "challenge " << id;
         auto label = LabelTTF::create(sstr.str(), "fonts/EraserDust.ttf" , 40);
-        label->setPosition(3*wd/5, (5 - id) * ht/5);
+        label->setAnchorPoint(Vec2::ZERO);
+        label->setPosition(2*wd/5, (5 - id) * ht/5 + LABEL_OFFSET);
         menu->addChild(label);
     };
 
@@ -92,6 +95,14 @@ bool ChallengeMenu::init()
 	auto label = LabelTTF::create("CHALLENGES" , "fonts/EraserDust.ttf" , 60);
 	label->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + 2*visibleSize.height - label->getContentSize().height));
 	scrollContainer->addChild(label);
+
+	// objective : challenge 1
+	auto obj1 = LabelTTF::create("Objective: To move the box by applying force. "
+			"Notice the behavior of friction as you apply force" , "fonts/EraserDust.ttf" , 25 ,
+			Size(550,100) , TextHAlignment::LEFT);
+	obj1->setAnchorPoint(Vec2::ZERO);
+	obj1->setPosition(Vec2(2*wd/5, 4*ht/5 - 2*LABEL_OFFSET));
+	scrollContainer->addChild(obj1);
 
     // scroll view
     auto scrollview = ScrollView::create(visibleSize, scrollContainer);

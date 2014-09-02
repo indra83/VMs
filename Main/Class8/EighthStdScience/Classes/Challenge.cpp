@@ -148,7 +148,8 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
 template< class Derived >
 void Challenge<Derived>::showInfoPopUp()
 {
-    addPopupMenu("Objective", "Try to move the crate by changing the force applied", false);
+    addPopupMenu("INSTRUCTION", "Move the box to the right by applying force on it. Drag and hold the slider in position to apply a specific amount of force."
+    		" Help the box reach the house which is some distance away", false);
 }
 
 template< class Derived >
@@ -242,14 +243,16 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
          fabs(_spriteLayer->getExternalForceValue()) == SpriteLayer::MAX_FORCE && 
          prevValue != _spriteLayer->getExternalForceValue() && ++_numMaxHits >= SHOW_AFTER)
     {
-        addPopupMenu("Ask for Help", 
-                     "Not enough force, ask a friend to help out, by clicking the friend button on the top right", true, false); 
+        addPopupMenu("INSTRUCTION",
+                     "Ask for help ! For the body to move from rest, the force on the body should be greater than the friction force. "
+                     "Try taking help from your friend! Press the seek help button on the left", true, false);
 
         Size visibleSize = Director::getInstance()->getVisibleSize();
 
+        // seek help implementation
         auto menu = Menu::create();
         auto sprite = LayerColor::create(GREENISH, visibleSize.width/8, visibleSize.height/8);
-        auto label = LabelTTF::create("Ask Help", "fonts/EraserDust.ttf", 20);
+        auto label = LabelTTF::create("Seek Help", "fonts/EraserDust.ttf", 20);
         label->setPosition(Vec2(visibleSize.width/16, visibleSize.height/16));
         sprite->addChild(label);
 

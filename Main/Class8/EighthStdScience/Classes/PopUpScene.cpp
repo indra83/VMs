@@ -60,9 +60,9 @@ bool PopUp::init()
     _labelTitle->setAnchorPoint(Vec2::ANCHOR_MIDDLE_TOP);
     _labelTitle->setPosition(Vec2(inf_wd/2, inf_ht - 20.0 ));
     bgLayer->addChild(_labelTitle, 2);
-    _labelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30, Size(visibleSize.width/3, visibleSize.height/4));
+    _labelCaption = LabelTTF::create("", "fonts/EraserDust.ttf", 30, Size(visibleSize.width/2, visibleSize.height/3));
     _labelCaption->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
-    _labelCaption->setPosition(Vec2(inf_wd/2, inf_ht/2));
+    _labelCaption->setPosition(Vec2(inf_wd/2, inf_ht/2 - 40));
     bgLayer->addChild(_labelCaption, 2);
 
     this->addChild(bgLayer);
