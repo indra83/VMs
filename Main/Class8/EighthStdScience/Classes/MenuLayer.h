@@ -14,6 +14,9 @@ private :
     cocos2d::Menu * _topMenu;
     float _topMenuOffsetX;
     cocos2d::Layer * _forceSlider;
+    int _init_max;
+    int _init_min;
+    int _count;
 
 public :
     enum SurfaceType { ICE, GRASS, GRAVEL };
@@ -21,7 +24,10 @@ public :
         : _spriteLayer(nullptr), 
           _topMenu(nullptr),
           _topMenuOffsetX(0.0),
-          _forceSlider(nullptr)
+          _forceSlider(nullptr),
+          _init_max(0),
+          _init_min(0),
+          _count(0)
     {}
     virtual bool init();  
 

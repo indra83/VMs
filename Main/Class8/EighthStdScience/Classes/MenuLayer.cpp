@@ -67,6 +67,14 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+    // saving the initial value of the slider
+//    if(_count == 0)
+//    {
+//    	_init_max = max;
+//    	_init_min = min;
+//    	_count += 1;
+//    }
+
     if (_forceSlider)
         removeChild(_forceSlider);
 
@@ -79,6 +87,12 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     slider->setAnchorPoint(Vec2(0.5f, 0.5f));
     slider->setMinimumValue(min); // Sets the min value of range
     slider->setMaximumValue(max); // Sets the max value of range
+    // programatically change the value of the slider on change of force.
+    if(max-min == 400)
+    {
+    	//slider->setScaleX(((max-min)/(_init_max-_init_min)) * 0.75 /*multiplied to avoid factored scaling*/);
+    	slider->setScaleX(1.2);
+    }
     slider->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 - 20));
     slider->setValue(start);
 
