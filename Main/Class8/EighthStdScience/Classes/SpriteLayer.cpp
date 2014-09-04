@@ -1,9 +1,11 @@
 #include "SpriteLayer.h"
+#include "extensions/cocos-ext.h"
 #include <sstream>
 #include <cstdlib>
 #include <algorithm>
 
 USING_NS_CC;
+USING_NS_CC_EXT;
 
 static const int STATIONARY_ZINDEX = 0;
 static const int SPRITE_ZINDEX = 1;
@@ -26,7 +28,7 @@ const float SpriteLayer::MAX_FORCE=100;
 // TODO: base it on the crate size.. assuming the crate is 1m wide
 const int SpriteLayer::PTM_RATIO = 150;
 
-class ValueArrow : public Sprite
+class ValueArrow : public Scale9Sprite
 {
     float _val;
     MenuItemLabel * _label;
@@ -84,7 +86,7 @@ public :
             _label->setAnchorPoint(Vec2(0.5, 0.0));
             _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 65.0));
         }
-        setFlippedX(_val < 0);
+        //setFlippedX(_val < 0);
 
         // Stretches content proportional to newLevel
         float scale = val/SpriteLayer::MAX_FORCE;
@@ -153,15 +155,15 @@ bool SpriteLayer::init()
     {
         auto arrow = ValueArrow::create(fileName);
         arrow->setScaleY(0.25);
-        arrow->setPosition(curr); 
+        arrow->setPosition(curr);
         curr = curr + Vec2(0, arrow->getContentSize().height / 4);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
     };
 
-    _sumOfForces = addArrow("arrow.png");
-    _forceFriction = addArrow("arrow-fr.png");
-    _forceExternal = addArrow("arrow-force.png");
+    _sumOfForces = addArrow("arrow-sof.9.png");
+    _forceFriction = addArrow("arrow-fr.9.png");
+    _forceExternal = addArrow("arrow-force.9.png");
 
     //////////////////////////////
     // 4. add the speedLabel
