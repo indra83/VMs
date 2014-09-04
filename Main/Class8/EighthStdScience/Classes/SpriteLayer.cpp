@@ -11,10 +11,7 @@ static const int STATIONARY_ZINDEX = 0;
 static const int SPRITE_ZINDEX = 1;
 static const int PERSON_ZINDEX = 2;
 static const int LABEL_ZINDEX = 3;
-static const int DIAL_ZINDEX = 3; //TODO
-static const int NEEDLE_ZINDEX = 4;
 
-static const Color3B BLACK(0, 0, 0);
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
 
@@ -28,28 +25,44 @@ const float SpriteLayer::MAX_FORCE=100;
 // TODO: base it on the crate size.. assuming the crate is 1m wide
 const int SpriteLayer::PTM_RATIO = 150;
 
-class ValueArrow : public Scale9Sprite
+class ValueArrow : public Layer
 {
     float _val;
-    MenuItemLabel * _label;
-    bool _showValues;
+    LabelTTF * _label;
+    Scale9Sprite * _sprite;
+    std::string _name;
 
 public :
-    static ValueArrow * create(const std::string &filename, bool showValues=true)
+    static ValueArrow * create(const std::string &fileName, const std::string &name)
     {
-        ValueArrow *sprite = new ValueArrow();
-        if (sprite && sprite->initWithFile(filename))
+        ValueArrow *layer = new ValueArrow();
+        if (layer && layer->init(fileName, name))
         {
-            sprite->autorelease();
-            sprite->_showValues = showValues;
-            sprite->adjustSize();
-            return sprite;
+            layer->autorelease();
+            return layer;
         }
-        CC_SAFE_DELETE(sprite);
+        CC_SAFE_DELETE(layer);
         return nullptr;
     }
 
-    ValueArrow() : _val(0.0), _label(nullptr) {}
+    ValueArrow() : _val(0.0), _label(nullptr), _name() {}
+
+    bool init(const std::string & fileName, const std::string & name)
+    {
+        if ( !Layer::init() )
+            return false;
+        _label = LabelTTF::create("", "fonts/Maven Pro Black.otf", 30);
+        _label->setHorizontalAlignment(TextHAlignment::LEFT);
+        _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        addChild(_label);
+
+        _name = name;
+        _sprite = Scale9Sprite::create(fileName);
+        addChild(_sprite);
+
+        adjustSize();
+        return true;
+    }
 
     void setValue(float f)
     {
@@ -57,57 +70,26 @@ public :
         {
             _val = f;
             adjustSize();
-            if (_label)
-                _label->setLabel(getLabel());
         }
     }
 
-    float getValue() {return _val;}
+    float getValue() { return _val; }
 
     void adjustSize()
     {
-        auto val = _val;
-        if (_val < 0)
-            val = -_val;
+        auto val = fabs(_val);
+        std::stringstream sstr;
+        sstr << (int)val << " N";
+        _label->setString(sstr.str());
+
         setAnchorPoint(_val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT);
 
-        if( _showValues && !_label) 
-        {
-            _label = MenuItemLabel::create(getLabel());
-            _label->setColor(Color3B(255,255,255));
-            _label->setAnchorPoint(Vec2(0.5, 0.0));
-            _label->setPosition(Vec2(getContentSize().width /** getScaleX()/2 */, 65.0));
-            // add the mass label
-            addChild(_label);
-        }
-
-        if (_label)
-        {
-            _label->setAnchorPoint(Vec2(0.5, 0.0));
-            _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 65.0));
-        }
-        //setFlippedX(_val < 0);
+        _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 0.0));
+        //_sprite->setFlippedX(_val < 0);
 
         // Stretches content proportional to newLevel
         float scale = val/SpriteLayer::MAX_FORCE;
         setScaleX(scale/1.7);
-    }
-
-    LabelTTF * getLabel()
-    {
-        std::stringstream sstr;
-        float val = _val;
-        if (val < 0)
-            val = -val;
-        sstr << (int)val << " N";
-        auto labelTTF = LabelTTF::create(sstr.str().c_str(), "fonts/Maven Pro Black.otf", 30);
-        labelTTF->setHorizontalAlignment(TextHAlignment::LEFT);
-        return labelTTF;
-    }
-
-    void showValues(bool enable)
-    {
-        _showValues = enable;
     }
 };
 
@@ -141,7 +123,7 @@ bool SpriteLayer::init()
     _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
     _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
     auto menuLabel1 = MenuItemLabel::create(_massLabel);
-    menuLabel1->setColor(BLACK);
+    menuLabel1->setColor(Color3B::BLACK);
     menuLabel1->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     menuLabel1->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
     _crate->addChild(menuLabel1, LABEL_ZINDEX);
@@ -151,9 +133,9 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 3. add the force arrows
     Vec2 curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
-    auto addArrow = [&](const std::string & fileName) -> ValueArrow *
+    auto addArrow = [&](const std::string & fileName, const std::string & name) -> ValueArrow *
     {
-        auto arrow = ValueArrow::create(fileName);
+        auto arrow = ValueArrow::create(fileName, name);
         arrow->setScaleY(0.25);
         arrow->setPosition(curr);
         curr = curr + Vec2(0, arrow->getContentSize().height / 4);
@@ -161,36 +143,40 @@ bool SpriteLayer::init()
         return arrow;
     };
 
-    _sumOfForces = addArrow("arrow-sof.9.png");
-    _forceFriction = addArrow("arrow-fr.9.png");
-    _forceExternal = addArrow("arrow-force.9.png");
+    _sumOfForces = addArrow("arrow-sof.png", "Net");
+    _forceFriction = addArrow("arrow-fr.png", "Friction");
+    _forceExternal = addArrow("arrow-force.png", "Applied");
+
 
     //////////////////////////////
-    // 4. add the speedLabel
+    // 4. add the speed related display
+    auto speedLayer = Layer::create();
 
+    // label
     _speedLabel = LabelTTF::create(getSpeedString().c_str(), "fonts/Marker Felt.ttf", 30);
     _speedLabel->setHorizontalAlignment(TextHAlignment::LEFT);
-    auto menuLabel = MenuItemLabel::create(_speedLabel);
-    menuLabel->setColor(BLACK);
-    menuLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-    menuLabel->setPosition(Vec2(visibleSize.width, visibleSize.height/3));
-    addChild(menuLabel);
+    _speedLabel->setColor(Color3B::BLACK);
+    speedLayer->addChild(_speedLabel);
 
-    //////////////////////////////
-    // 5. add the dial and needle for speed-o-meter
+    // speed-o-meter
     // dial
     auto dial = Sprite::create("dial.png");
-    dial->setPosition(Vec2(visibleSize.width/6 ,visibleSize.height/6));
+    //dial->setPosition(Vec2(visibleSize.width/6 ,visibleSize.height/6));
+    dial->setPosition(Vec2(0.0, 10.0));
     dial->setScale(0.8);
-    this->addChild(dial, DIAL_ZINDEX);
-
+    speedLayer->addChild(dial);
     // needle
     _needle = Sprite::create("needle.png");
-    _needle->setAnchorPoint(Vec2(0.85, 0.5));
+    //_needle->setAnchorPoint(Vec2(0.85, 0.5));
+    dial->setPosition(Vec2(0.0, 10.0));
     _needle->setPosition(Vec2(visibleSize.width/6, visibleSize.height/6));
     _needle->setScale(0.8);
     _needle->setRotation(OFFSET_ANGLE);
-    this->addChild(_needle , NEEDLE_ZINDEX);
+    speedLayer->addChild(_needle, 1);
+
+    speedLayer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    speedLayer->setPosition(Vec2(visibleSize.width, visibleSize.height/3 + 10));
+    addChild(speedLayer);
 
     this->addPersonOfForce(0.0);
     this->scheduleUpdate();
@@ -296,7 +282,7 @@ float SpriteLayer::getFrictionalForce()
     float fric = 0.0;
     float gravity = 10.0;
     float max = _frictionCoefficient * _mass * gravity;
-    if (fabs(_velocity) > 0.2)
+    if (fabs(_velocity) > EPSILON)
         fric = _velocity > 0.0 ? -max : max;
     else if (fabs(_forceExternalValue) != 0.0)
     {
