@@ -3,6 +3,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <algorithm>
+#include "NativeHelper.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -23,7 +24,7 @@ static const float MAX_SPEED=50.0;
 const float SpriteLayer::MAX_FORCE=100;
 
 // TODO: base it on the crate size.. assuming the crate is 1m wide
-const int SpriteLayer::PTM_RATIO = 150;
+const int SpriteLayer::PTM_RATIO = 50;
 
 class ValueArrow : public Layer
 {
@@ -182,7 +183,7 @@ bool SpriteLayer::init()
     speedLayer->setPosition(Vec2(visibleSize.width, visibleSize.height/3 + 10));
     addChild(speedLayer, LABEL_ZINDEX);
 
-    this->addPersonOfForce(0.0);
+    this->addPersonOfForce();
     this->scheduleUpdate();
 
     return true;
@@ -196,10 +197,12 @@ int getIndexFromForce(float force)
     return val;
 }
 
-void SpriteLayer::addPersonOfForce(float force)
+void SpriteLayer::addPersonOfForce()
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    float force = _forceExternalValue;
 
     auto beforeCrate = Vec2(visibleSize.width/2 + origin.x - _crate->getContentSize().width/2,
                     visibleSize.height/3 + 15 +origin.y);
@@ -208,17 +211,21 @@ void SpriteLayer::addPersonOfForce(float force)
 
     auto prevPosition = beforeCrate;
     auto prevAnchorPoint = Vec2::ANCHOR_BOTTOM_RIGHT;
+    auto prevFlippedX = false;
     if (_personLayer)
     {
         prevPosition = _personLayer->getPosition();
         prevAnchorPoint = _personLayer->getAnchorPoint();
+        prevFlippedX = _person->isFlippedX();
         removeFromMovables(_personLayer);
         removeChild(_personLayer);
     }
 
     std::stringstream sstr;
     if (force == 0)
-        sstr << "pusher_straight_on.png";
+    {
+        sstr << (_personFell ? "pusher_fall_down.png" : "pusher_straight_on.png");
+    }
     else
     {
         sstr << "pusher_" << getIndexFromForce(fabs(_showAnotherPerson ? force/2 : force)) << ".png";
@@ -227,30 +234,32 @@ void SpriteLayer::addPersonOfForce(float force)
     _personLayer = Layer::create();
     _personLayer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
-    auto person = Sprite::create(sstr.str());
-    _personLayer->addChild(person);
-    _personLayer->setContentSize(person->getContentSize());
+    _person = Sprite::create(sstr.str());
+    _personLayer->addChild(_person);
+    _personLayer->setContentSize(_person->getContentSize());
 
-    Sprite * anotherPerson = nullptr;
+    _anotherPerson = nullptr;
     if (_showAnotherPerson)
     {
-        anotherPerson = Sprite::create(sstr.str());
-        anotherPerson->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-        _personLayer->setContentSize(person->getContentSize() + anotherPerson->getContentSize());
-        _personLayer->addChild(anotherPerson);
+        _anotherPerson = Sprite::create(sstr.str());
+        _anotherPerson->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        _personLayer->setContentSize(_person->getContentSize() + _anotherPerson->getContentSize());
+        _personLayer->addChild(_anotherPerson);
     }
 
     if (force == 0)
     {
         _personLayer->setPosition(prevPosition);
         _personLayer->setAnchorPoint(prevAnchorPoint);
-        person->setPosition(Vec2(0.0, 0.0));
-        person->setAnchorPoint(prevAnchorPoint);
-        if (anotherPerson)
+        _person->setPosition(Vec2(0.0, 0.0));
+        _person->setAnchorPoint(prevAnchorPoint);
+        _person->setFlippedX(!prevFlippedX);
+        if (_anotherPerson)
         {
-            anotherPerson->setAnchorPoint(prevAnchorPoint);
+            _anotherPerson->setAnchorPoint(prevAnchorPoint);
             auto direction = prevAnchorPoint == Vec2::ANCHOR_BOTTOM_RIGHT ? -1 : 1;
-            anotherPerson->setPosition(Vec2(direction * ( person->getContentSize().width + 10 ), 0.0));
+            _anotherPerson->setPosition(Vec2(direction * ( _person->getContentSize().width + 10 ), 0.0));
+            _anotherPerson->setFlippedX(!prevFlippedX);
         }
     }
     else
@@ -258,22 +267,22 @@ void SpriteLayer::addPersonOfForce(float force)
         _personLayer->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
         _personLayer->setPosition( force > 0 ? beforeCrate : afterCrate);
 
-        person->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
-        person->setPosition(Vec2::ZERO);
+        _person->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+        _person->setPosition(Vec2::ZERO);
 
-        if (anotherPerson)
+        if (_anotherPerson)
         {
-            anotherPerson->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
+            _anotherPerson->setAnchorPoint( force > 0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT );
             auto direction = force > 0 ? -1 : 1;
-            anotherPerson->setPosition(Vec2( direction * 10, 0.0));
+            _anotherPerson->setPosition(Vec2( direction * 10, 0.0));
         }
     }
 
     if (force < 0)
     {
-        person->setFlippedX(true);
+        _person->setFlippedX(true);
         if (_showAnotherPerson)
-            anotherPerson->setFlippedX(true);
+            _anotherPerson->setFlippedX(true);
     }
 
     addChild(_personLayer, PERSON_ZINDEX);
@@ -309,9 +318,13 @@ void SpriteLayer::readjustForces()
 void SpriteLayer::changeForceValue(float value)
 {
     if(value != _forceExternalValue)
-        addPersonOfForce(value);
+    {
+        _forceExternalValue = value;
+        if (_forceExternalValue > 0.0)
+           _personFell = false; 
+        addPersonOfForce();
+    }
 
-    _forceExternalValue = value;
     _forceExternal->setValue(_forceExternalValue);
 
     readjustForces();
@@ -347,6 +360,15 @@ void SpriteLayer::update(float dt)
     if (_periodicCB && !_periodicCB())
         return;
 
+    if (fabs(_velocity) > MAX_SPEED)
+    {
+        _personFell = true;
+        
+        // this will in turn invoke changeForceValue() fn
+        _menuLayer->setForceSliderValue(0.0);
+        NativeHelper::vibrate(500);
+        addPersonOfForce();
+    }
     readjustForces();
 
     float acc = _prevSumOfForcesValue / _mass;
@@ -393,7 +415,7 @@ void SpriteLayer::removeFromMovables( Node * node )
 void SpriteLayer::addAnotherPerson()
 {
     _showAnotherPerson = true;
-    addPersonOfForce(getExternalForceValue());
+    addPersonOfForce();
 }
 
 SpriteLayer::~SpriteLayer()

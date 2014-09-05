@@ -70,16 +70,7 @@ bool Challenge<Derived>::init(bool showInfo)
     this->addChild(_bgLayer, BG_ZINDEX);
 
     /////////////////////////////
-    // 2. add the sprite layer
-    _spriteLayer = SpriteLayer::create();
-    _spriteLayer->setMass(30.0);
-    _spriteLayer->setFrictionCoefficient(0.5);
-    _spriteLayer->addToMovables(_bgLayer);
-    _spriteLayer->changeForceValue(0.0);
-    this->addChild(_spriteLayer, SP_ZINDEX);
-
-    /////////////////////////////
-    // 3. add the menu layer
+    // 2. add the menu layer
     _menuLayer = MenuLayer::create();
 
     // add the reset button
@@ -110,6 +101,16 @@ bool Challenge<Derived>::init(bool showInfo)
                              });
 
     this->addChild(_menuLayer, MN_ZINDEX);
+
+    /////////////////////////////
+    // 3. add the sprite layer
+    _spriteLayer = SpriteLayer::create();
+    _spriteLayer->setMass(30.0);
+    _spriteLayer->setFrictionCoefficient(0.5);
+    _spriteLayer->addToMovables(_bgLayer);
+    _spriteLayer->changeForceValue(0.0);
+    _spriteLayer->setMenuLayer(_menuLayer);
+    this->addChild(_spriteLayer, SP_ZINDEX);
 
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME.c_str());
     CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(1.0);

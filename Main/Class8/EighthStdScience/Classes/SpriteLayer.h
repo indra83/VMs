@@ -2,6 +2,7 @@
 #define __SPRITE_LAYER_H__
 
 #include "cocos2d.h"
+#include "MenuLayer.h"
 
 class ValueArrow;
 class SpriteLayer : public cocos2d::Layer 
@@ -16,6 +17,8 @@ private :
     ValueArrow * _sumOfForces; 
     cocos2d::Layer * _crate;
     cocos2d::Layer * _personLayer;
+    cocos2d::Sprite * _person;
+    cocos2d::Sprite * _anotherPerson;
     std::function< bool () > _periodicCB;
     cocos2d::LabelTTF * _speedLabel;
     cocos2d::LabelTTF * _massLabel;
@@ -30,6 +33,8 @@ private :
     float _angle;
     bool _showAnotherPerson;
     std::vector< cocos2d::Node * > _movables;
+    bool _personFell;
+    MenuLayer * _menuLayer;
 
 public :  
     SpriteLayer() : 
@@ -38,6 +43,8 @@ public :
        _sumOfForces(nullptr),
        _crate(nullptr), 
        _personLayer(nullptr),
+       _person(nullptr),
+       _anotherPerson(nullptr),
        _speedLabel(nullptr),
        _massLabel(nullptr),
        _forceExternalValue(0.0),
@@ -49,7 +56,9 @@ public :
        _frictionCoefficient(0.0),
        _showAnotherPerson(false),
        _periodicCB(),
-       _movables() {}
+       _movables(),
+       _personFell(false),
+       _menuLayer(nullptr) {}
 
     ~SpriteLayer();
 
@@ -59,7 +68,7 @@ public :
     void changeForceValue(float value);
     void changeFrictionValue(float value);
     void setBackGroundLayer(Layer *layer);
-    void addPersonOfForce(float);
+    void addPersonOfForce();
     void update(float) override;
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
@@ -69,6 +78,7 @@ public :
     void addStationaryChild( cocos2d::Node * node);
     void addToMovables( cocos2d::Node * node );
     void removeFromMovables( cocos2d::Node * node );
+    void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
 
 private :    
     std::string getMassString();

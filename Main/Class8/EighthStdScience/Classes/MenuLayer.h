@@ -4,35 +4,29 @@
 #include "cocos2d.h"
 #include "extensions/cocos-ext.h"
 
-class SpriteLayer;
-class BackGroundLayer;
+class ControlSliderRollBack;
 
 class MenuLayer : public cocos2d::Layer
 {
 private :    
-    SpriteLayer * _spriteLayer;
     cocos2d::Menu * _topMenu;
     float _topMenuOffsetX;
-    cocos2d::Layer * _forceSlider;
-    int _init_max;
-    int _init_min;
-    int _count;
+    cocos2d::Layer * _forceLayer;
+    ControlSliderRollBack * _forceSlider;
 
 public :
     enum SurfaceType { ICE, GRASS, GRAVEL };
-    MenuLayer() 
-        : _spriteLayer(nullptr), 
+    MenuLayer() :
           _topMenu(nullptr),
           _topMenuOffsetX(0.0),
-          _forceSlider(nullptr),
-          _init_max(0),
-          _init_min(0),
-          _count(0)
+          _forceLayer(nullptr),
+          _forceSlider(nullptr)
     {}
     virtual bool init();  
 
     void addForceMenu(float min, float max, float start, cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
     void addSurfaceMenu(std::function<void (cocos2d::Ref *)> cb);
+    void setForceSliderValue(float force);
 
     CREATE_FUNC(MenuLayer);
 

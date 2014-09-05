@@ -15,6 +15,7 @@ static const float PADDING = 10.0;
 class ControlSliderRollBack : public ControlSlider
 {
     float _base;
+    bool _forced;
 public :
     
     static ControlSliderRollBack* create(const char* bgFile, const char* progressFile, const char* thumbFile, float base)
@@ -26,12 +27,41 @@ public :
 
         pRet->initWithSprites(backgroundSprite, progressSprite, thumbSprite);
         pRet->_base = base;
+        pRet->_forced = false;
         pRet->autorelease();
         return pRet;
     }
 
-    void onTouchEnded(cocos2d::Touch *pTouch, cocos2d::Event *pEvent)
+    void forceSetValue(float value)
     {
+        setValue(value);
+        _forced = true;
+    }
+
+    bool onTouchBegan(Touch* pTouch, Event* pEvent) override
+    {
+        if(_forced)
+            return false;
+        return ControlSlider::onTouchBegan(pTouch, pEvent);
+    }
+
+    void onTouchMoved(Touch *pTouch, Event *pEvent) override
+    {
+        if(_forced)
+            return;
+
+        ControlSlider::onTouchMoved(pTouch, pEvent);
+    }
+
+
+    void onTouchEnded(cocos2d::Touch *pTouch, cocos2d::Event *pEvent) override
+    {
+        if(_forced)
+        {
+            _forced=false;
+            return;
+        }
+
         ControlSlider::onTouchEnded(pTouch, pEvent);
         setValue(_base);
     }
@@ -67,44 +97,36 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // saving the initial value of the slider
-//    if(_count == 0)
-//    {
-//    	_init_max = max;
-//    	_init_min = min;
-//    	_count += 1;
-//    }
+    if (_forceLayer)
+        removeChild(_forceLayer);
 
-    if (_forceSlider)
-        removeChild(_forceSlider);
-
-    _forceSlider = Layer::create();
+    _forceLayer = Layer::create();
     auto labelForce = LabelTTF::create("Change Force :", "fonts/Marker Felt.ttf", 35);
     labelForce->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 + 20));
-    _forceSlider->addChild(labelForce);
+    _forceLayer->addChild(labelForce);
 
-    auto slider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", start);
-    slider->setAnchorPoint(Vec2(0.5f, 0.5f));
-    slider->setMinimumValue(min); // Sets the min value of range
-    slider->setMaximumValue(max); // Sets the max value of range
+    _forceSlider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", start);
+    _forceSlider->setAnchorPoint(Vec2(0.5f, 0.5f));
+    _forceSlider->setMinimumValue(min); // Sets the min value of range
+    _forceSlider->setMaximumValue(max); // Sets the max value of range
     // programatically change the value of the slider on change of force.
     if(max-min == 400)
     {
     	//slider->setScaleX(((max-min)/(_init_max-_init_min)) * 0.75 /*multiplied to avoid factored scaling*/);
-    	slider->setScaleX(1.2);
+    	_forceSlider->setScaleX(1.2);
     }
-    slider->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 - 20));
-    slider->setValue(start);
+    _forceSlider->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 - 20));
+    _forceSlider->setValue(start);
 
     // When the value of the slider will change, the given selector will be called
-    slider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
-    _forceSlider->addChild(slider);
+    _forceSlider->addTargetWithActionForControlEvents(target, handler, Control::EventType::VALUE_CHANGED);
+    _forceLayer->addChild(_forceSlider);
 
     std::stringstream sstr_min;
     sstr_min << (int)min;
     auto labelL = LabelTTF::create(sstr_min.str(), "fonts/Marker Felt.ttf", 25);
-    labelL->setPosition(Vec2(slider->getPosition().x - slider->getContentSize().width/2, slider->getPosition().y - 30));
-    _forceSlider->addChild(labelL);
+    labelL->setPosition(Vec2(_forceSlider->getPosition().x - _forceSlider->getContentSize().width/2, _forceSlider->getPosition().y - 30));
+    _forceLayer->addChild(labelL);
     /*
     auto labelM = LabelTTF::create("0", "fonts/Marker Felt.ttf", 25);
     labelM->setPosition(Vec2(slider->getPosition().x, slider->getPosition().y - 30 ));
@@ -113,9 +135,9 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     std::stringstream sstr_max;
     sstr_max << (int)max;
     auto labelH = LabelTTF::create(sstr_max.str(), "fonts/Marker Felt.ttf", 25);
-    labelH->setPosition(Vec2(slider->getPosition().x + slider->getContentSize().width/2, slider->getPosition().y - 30));
-    _forceSlider->addChild(labelH);
-    addChild(_forceSlider);
+    labelH->setPosition(Vec2(_forceSlider->getPosition().x + _forceSlider->getContentSize().width/2, _forceSlider->getPosition().y - 30));
+    _forceLayer->addChild(labelH);
+    addChild(_forceLayer);
 }
 
 void MenuLayer::addSurfaceMenu(std::function<void (Ref *)> cb)
@@ -151,6 +173,13 @@ void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)>
     item->setPosition(_topMenuOffsetX, -PADDING);
     _topMenuOffsetX -= item->getContentSize().width * item->getScale();
     _topMenu->addChild(item);
+}
+
+void MenuLayer::setForceSliderValue(float force)
+{
+    if(!_forceSlider)
+        return;
+    _forceSlider->forceSetValue(force);
 }
 
 MenuLayer::~MenuLayer()
