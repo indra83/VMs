@@ -154,6 +154,7 @@ bool SpriteLayer::init()
 
     // label
     _speedLabel = LabelTTF::create(getSpeedString().c_str(), "fonts/Marker Felt.ttf", 30);
+    _speedLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     _speedLabel->setHorizontalAlignment(TextHAlignment::LEFT);
     _speedLabel->setColor(Color3B::BLACK);
     speedLayer->addChild(_speedLabel);
@@ -162,21 +163,24 @@ bool SpriteLayer::init()
     // dial
     auto dial = Sprite::create("dial.png");
     //dial->setPosition(Vec2(visibleSize.width/6 ,visibleSize.height/6));
-    dial->setPosition(Vec2(0.0, 10.0));
+    dial->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    dial->setPosition(Vec2(-10.0, 40.0));
     dial->setScale(0.8);
     speedLayer->addChild(dial);
     // needle
     _needle = Sprite::create("needle.png");
     //_needle->setAnchorPoint(Vec2(0.85, 0.5));
-    dial->setPosition(Vec2(0.0, 10.0));
-    _needle->setPosition(Vec2(visibleSize.width/6, visibleSize.height/6));
+    _needle->setAnchorPoint(Vec2(0.85, 0.5));
+    //_needle->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    _needle->setPosition(Vec2(-dial->getContentSize().width/2 + 10.0, dial->getContentSize().height/2 + 17.0));
+    //_needle->setPosition(Vec2(visibleSize.width/6, visibleSize.height/6));
     _needle->setScale(0.8);
     _needle->setRotation(OFFSET_ANGLE);
     speedLayer->addChild(_needle, 1);
 
     speedLayer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     speedLayer->setPosition(Vec2(visibleSize.width, visibleSize.height/3 + 10));
-    addChild(speedLayer);
+    addChild(speedLayer, LABEL_ZINDEX);
 
     this->addPersonOfForce(0.0);
     this->scheduleUpdate();
