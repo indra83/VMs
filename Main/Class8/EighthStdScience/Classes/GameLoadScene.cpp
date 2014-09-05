@@ -10,7 +10,7 @@
 
 //#define ALTITUDE 150
 
-#define BOUNCE_SOUND "audio/cratefall.mp3"
+std::string BOUNCE_SOUND("audio/cratefall.mp3");
 #define INITIAL_VOLUME 1.0
 #define DELTA_VOLUME 0.3
 
@@ -88,7 +88,8 @@ bool GameLoad::init()
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     // preloading sound effects
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(BOUNCE_SOUND);
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(BOUNCE_SOUND.c_str());
+    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME.c_str());
 
     this->setKeypadEnabled(true);
 
@@ -119,7 +120,7 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     {
         CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(_effects_volume);
         _effects_volume -= DELTA_VOLUME;
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(BOUNCE_SOUND);
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(BOUNCE_SOUND.c_str());
 
         // TODO: this should ideally have been based on the current impulse
         if (_vibration_length > 0)

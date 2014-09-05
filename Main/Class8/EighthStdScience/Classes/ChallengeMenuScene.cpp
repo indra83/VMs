@@ -2,7 +2,7 @@
 #include "GameLoadScene.h"
 #include "Challenge.h"
 #include "Util.h"
-//#include "SimpleAudioEngine.h"
+#include "SimpleAudioEngine.h"
 
 #include "extensions/cocos-ext.h"
 
@@ -47,8 +47,7 @@ bool ChallengeMenu::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // preload music and play music
-//    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME);
-//    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME);
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
 
     // green board layer
     auto bglayer = LayerColor::create(GREENISH , visibleSize.width , visibleSize.height);
