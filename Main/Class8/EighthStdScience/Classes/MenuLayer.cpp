@@ -106,15 +106,13 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     _forceLayer->addChild(labelForce);
 
     _forceSlider = ControlSliderRollBack::create("sliderTrack.png", "sliderProgress.png" ,"slider_handle.png", start);
-    _forceSlider->setAnchorPoint(Vec2(0.5f, 0.5f));
+    _forceSlider->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     _forceSlider->setMinimumValue(min); // Sets the min value of range
     _forceSlider->setMaximumValue(max); // Sets the max value of range
     // programatically change the value of the slider on change of force.
-    if(max-min == 400)
-    {
-    	//slider->setScaleX(((max-min)/(_init_max-_init_min)) * 0.75 /*multiplied to avoid factored scaling*/);
-    	_forceSlider->setScaleX(1.2);
-    }
+    
+    auto scaleX = (max-min)/(2*SpriteLayer::MAX_FORCE);
+    _forceSlider->setScaleX(scaleX);
     _forceSlider->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 - 20));
     _forceSlider->setValue(start);
 
@@ -125,17 +123,15 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     std::stringstream sstr_min;
     sstr_min << (int)min;
     auto labelL = LabelTTF::create(sstr_min.str(), "fonts/Marker Felt.ttf", 25);
-    labelL->setPosition(Vec2(_forceSlider->getPosition().x - _forceSlider->getContentSize().width/2, _forceSlider->getPosition().y - 30));
+    labelL->setPosition(Vec2(_forceSlider->getPosition().x - _forceSlider->getContentSize().width * _forceSlider->getScaleX()/2, 
+                             _forceSlider->getPosition().y - 30));
     _forceLayer->addChild(labelL);
-    /*
-    auto labelM = LabelTTF::create("0", "fonts/Marker Felt.ttf", 25);
-    labelM->setPosition(Vec2(slider->getPosition().x, slider->getPosition().y - 30 ));
-    addChild(labelM);
-    */
+
     std::stringstream sstr_max;
     sstr_max << (int)max;
     auto labelH = LabelTTF::create(sstr_max.str(), "fonts/Marker Felt.ttf", 25);
-    labelH->setPosition(Vec2(_forceSlider->getPosition().x + _forceSlider->getContentSize().width/2, _forceSlider->getPosition().y - 30));
+    labelH->setPosition(Vec2(_forceSlider->getPosition().x + _forceSlider->getContentSize().width * _forceSlider->getScaleX()/2,
+                             _forceSlider->getPosition().y - 30));
     _forceLayer->addChild(labelH);
     addChild(_forceLayer);
 }
