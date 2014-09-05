@@ -184,7 +184,7 @@ void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, 
 //////////////////////////////
 
 static const int SHOW_AFTER = 2;
-static const int TARGET_METRES = 5;
+static const int TARGET_METRES = 10;
 
 Scene* Challenge1::createScene(bool showInfo)
 {
