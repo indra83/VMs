@@ -31,6 +31,7 @@ class ValueArrow : public Layer
     float _val;
     LabelTTF * _label;
     Scale9Sprite * _sprite;
+    Size _size;
     std::string _name;
 
 public :
@@ -59,6 +60,8 @@ public :
 
         _name = name;
         _sprite = Scale9Sprite::create(fileName);
+        _sprite->setCapInsets(Rect(0.0, 0.0, 400.0, 200.0));
+        _size = _sprite->getContentSize();
         addChild(_sprite);
 
         adjustSize();
@@ -85,12 +88,10 @@ public :
 
         setAnchorPoint(_val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT);
 
-        _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 0.0));
-        //_sprite->setFlippedX(_val < 0);
-
-        // Stretches content proportional to newLevel
         float scale = val/SpriteLayer::MAX_FORCE;
-        setScaleX(scale/1.7);
+        _sprite->setContentSize(_size*scale);
+        _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 0.0));
+
     }
 };
 
@@ -133,7 +134,7 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 3. add the force arrows
-    Vec2 curr(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2);
+    Vec2 curr(visibleSize.width/2, visibleSize.height/2);
     auto addArrow = [&](const std::string & fileName, const std::string & name) -> ValueArrow *
     {
         auto arrow = ValueArrow::create(fileName, name);
