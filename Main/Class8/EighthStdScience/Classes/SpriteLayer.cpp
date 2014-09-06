@@ -29,16 +29,16 @@ const int SpriteLayer::PTM_RATIO = 50;
 class ValueArrow : public Layer
 {
     float _val;
-    LabelTTF * _label;
-    Scale9Sprite * _sprite;
-    Size _size;
-    std::string _name;
+    LabelTTF * _labelForce;
+    LabelTTF * _labelName;
+    Node * _shaft;
+    Node * _head;
 
 public :
-    static ValueArrow * create(const std::string &fileName, const std::string &name)
+    static ValueArrow * create(const Color4B &color, const std::string &name)
     {
         ValueArrow *layer = new ValueArrow();
-        if (layer && layer->init(fileName, name))
+        if (layer && layer->init(color, name))
         {
             layer->autorelease();
             return layer;
@@ -47,22 +47,26 @@ public :
         return nullptr;
     }
 
-    ValueArrow() : _val(0.0), _label(nullptr), _name() {}
+    ValueArrow() : _val(0.0), _labelForce(nullptr), _labelName(nullptr), _shaft(nullptr), _head(nullptr) {}
 
-    bool init(const std::string & fileName, const std::string & name)
+    bool init(const Color4B &color, const std::string & name)
     {
         if ( !Layer::init() )
             return false;
-        _label = LabelTTF::create("", "fonts/Maven Pro Black.otf", 30);
-        _label->setHorizontalAlignment(TextHAlignment::LEFT);
-        _label->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        addChild(_label);
+        _labelName = LabelTTF::create(name, "fonts/Maven Pro Black.otf", 30);
+        _labelName->setHorizontalAlignment(TextHAlignment::LEFT);
+        _labelName->setColor(Color3B::BLACK);
+        _labelName->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        addChild(_labelName, 1);
 
-        _name = name;
-        _sprite = Scale9Sprite::create(fileName);
-        _sprite->setCapInsets(Rect(0.0, 0.0, 400.0, 200.0));
-        _size = _sprite->getContentSize();
-        addChild(_sprite);
+        _labelForce = LabelTTF::create("", "fonts/Maven Pro Black.otf", 30);
+        _labelForce->setHorizontalAlignment(TextHAlignment::LEFT);
+        _labelForce->setColor(Color3B::BLACK);
+        _labelForce->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        addChild(_labelForce, 1);
+
+        _shaft = LayerColor::create(color, 100.0, 50.0);
+        addChild(_shaft);
 
         adjustSize();
         return true;
@@ -82,15 +86,36 @@ public :
     void adjustSize()
     {
         auto val = fabs(_val);
+        float scale = val/SpriteLayer::MAX_FORCE;
+
         std::stringstream sstr;
         sstr << (int)val << " N";
-        _label->setString(sstr.str());
+        _labelForce->setString(sstr.str());
 
-        setAnchorPoint(_val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT);
+        // scalings and positionings
+        auto anchor = _val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT;
+        setAnchorPoint(anchor);
+        auto direction = _val < 0.0 ? -1 : 1;
 
-        float scale = val/SpriteLayer::MAX_FORCE;
-        _sprite->setContentSize(_size*scale);
-        _label->setPosition(Vec2(getContentSize().width * getScaleX()/2 , 0.0));
+        _shaft->setScaleX(scale);
+        _shaft->setAnchorPoint(anchor);
+        _shaft->setPosition(Vec2((( direction - 1 ) /2) * _shaft->getContentSize().width, 0.0));
+
+        _labelName->setPosition(direction * _shaft->getContentSize().width * scale, 0.0 );
+        _labelName->setAnchorPoint(anchor);
+
+        if( _labelForce->getContentSize().width > _shaft->getContentSize().width * scale )
+        {
+            _labelForce->setPosition(_labelName->getPosition() + Vec2(direction * (_labelName->getContentSize().width + 10.0), 0.0 ) );
+            _labelForce->setAnchorPoint(anchor);
+        }
+        else
+        {
+            _labelForce->setPosition(Vec2(direction * _shaft->getContentSize().width * scale/2 , 0.0));
+            _labelForce->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        }
+
+        setContentSize(_shaft->getContentSize());
 
     }
 };
@@ -135,19 +160,18 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 3. add the force arrows
     Vec2 curr(visibleSize.width/2, visibleSize.height/2);
-    auto addArrow = [&](const std::string & fileName, const std::string & name) -> ValueArrow *
+    auto addArrow = [&](const Color4B & color, const std::string & name) -> ValueArrow *
     {
-        auto arrow = ValueArrow::create(fileName, name);
-        arrow->setScaleY(0.25);
+        auto arrow = ValueArrow::create(color, name);
         arrow->setPosition(curr);
-        curr = curr + Vec2(0, arrow->getContentSize().height / 4);
+        curr = curr + Vec2(0, arrow->getContentSize().height);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
     };
 
-    _sumOfForces = addArrow("arrow-sof.png", "Net");
-    _forceFriction = addArrow("arrow-fr.png", "Friction");
-    _forceExternal = addArrow("arrow-force.png", "Applied");
+    _forceExternal = addArrow(Color4B::GREEN, "Applied");
+    _forceFriction = addArrow(Color4B::RED, "Friction");
+    _sumOfForces = addArrow(Color4B::BLUE, "Net");
 
 
     //////////////////////////////
