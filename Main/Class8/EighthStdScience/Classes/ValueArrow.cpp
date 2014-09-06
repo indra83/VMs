@@ -3,6 +3,8 @@
 USING_NS_CC;
 
 float ValueArrow::BASE_VALUE=0.0;
+float ValueArrow::HEIGHT=50.0;
+float ValueArrow::WIDTH=100.0;
 
 ValueArrow * ValueArrow::create(const Color4B &color, const std::string &name)
 {
@@ -32,7 +34,8 @@ bool ValueArrow::init(const Color4B &color, const std::string & name)
     _labelForce->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     addChild(_labelForce, 1);
 
-    _shaft = LayerColor::create(color, 100.0, 50.0);
+    _color=color;
+    _shaft = LayerColor::create(_color, WIDTH, HEIGHT);
     addChild(_shaft);
 
     adjustSize();
@@ -43,6 +46,7 @@ void ValueArrow::adjustSize()
 {
     auto val = fabs(_val);
     float scale = val/ValueArrow::BASE_VALUE;
+    float scaleHead = scale > 1.0 ? 1.0 : scale;
 
     std::stringstream sstr;
     sstr << (int)val << " N";
@@ -55,9 +59,42 @@ void ValueArrow::adjustSize()
 
     _shaft->setScaleX(scale);
     _shaft->setAnchorPoint(anchor);
-    _shaft->setPosition(Vec2((( direction - 1 ) /2) * _shaft->getContentSize().width, 0.0));
+    if (direction == -1)
+        _shaft->setPosition(Vec2(-_shaft->getContentSize().width, 0.0));
+    else
+        _shaft->setPosition(Vec2(0.0, 0.0));
 
-    _labelName->setPosition(direction * _shaft->getContentSize().width * scale, 0.0 );
+    if (_head)
+        removeChild(_head);
+    auto head = DrawNode::create();
+    _head = head;
+    _head->setAnchorPoint(anchor);
+    head->drawTriangle(Vec2(0.0, HEIGHT), 
+                        Vec2(0.0, -HEIGHT), 
+                        Vec2(direction * HEIGHT, 0.0),
+                        Color4F(_color));
+    head->setContentSize(Size(HEIGHT, 2*HEIGHT));
+    addChild(_head);
+
+    if (direction == -1)
+    {
+        _head->setPosition(Vec2(-_shaft->getContentSize().width*scale + head->getContentSize().width*scaleHead, HEIGHT/2)); 
+    }
+    else
+    {
+        _head->setPosition(_shaft->getPosition() + Vec2(_shaft->getContentSize().width*scale, HEIGHT/2)); 
+    }
+    _head->setScaleX(scaleHead);
+
+
+    if (direction == -1)
+    {
+        _labelName->setPosition(_head->getPosition() + Vec2( -2 * head->getContentSize().width * scaleHead, 0.0 ));
+    }
+    else
+    {
+        _labelName->setPosition(_head->getPosition() + Vec2(head->getContentSize().width * scaleHead, 0.0 ));
+    }
     _labelName->setAnchorPoint(anchor);
 
     if( _labelForce->getContentSize().width > _shaft->getContentSize().width * scale )
@@ -71,7 +108,7 @@ void ValueArrow::adjustSize()
         _labelForce->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     }
 
-    setContentSize(_shaft->getContentSize());
+    setContentSize(_head->getContentSize());
 }
 
 
