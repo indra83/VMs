@@ -1,7 +1,7 @@
 #include "Util.h"
 
 USING_NS_CC;
-
+// copied from cocos2d::utils captureScreen() code
 void onCaptureScreen(std::function< void (Sprite *) > cb)
 {
     auto glView = Director::getInstance()->getOpenGLView();
