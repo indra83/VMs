@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
                    ../../Classes/MenuLayer.cpp \
                    ../../Classes/Util.cpp \
                    ../../Classes/PopUpScene.cpp \
+                   ../../Classes/ValueArrow.cpp \
                    ../../Classes/SpriteLayer.cpp
                
 

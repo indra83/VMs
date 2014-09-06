@@ -111,6 +111,7 @@ public :
     void addToMovables( Node * node, float vel=0.0, float scale=1.0 );
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
+    void addToMiniMap( cocos2d::Node * node );
 
 private :    
     std::string getMassString();

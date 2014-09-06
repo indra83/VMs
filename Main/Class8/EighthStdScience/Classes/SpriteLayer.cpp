@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include "NativeHelper.h"
+#include "ValueArrow.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -20,105 +21,13 @@ static const float MAX_ANGLE=270.0;
 static const float OFFSET_ANGLE=-45.0;
 static const float MAX_SPEED=50.0;
 
+static const float MINI_MAP_SCALE=0.05;
+
 // per person;
 const float SpriteLayer::MAX_FORCE=100;
 
 // TODO: base it on the crate size.. assuming the crate is 1m wide
 const int SpriteLayer::PTM_RATIO = 50;
-
-class ValueArrow : public Layer
-{
-    float _val;
-    LabelTTF * _labelForce;
-    LabelTTF * _labelName;
-    Node * _shaft;
-    Node * _head;
-
-public :
-    static ValueArrow * create(const Color4B &color, const std::string &name)
-    {
-        ValueArrow *layer = new ValueArrow();
-        if (layer && layer->init(color, name))
-        {
-            layer->autorelease();
-            return layer;
-        }
-        CC_SAFE_DELETE(layer);
-        return nullptr;
-    }
-
-    ValueArrow() : _val(0.0), _labelForce(nullptr), _labelName(nullptr), _shaft(nullptr), _head(nullptr) {}
-
-    bool init(const Color4B &color, const std::string & name)
-    {
-        if ( !Layer::init() )
-            return false;
-        _labelName = LabelTTF::create(name, "fonts/Maven Pro Black.otf", 30);
-        _labelName->setHorizontalAlignment(TextHAlignment::LEFT);
-        _labelName->setColor(Color3B::BLACK);
-        _labelName->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        addChild(_labelName, 1);
-
-        _labelForce = LabelTTF::create("", "fonts/Maven Pro Black.otf", 30);
-        _labelForce->setHorizontalAlignment(TextHAlignment::LEFT);
-        _labelForce->setColor(Color3B::BLACK);
-        _labelForce->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        addChild(_labelForce, 1);
-
-        _shaft = LayerColor::create(color, 100.0, 50.0);
-        addChild(_shaft);
-
-        adjustSize();
-        return true;
-    }
-
-    void setValue(float f)
-    {
-        if( _val != f )
-        {
-            _val = f;
-            adjustSize();
-        }
-    }
-
-    float getValue() { return _val; }
-
-    void adjustSize()
-    {
-        auto val = fabs(_val);
-        float scale = val/SpriteLayer::MAX_FORCE;
-
-        std::stringstream sstr;
-        sstr << (int)val << " N";
-        _labelForce->setString(sstr.str());
-
-        // scalings and positionings
-        auto anchor = _val < 0.0 ? Vec2::ANCHOR_BOTTOM_RIGHT : Vec2::ANCHOR_BOTTOM_LEFT;
-        setAnchorPoint(anchor);
-        auto direction = _val < 0.0 ? -1 : 1;
-
-        _shaft->setScaleX(scale);
-        _shaft->setAnchorPoint(anchor);
-        _shaft->setPosition(Vec2((( direction - 1 ) /2) * _shaft->getContentSize().width, 0.0));
-
-        _labelName->setPosition(direction * _shaft->getContentSize().width * scale, 0.0 );
-        _labelName->setAnchorPoint(anchor);
-
-        if( _labelForce->getContentSize().width > _shaft->getContentSize().width * scale )
-        {
-            _labelForce->setPosition(_labelName->getPosition() + Vec2(direction * (_labelName->getContentSize().width + 10.0), 0.0 ) );
-            _labelForce->setAnchorPoint(anchor);
-        }
-        else
-        {
-            _labelForce->setPosition(Vec2(direction * _shaft->getContentSize().width * scale/2 , 0.0));
-            _labelForce->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        }
-
-        setContentSize(_shaft->getContentSize());
-
-    }
-};
 // on "init" you need to initialize your instance
 bool SpriteLayer::init()
 {
@@ -133,7 +42,10 @@ bool SpriteLayer::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     //////////////////////////////
-    // 2. add crate
+    // 2. add mini map
+
+    //////////////////////////////
+    // 3. add crate
     _crate = Layer::create();
     _crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     _crate->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
@@ -145,7 +57,7 @@ bool SpriteLayer::init()
     _crate->addChild(crate, SPRITE_ZINDEX);
 
     //////////////////////////////
-    // 3. add mass label
+    // 4. add mass label
     _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
     _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
     auto menuLabel1 = MenuItemLabel::create(_massLabel);
@@ -157,8 +69,9 @@ bool SpriteLayer::init()
     this->addChild(_crate, SPRITE_ZINDEX);
 
     //////////////////////////////
-    // 3. add the force arrows
+    // 5. add the force arrows
     Vec2 curr(visibleSize.width/2, visibleSize.height/2);
+    ValueArrow::setBaseValue(SpriteLayer::MAX_FORCE);
     auto addArrow = [&](const Color4B & color, const std::string & name) -> ValueArrow *
     {
         auto arrow = ValueArrow::create(color, name);
@@ -174,7 +87,7 @@ bool SpriteLayer::init()
 
 
     //////////////////////////////
-    // 4. add the speed related display
+    // 6. add the speed related display
     auto speedLayer = Layer::create();
 
     // label
@@ -203,6 +116,8 @@ bool SpriteLayer::init()
     speedLayer->setPosition(Vec2(visibleSize.width, visibleSize.height/3 + 10));
     addChild(speedLayer, LABEL_ZINDEX);
 
+    //////////////////////////////
+    // 7. setup
     this->addPersonOfForce();
     this->scheduleUpdate();
 
@@ -433,6 +348,10 @@ void SpriteLayer::removeFromMovables( Node * node )
     auto f = std::find(_movables.begin(), _movables.end(), Movable(0.0, 0.0, node)); 
     if (f != _movables.end())
         _movables.erase(f); 
+}
+
+void SpriteLayer::addToMiniMap(Node * node)
+{
 }
 
 void SpriteLayer::addAnotherPerson()
