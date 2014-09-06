@@ -60,11 +60,10 @@ bool SpriteLayer::init()
     // 4. add mass label
     _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
     _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
-    auto menuLabel1 = MenuItemLabel::create(_massLabel);
-    menuLabel1->setColor(Color3B::BLACK);
-    menuLabel1->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    menuLabel1->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
-    _crate->addChild(menuLabel1, LABEL_ZINDEX);
+    _massLabel->setColor(Color3B::BLACK);
+    _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    _massLabel->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
+    _crate->addChild(_massLabel, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);
 
