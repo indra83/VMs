@@ -119,7 +119,6 @@ public :
 
     }
 };
-
 // on "init" you need to initialize your instance
 bool SpriteLayer::init()
 {
@@ -188,18 +187,14 @@ bool SpriteLayer::init()
     // speed-o-meter
     // dial
     auto dial = Sprite::create("dial.png");
-    //dial->setPosition(Vec2(visibleSize.width/6 ,visibleSize.height/6));
     dial->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     dial->setPosition(Vec2(-10.0, 40.0));
     dial->setScale(0.8);
     speedLayer->addChild(dial);
     // needle
     _needle = Sprite::create("needle.png");
-    //_needle->setAnchorPoint(Vec2(0.85, 0.5));
     _needle->setAnchorPoint(Vec2(0.85, 0.5));
-    //_needle->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     _needle->setPosition(Vec2(-dial->getContentSize().width/2 + 10.0, dial->getContentSize().height/2 + 17.0));
-    //_needle->setPosition(Vec2(visibleSize.width/6, visibleSize.height/6));
     _needle->setScale(0.8);
     _needle->setRotation(OFFSET_ANGLE);
     speedLayer->addChild(_needle, 1);
@@ -406,8 +401,11 @@ void SpriteLayer::update(float dt)
 
     if(fabs(dx) > 0.0)
     {
-        for( auto node : _movables )
-            node->runAction(Place::create(node->getPosition() + Vec2(-dx, 0.0)));
+        for( auto mov: _movables )
+        {
+            auto node = mov.getNode();
+            node->runAction(Place::create(node->getPosition() + Vec2( (-dx + mov.getVelocity() * dt) * mov.getScale(), 0.0)));
+        }
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
@@ -425,14 +423,14 @@ void SpriteLayer::addStationaryChild(Node * node)
     addToMovables(node);
 }
 
-void SpriteLayer::addToMovables( Node * node )
+void SpriteLayer::addToMovables( Node * node, float vel, float scale )
 {
-    _movables.push_back(node);
+    _movables.push_back(Movable(vel, scale, node));
 }
 
 void SpriteLayer::removeFromMovables( Node * node )
 {
-    auto f = std::find(_movables.begin(), _movables.end(), node); 
+    auto f = std::find(_movables.begin(), _movables.end(), Movable(0.0, 0.0, node)); 
     if (f != _movables.end())
         _movables.erase(f); 
 }

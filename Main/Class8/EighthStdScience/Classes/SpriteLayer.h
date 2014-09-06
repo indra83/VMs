@@ -5,6 +5,38 @@
 #include "MenuLayer.h"
 
 class ValueArrow;
+
+class Movable
+{
+    float _vel;
+    float _scale;
+    cocos2d::Node * _node;
+public:
+    Movable(float vel, float scale, cocos2d::Node * node) 
+    {
+        _vel = vel;
+        _scale = scale;
+        _node = node;
+    }
+
+    Movable(const Movable &m)
+    {
+        _vel = m._vel;
+        _scale = m._scale;
+        _node = m._node;
+    }
+
+    bool operator== (const Movable& mov)
+    {
+        return mov._node == _node;
+    }
+
+    float getScale() { return _scale; }
+    float getVelocity() { return _vel; }
+    cocos2d::Node * getNode() { return _node; }
+
+};
+
 class SpriteLayer : public cocos2d::Layer 
 {
 public :
@@ -32,7 +64,7 @@ private :
     float _frictionCoefficient;
     float _angle;
     bool _showAnotherPerson;
-    std::vector< cocos2d::Node * > _movables;
+    std::vector< Movable > _movables;
     bool _personFell;
     MenuLayer * _menuLayer;
 
@@ -76,7 +108,7 @@ public :
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
     void addStationaryChild( cocos2d::Node * node);
-    void addToMovables( cocos2d::Node * node );
+    void addToMovables( Node * node, float vel=0.0, float scale=1.0 );
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
 
