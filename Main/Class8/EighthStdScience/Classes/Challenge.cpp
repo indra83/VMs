@@ -215,7 +215,12 @@ bool Challenge1::init(bool showInfo)
         dest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
         dest->setPosition(Vec2( (right ? 1 : -1) * TARGET_METRES * SpriteLayer::PTM_RATIO + visibleSize.width/2, 
                                 visibleSize.height/3 + 10));
-        _spriteLayer->addStationaryChild(dest);
+
+        auto dest_small = Sprite::create("destination.png");
+        dest_small->setScale(0.8*SpriteLayer::MINI_MAP_SCALE);
+        dest_small->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        dest_small->setPosition(Vec2(  (right ? 1 : -1) * TARGET_METRES * SpriteLayer::PTM_RATIO * SpriteLayer::MINI_MAP_SCALE, 0.0));
+        _spriteLayer->addStationaryChild(dest, dest_small);
     };
 
     addDestination(true);

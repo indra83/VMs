@@ -43,6 +43,7 @@ public :
     // per person
     static const float MAX_FORCE;
     static const int PTM_RATIO;
+    static const float MINI_MAP_SCALE;
 private :
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
@@ -67,6 +68,7 @@ private :
     std::vector< Movable > _movables;
     bool _personFell;
     MenuLayer * _menuLayer;
+    Layer * _minimap;
 
 public :  
     SpriteLayer() : 
@@ -90,7 +92,8 @@ public :
        _periodicCB(),
        _movables(),
        _personFell(false),
-       _menuLayer(nullptr) {}
+       _menuLayer(nullptr),
+       _minimap(nullptr) {}
 
     ~SpriteLayer();
 
@@ -107,7 +110,7 @@ public :
     void setPeriodicCB( std::function< bool () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
-    void addStationaryChild( cocos2d::Node * node);
+    void addStationaryChild( cocos2d::Node * node, cocos2d::Node * mini_node);
     void addToMovables( Node * node, float vel=0.0, float scale=1.0 );
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }

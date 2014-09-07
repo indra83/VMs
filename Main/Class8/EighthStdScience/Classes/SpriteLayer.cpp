@@ -21,7 +21,7 @@ static const float MAX_ANGLE=270.0;
 static const float OFFSET_ANGLE=-45.0;
 static const float MAX_SPEED=50.0;
 
-static const float MINI_MAP_SCALE=0.05;
+const float SpriteLayer::MINI_MAP_SCALE=0.10;
 
 // per person;
 const float SpriteLayer::MAX_FORCE=100;
@@ -43,6 +43,17 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 2. add mini map
+    _minimap = Layer::create();
+    _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
+    //_minimap->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
+    _minimap->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+
+    auto drawNode = DrawNode::create();
+    drawNode->drawSegment(Vec2::ZERO, Vec2(visibleSize.width, 0.0), 1.0, Color4F::BLACK);
+    drawNode->setPosition(Vec2::ZERO);
+    _minimap->addChild(drawNode);
+
+    addChild(_minimap, LABEL_ZINDEX);
 
     //////////////////////////////
     // 3. add crate
@@ -55,6 +66,12 @@ bool SpriteLayer::init()
     crate->setPosition(Vec2::ZERO);
     _crate->setContentSize(crate->getContentSize());
     _crate->addChild(crate, SPRITE_ZINDEX);
+
+    auto crate_small = Sprite::create("crate.png");
+    crate_small->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    crate_small->setPosition(Vec2(visibleSize.width/2, 0.0));
+    crate_small->setScale(MINI_MAP_SCALE);
+    _minimap->addChild(crate_small);
 
     //////////////////////////////
     // 4. add mass label
@@ -331,10 +348,12 @@ void SpriteLayer::update(float dt)
     Node::update(dt);
 }
 
-void SpriteLayer::addStationaryChild(Node * node)
+void SpriteLayer::addStationaryChild(Node * node, Node * miniNode)
 {
     addChild( node, STATIONARY_ZINDEX);
     addToMovables(node);
+    _minimap->addChild(miniNode);
+    addToMovables(node, 0.0, MINI_MAP_SCALE);
 }
 
 void SpriteLayer::addToMovables( Node * node, float vel, float scale )
