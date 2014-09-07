@@ -71,7 +71,7 @@ bool SpriteLayer::init()
     crate_small->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     crate_small->setPosition(Vec2(visibleSize.width/2, 0.0));
     crate_small->setScale(MINI_MAP_SCALE);
-    _minimap->addChild(crate_small);
+    _minimap->addChild(crate_small, SPRITE_ZINDEX);
 
     //////////////////////////////
     // 4. add mass label
@@ -352,8 +352,8 @@ void SpriteLayer::addStationaryChild(Node * node, Node * miniNode)
 {
     addChild( node, STATIONARY_ZINDEX);
     addToMovables(node);
-    _minimap->addChild(miniNode);
-    addToMovables(node, 0.0, MINI_MAP_SCALE);
+    _minimap->addChild(miniNode, STATIONARY_ZINDEX);
+    addToMovables(miniNode, 0.0, MINI_MAP_SCALE);
 }
 
 void SpriteLayer::addToMovables( Node * node, float vel, float scale )
