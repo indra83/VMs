@@ -45,7 +45,6 @@ bool SpriteLayer::init()
     // 2. add mini map
     _minimap = Layer::create();
     _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
-    //_minimap->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     _minimap->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 
     auto drawNode = DrawNode::create();
@@ -57,29 +56,24 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 3. add crate
-    _crate = Layer::create();
-    _crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    _crate->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/3 + origin.y + 15));
+    
+    auto gen = []() -> Node *
+    {
+        auto node = Sprite::create("crate.png");
+        node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        return node;
+    };
+    _crate = addMovingChild(gen, 0.0, SPRITE_ZINDEX, Vec2(0.0, visibleSize.height/3 + 15), true);
 
-    auto crate = Sprite::create("crate.png");
-    crate->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    crate->setPosition(Vec2::ZERO);
-    _crate->setContentSize(crate->getContentSize());
-    _crate->addChild(crate, SPRITE_ZINDEX);
-
-    auto crate_small = Sprite::create("crate.png");
-    crate_small->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    crate_small->setPosition(Vec2(visibleSize.width/2, 0.0));
-    crate_small->setScale(MINI_MAP_SCALE);
-    _minimap->addChild(crate_small, SPRITE_ZINDEX);
 
     //////////////////////////////
     // 4. add mass label
+    // TODO: fix the label pos
     _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
     _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
     _massLabel->setColor(Color3B::BLACK);
     _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _massLabel->setPosition(Vec2(-crate->getContentSize().width/2, 0.0));
+    _massLabel->setPosition(Vec2(-_crate->getContentSize().width/2, 0.0));
     _crate->addChild(_massLabel, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);
@@ -348,12 +342,30 @@ void SpriteLayer::update(float dt)
     Node::update(dt);
 }
 
-void SpriteLayer::addStationaryChild(Node * node, Node * miniNode)
+Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float velocity, int zindex, Vec2 pos, bool baseMover)
 {
-    addChild( node, STATIONARY_ZINDEX);
-    addToMovables(node);
-    _minimap->addChild(miniNode, STATIONARY_ZINDEX);
-    addToMovables(miniNode, 0.0, MINI_MAP_SCALE);
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    auto create = [=] (bool mini) ->  Node *
+    {
+        auto scale = mini ? MINI_MAP_SCALE : 1.0;
+        Node * node = generator();
+        node->setScale( node->getScale() * scale);
+
+        node->setPosition(Vec2(pos.x*scale, mini ? 0.0 : pos.y) + Vec2(visibleSize.width/2, 0.0 )); 
+        if (!baseMover)
+            addToMovables(node, velocity, scale);
+        auto parent = mini ? _minimap : this;
+        parent->addChild(node, zindex);
+        return node;
+    };
+
+    create(true);
+    return create(false); 
+}
+
+Node * SpriteLayer::addStationaryChild(std::function< Node * () > generator, Vec2 pos)
+{
+    return addMovingChild(generator, 0.0, STATIONARY_ZINDEX, pos, false);
 }
 
 void SpriteLayer::addToMovables( Node * node, float vel, float scale )
@@ -366,10 +378,6 @@ void SpriteLayer::removeFromMovables( Node * node )
     auto f = std::find(_movables.begin(), _movables.end(), Movable(0.0, 0.0, node)); 
     if (f != _movables.end())
         _movables.erase(f); 
-}
-
-void SpriteLayer::addToMiniMap(Node * node)
-{
 }
 
 void SpriteLayer::addAnotherPerson()

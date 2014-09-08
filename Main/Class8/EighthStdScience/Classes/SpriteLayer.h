@@ -48,7 +48,7 @@ private :
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
     ValueArrow * _sumOfForces; 
-    cocos2d::Layer * _crate;
+    cocos2d::Node * _crate;
     cocos2d::Layer * _personLayer;
     cocos2d::Sprite * _person;
     cocos2d::Sprite * _anotherPerson;
@@ -110,11 +110,11 @@ public :
     void setPeriodicCB( std::function< bool () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
-    void addStationaryChild( cocos2d::Node * node, cocos2d::Node * mini_node);
+    Node * addStationaryChild(std::function< cocos2d::Node * () > generator, cocos2d::Vec2 pos);
+    Node * addMovingChild(std::function< cocos2d::Node * () > generator, float vel, int zIndex, cocos2d::Vec2 pos, bool baseMover);
     void addToMovables( Node * node, float vel=0.0, float scale=1.0 );
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
-    void addToMiniMap( cocos2d::Node * node );
 
 private :    
     std::string getMassString();
