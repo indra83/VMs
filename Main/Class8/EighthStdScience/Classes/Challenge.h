@@ -54,13 +54,12 @@ private:
     int _numMaxHits;
 };
 
-class Challenge4: public Challenge<Challenge4>
+class Challenge2: public Challenge<Challenge2>
 {
 public:
-    Challenge4(){}
+    Challenge2(){}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
-private:
 };
 
 #endif // __CHALLENGE_H__

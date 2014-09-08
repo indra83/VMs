@@ -282,15 +282,15 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 }
 
 //////////////////////////////
-// challenge4
+// challenge2
 //////////////////////////////
  
-Scene* Challenge4::createScene(bool showInfo)
+Scene* Challenge2::createScene(bool showInfo)
 {
-    return Challenge<Challenge4>::createScene(showInfo);
+    return Challenge<Challenge2>::createScene(showInfo);
 }
 
-bool Challenge4::init(bool showInfo)
+bool Challenge2::init(bool showInfo)
 {
     //////////////////////////////
     // 1. super init first
