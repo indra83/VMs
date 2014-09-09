@@ -105,8 +105,6 @@ bool Challenge<Derived>::init(bool showInfo)
     /////////////////////////////
     // 3. add the sprite layer
     _spriteLayer = SpriteLayer::create();
-    _spriteLayer->setMass(30.0);
-    _spriteLayer->setFrictionCoefficient(0.5);
     _spriteLayer->addToMovables(_bgLayer);
     _spriteLayer->changeForceValue(0.0);
     _spriteLayer->setMenuLayer(_menuLayer);
@@ -201,6 +199,8 @@ bool Challenge1::init(bool showInfo)
         return false;
     }
 
+    _spriteLayer->setMass(30.0);
+    _spriteLayer->setFrictionCoefficient(0.5);
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
 
@@ -210,17 +210,15 @@ bool Challenge1::init(bool showInfo)
     // add destinations on both sides
     auto addDestination = [this, visibleSize] ( bool right ) -> void
     {
-        auto dest = Sprite::create("destination.png");
-        dest->setScale(0.8);
-        dest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        dest->setPosition(Vec2( (right ? 1 : -1) * TARGET_METRES * SpriteLayer::PTM_RATIO + visibleSize.width/2, 
-                                visibleSize.height/3 + 10));
+        auto gen = []() -> Node *
+        {
+            auto dest = Sprite::create("destination.png");
+            dest->setScale(0.8);
+            dest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            return dest;
+        };
 
-        auto dest_small = Sprite::create("destination.png");
-        dest_small->setScale(0.8*SpriteLayer::MINI_MAP_SCALE);
-        dest_small->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-        dest_small->setPosition(Vec2(  (right ? 1 : -1) * TARGET_METRES * SpriteLayer::PTM_RATIO * SpriteLayer::MINI_MAP_SCALE + visibleSize.width/2, 0.0));
-        _spriteLayer->addStationaryChild(dest, dest_small);
+        _spriteLayer->addStationaryChild(gen, Vec2( (right ? 1 : -1) * TARGET_METRES * SpriteLayer::PTM_RATIO, visibleSize.height/3 + 10));
     };
 
     addDestination(true);
@@ -304,6 +302,21 @@ bool Challenge2::init(bool showInfo)
     {
         return false;
     }
+
+    // add the force menu
+    _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge2::forceValueChanged));
+
+    _spriteLayer->setMass(30.0);
+    _spriteLayer->setFrictionCoefficient(0.5);
+
+
+    //_spriteLayer->addMovingChild();
+    _spriteLayer->setPeriodicCB([]() -> bool
+            {    
+                // priodically check where the current trolleys are.. add and remove sprites as they move out the visible region
+                // also check if there is a sprite at 0,0 and for how long
+                return true;
+            });
     return true;
 }
 
