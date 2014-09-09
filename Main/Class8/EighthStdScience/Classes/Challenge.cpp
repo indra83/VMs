@@ -286,6 +286,10 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 static const float TROLLEY_VELOCITY = 5.0; // metres/sec
 static const float INTERVAL = 60; // metres
 
+static const int RIGHT_TAG = 1;
+static const int LEFT_TAG = 2;
+
+
 Scene* Challenge2::createScene(bool showInfo)
 {
     return Challenge<Challenge2>::createScene(showInfo);
@@ -308,7 +312,7 @@ bool Challenge2::init(bool showInfo)
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
-    auto limitWidth = visibleSize.width / (2*SpriteLayer::MINI_MAP_SCALE);
+    auto limitWidth = visibleSize.width / SpriteLayer::MINI_MAP_SCALE;
     // fill up the limits
     auto initTrollies = [=] (bool right) -> void
     {
@@ -317,27 +321,46 @@ bool Challenge2::init(bool showInfo)
         {
             auto node = Sprite::create("trolley.png");
             node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            node->setTag(right ? RIGHT_TAG : LEFT_TAG );
             return node;
         };
 
         auto widthCovered = -limitWidth;
         while(widthCovered < limitWidth)
         {
-            _spriteLayer->addMovingChild(gen,
+            auto trolley = _spriteLayer->addMovingChild(gen,
                                          (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
                                          right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
                                          Vec2( widthCovered, visibleSize.height/3 + 10),
                                          false);
+            _trollies.push_back(trolley);
             widthCovered += ( INTERVAL * SpriteLayer::PTM_RATIO );
         };
     };
 
     initTrollies(true);
-    initTrollies(false);
+    //initTrollies(false);
 
-    _spriteLayer->setPeriodicCB([]() -> bool
+    _spriteLayer->setPeriodicCB([=]() -> bool
             {    
-                // priodically check where the current trolleys are.. add and remove sprites as they move out the visible region
+                auto move = [=]( Node * node, bool right) -> void
+                {
+                    auto direction = right ? 1 : -1;
+                    node->setPosition(node->getPosition() + ( direction * Vec2(2*limitWidth, 0.0) ) );
+                    auto miniNode = dynamic_cast< Node * >( node->getUserObject() ); 
+                    if ( miniNode )
+                        miniNode->setPosition(miniNode->getPosition() + ( direction * Vec2(2*limitWidth*SpriteLayer::MINI_MAP_SCALE, 0.0) ));
+                };
+
+                // periodically check where the current trolleys are.. add and remove sprites as they move out the visible region
+                for( auto trolley : _trollies )                 
+                {
+                    if (trolley->getTag() == RIGHT_TAG && trolley->getPosition().x > visibleSize.width/2 + limitWidth)
+                        move(trolley, false);
+                    if (trolley->getTag() == LEFT_TAG && trolley->getPosition().x < visibleSize.width/2 - limitWidth)
+                        move(trolley, true);
+                };
+
                 // also check if there is a sprite at 0,0 and for how long
                 return true;
             });

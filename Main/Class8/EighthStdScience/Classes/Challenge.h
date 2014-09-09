@@ -56,8 +56,9 @@ private:
 
 class Challenge2: public Challenge<Challenge2>
 {
+    std::list<Node *> _trollies;
 public:
-    Challenge2(){}
+    Challenge2(): _trollies(){}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
 };

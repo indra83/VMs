@@ -360,8 +360,10 @@ Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float v
         return node;
     };
 
-    create(true);
-    return create(false); 
+    auto miniNode = create(true);
+    auto node = create(true);
+    node->setUserObject(miniNode);
+    return node;
 }
 
 Node * SpriteLayer::addStationaryChild(std::function< Node * () > generator, Vec2 pos)
