@@ -9,10 +9,12 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
-static const int STATIONARY_ZINDEX = 0;
-static const int SPRITE_ZINDEX = 1;
-static const int PERSON_ZINDEX = 2;
-static const int LABEL_ZINDEX = 3;
+const int SpriteLayer::STATIONARY_ZINDEX = 0;
+const int SpriteLayer::TROLLEY_RIGHT_ZINDEX = 1;
+const int SpriteLayer::SPRITE_ZINDEX = 2;
+const int SpriteLayer::TROLLEY_LEFT_ZINDEX = 3;
+const int SpriteLayer::PERSON_ZINDEX = 4;
+const int SpriteLayer::LABEL_ZINDEX = 5;
 
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
@@ -326,13 +328,10 @@ void SpriteLayer::update(float dt)
         dx = _velocity * dt * PTM_RATIO;
     _speedLabel->setString(getSpeedString());
 
-    if(fabs(dx) > 0.0)
+    for( auto mov: _movables )
     {
-        for( auto mov: _movables )
-        {
-            auto node = mov.getNode();
-            node->runAction(Place::create(node->getPosition() + Vec2( (-dx + mov.getVelocity() * dt) * mov.getScale(), 0.0)));
-        }
+        auto node = mov.getNode();
+        node->runAction(Place::create(node->getPosition() + Vec2( (-dx + mov.getVelocity() * dt * PTM_RATIO) * mov.getScale(), 0.0)));
     }
 
     _prevSumOfForcesValue = _sumOfForcesValue;
@@ -353,7 +352,7 @@ Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float v
         Node * node = generator();
         node->setScale( node->getScale() * scale);
 
-        node->setPosition(Vec2(pos.x*scale, mini ? 0.0 : pos.y) + Vec2(visibleSize.width/2, 0.0 )); 
+        node->setPosition(Vec2((pos.x*scale) + visibleSize.width/2, mini ? 0.0 : pos.y)); 
         if (!baseMover)
             addToMovables(node, velocity, scale);
         auto parent = mini ? _minimap : this;

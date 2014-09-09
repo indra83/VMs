@@ -289,6 +289,11 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 // challenge2
 //////////////////////////////
  
+static const float TROLLEY_VELOCITY = 5.0; // metres/sec
+static const float INTERVAL = 50; // metres
+static const float RIGHT_FLIPPED = true;
+static const float LEFT_FLIPPED = false;
+
 Scene* Challenge2::createScene(bool showInfo)
 {
     return Challenge<Challenge2>::createScene(showInfo);
@@ -306,11 +311,46 @@ bool Challenge2::init(bool showInfo)
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge2::forceValueChanged));
 
-    _spriteLayer->setMass(30.0);
+    _spriteLayer->setMass(15.0);
     _spriteLayer->setFrictionCoefficient(0.5);
 
+    Size visibleSize = Director::getInstance()->getVisibleSize();
 
-    //_spriteLayer->addMovingChild();
+    auto limitWidth = visibleSize.width / (2*SpriteLayer::MINI_MAP_SCALE);
+    // fill up the limits
+    auto initTrollies = [=] (bool right) -> void
+    {
+
+        auto gen = [=]() -> Node *
+        {
+            auto node = Sprite::create("trolley.png");
+            node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            node->setScale(0.25);
+            if (right == RIGHT_FLIPPED)
+                node->setFlippedX(true);
+            return node;
+        };
+
+        auto widthLeft = limitWidth;
+        while(widthLeft > 0)
+        {
+            _spriteLayer->addMovingChild(gen,
+                                         (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
+                                         right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
+                                         Vec2( -widthLeft, visibleSize.height/3 + 10),
+                                         false);
+            _spriteLayer->addMovingChild(gen,
+                                         (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
+                                         right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
+                                         Vec2( widthLeft, visibleSize.height/3 + 10),
+                                         false);
+            widthLeft -= ( INTERVAL * SpriteLayer::PTM_RATIO );
+        };
+    };
+
+    initTrollies(true);
+    initTrollies(false);
+
     _spriteLayer->setPeriodicCB([]() -> bool
             {    
                 // priodically check where the current trolleys are.. add and remove sprites as they move out the visible region

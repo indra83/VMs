@@ -44,6 +44,15 @@ public :
     static const float MAX_FORCE;
     static const int PTM_RATIO;
     static const float MINI_MAP_SCALE;
+
+    static const int STATIONARY_ZINDEX;
+    static const int TROLLEY_RIGHT_ZINDEX;
+    static const int SPRITE_ZINDEX;
+    static const int TROLLEY_LEFT_ZINDEX;
+    static const int PERSON_ZINDEX;
+    static const int LABEL_ZINDEX;
+
+
 private :
     ValueArrow * _forceFriction;
     ValueArrow * _forceExternal;
