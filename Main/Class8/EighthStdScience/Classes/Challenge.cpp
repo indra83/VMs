@@ -224,12 +224,6 @@ bool Challenge1::init(bool showInfo)
     addDestination(true);
     addDestination(false);
 
-    // trolley sprite for animation guys
-    auto trolley = Sprite::create("trolley.png");
-    trolley->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    trolley->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/3 + 10));
-    this->addChild(trolley);
- 
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([this, originalPos] () -> bool
     {
@@ -290,9 +284,7 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
 //////////////////////////////
  
 static const float TROLLEY_VELOCITY = 5.0; // metres/sec
-static const float INTERVAL = 50; // metres
-static const float RIGHT_FLIPPED = true;
-static const float LEFT_FLIPPED = false;
+static const float INTERVAL = 60; // metres
 
 Scene* Challenge2::createScene(bool showInfo)
 {
@@ -325,26 +317,18 @@ bool Challenge2::init(bool showInfo)
         {
             auto node = Sprite::create("trolley.png");
             node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-            node->setScale(0.25);
-            if (right == RIGHT_FLIPPED)
-                node->setFlippedX(true);
             return node;
         };
 
-        auto widthLeft = limitWidth;
-        while(widthLeft > 0)
+        auto widthCovered = -limitWidth;
+        while(widthCovered < limitWidth)
         {
             _spriteLayer->addMovingChild(gen,
                                          (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
                                          right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
-                                         Vec2( -widthLeft, visibleSize.height/3 + 10),
+                                         Vec2( widthCovered, visibleSize.height/3 + 10),
                                          false);
-            _spriteLayer->addMovingChild(gen,
-                                         (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
-                                         right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
-                                         Vec2( widthLeft, visibleSize.height/3 + 10),
-                                         false);
-            widthLeft -= ( INTERVAL * SpriteLayer::PTM_RATIO );
+            widthCovered += ( INTERVAL * SpriteLayer::PTM_RATIO );
         };
     };
 
