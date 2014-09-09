@@ -63,4 +63,14 @@ public:
     static cocos2d::Scene* createScene(bool showInfo);
 };
 
+class Challenge3: public Challenge<Challenge3>
+{
+public:
+	Challenge3(){}
+	virtual bool init(bool showInfo) override;
+	static cocos2d::Scene * createScene(bool showInfo);
+	void radioSelectSurface(cocos2d::Object *pSender);
+	void selectSurfaceFriction();
+};
+
 #endif // __CHALLENGE_H__

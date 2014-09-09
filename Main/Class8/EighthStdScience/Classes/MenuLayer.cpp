@@ -88,26 +88,7 @@ bool MenuLayer::init()
     _topMenu->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
     _topMenu->setPosition(visibleSize.width, visibleSize.height);
     this->addChild(_topMenu);
-/////////////////////////////////////////////////////////////////////////////////////////////
-    // surface selection section
-	auto surf_label = LabelTTF::create("Set Friction :" , "fonts/Marker Felt.ttf" , 30);
-	surf_label->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/6));
-	this->addChild(surf_label , SURF_ZINDEX);
 
-	auto surf_ice = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(MenuLayer::radioSelectSurface , this));
-	surf_ice->setTag(/*(int)MenuLayer::ICE*/ 1);
-
-	auto surf_grass = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(MenuLayer::radioSelectSurface , this));
-	surf_grass->setTag(/*(int)MenuLayer::GRASS*/ 2);
-
-	auto surf_gravel = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(MenuLayer::radioSelectSurface , this));
-	surf_gravel->setTag(/*(int)MenuLayer::GRAVEL*/ 3);
-
-	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
-	menu->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/13));
-	menu->alignItemsHorizontallyWithPadding(30.0f);
-	this->addChild(menu , SURF_ZINDEX);
-///////////////////////////////////////////////////////////////////////////////////////////
     return true;
 }
 
@@ -196,25 +177,6 @@ void MenuLayer::setForceSliderValue(float force)
     if(!_forceSlider)
         return;
     _forceSlider->forceSetValue(force);
-}
-
-void MenuLayer::radioSelectSurface(cocos2d::Object *pSender)
-{
-	auto menuItems = (MenuItem *)pSender;
-	int tag = (int)menuItems->getTag();
-
-	switch(tag)
-	{
-	case 1:
-		CCLOG("ice selected");
-		break;
-	case 2:
-		CCLOG("grass selected");
-		break;
-	case 3:
-		CCLOG("gravel selected");
-		break;
-	}
 }
 
 MenuLayer::~MenuLayer()

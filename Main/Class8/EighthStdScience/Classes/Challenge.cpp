@@ -13,6 +13,7 @@ static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 static const int INF_ZINDEX=3;
 static const int DEST_ZINDEX=4;
+static const int SURF_ZINDEX=5;
 
 
 USING_NS_CC;
@@ -367,3 +368,77 @@ bool Challenge2::init(bool showInfo)
     return true;
 }
 
+//////////////////////////////
+// challenge3
+//////////////////////////////
+
+Scene* Challenge3::createScene(bool showInfo)
+{
+    return Challenge<Challenge3>::createScene(showInfo);
+}
+
+bool Challenge3::init(bool showInfo)
+{
+    //////////////////////////////
+    // 1. super init first
+    if ( !Challenge::init(showInfo) )
+    {
+        return false;
+    }
+
+    return true;
+}
+
+void Challenge3::selectSurfaceFriction()
+{
+	// surface selection section
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto surf_label = LabelTTF::create("Set Friction :" , "fonts/Marker Felt.ttf" , 30);
+	surf_label->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/6));
+	this->addChild(surf_label , SURF_ZINDEX);
+
+	auto surf_ice = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
+	surf_ice->setTag((int)MenuLayer::ICE);
+
+	auto surf_grass = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
+	surf_grass->setTag((int)MenuLayer::GRASS);
+
+	auto surf_gravel = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
+	surf_gravel->setTag((int)MenuLayer::GRAVEL);
+
+	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
+	menu->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/13));
+	menu->alignItemsHorizontallyWithPadding(30.0f);
+	this->addChild(menu , SURF_ZINDEX);
+}
+
+void Challenge3::radioSelectSurface(cocos2d::Object *pSender)
+{
+	auto menuItem = (MenuItem *)pSender;
+	auto tag = menuItem->getTag();
+
+	auto parent = menuItem->getParent();
+
+	Vector<Node *> &children = parent->getChildren();
+
+	for( auto node : children )
+	{
+		auto child = dynamic_cast<MenuItem *>(node);
+		if(!child)
+			continue;
+
+		if(tag == child->getTag())
+		{
+			child->selected();
+			// function call for surface change
+		}
+		else
+		{
+			if (child->isSelected())
+					child->unselected();
+		}
+	}
+
+}

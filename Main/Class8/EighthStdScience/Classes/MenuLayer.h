@@ -26,7 +26,6 @@ public :
 
     void addForceMenu(float min, float max, float start, cocos2d::Ref * target, cocos2d::extension::Control::Handler handler);
     void addSurfaceMenu(std::function<void (cocos2d::Ref *)> cb);
-    void radioSelectSurface(cocos2d::Object *pSender);
     void setForceSliderValue(float force);
 
     CREATE_FUNC(MenuLayer);

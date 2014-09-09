@@ -30,6 +30,11 @@ const float SpriteLayer::MAX_FORCE=100;
 
 // TODO: base it on the crate size.. assuming the crate is 1m wide
 const int SpriteLayer::PTM_RATIO = 50;
+
+#define BLUEISH Color4B(0,114,188,255)
+#define GREENISH Color4B(25,123,48,255)
+#define BROWNISH Color4B(158,0,57,255)
+
 // on "init" you need to initialize your instance
 bool SpriteLayer::init()
 {
@@ -95,9 +100,9 @@ bool SpriteLayer::init()
         return arrow;
     };
 
-    _forceExternal = addArrow(Color4B::GREEN, "Applied");
-    _forceFriction = addArrow(Color4B::RED, "Friction");
-    _sumOfForces = addArrow(Color4B::BLUE, "Net");
+    _forceExternal = addArrow(Color4B::GREENISH, "Applied");
+    _forceFriction = addArrow(Color4B::BROWNISH, "Friction");
+    _sumOfForces = addArrow(Color4B::BLUEISH, "Net");
 
 
     //////////////////////////////

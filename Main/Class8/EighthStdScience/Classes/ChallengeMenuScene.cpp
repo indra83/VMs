@@ -131,10 +131,11 @@ void ChallengeMenu::touchDownAction(Ref *sender)
             scene = Challenge1::createScene(true);
             break;
         case 2 :
+        	scene = Challenge2::createScene(true);
+        	break;
         case 3 :    
-        case 4 :
-        default :
-            scene = Challenge2::createScene(true);
+        	scene = Challenge3::createScene(true);
+        	break;
     };
 
     if (_fromChallenge)
