@@ -366,7 +366,7 @@ Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float v
     };
 
     auto miniNode = create(true);
-    auto node = create(true);
+    auto node = create(false);
     node->setUserObject(miniNode);
     return node;
 }
