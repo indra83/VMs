@@ -204,9 +204,9 @@ bool Challenge1::init(bool showInfo)
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
 
-    // adding destination sprite at 100 meters away from current screen
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
+    // adding destination sprite at 100 meters away from current screen
     // add destinations on both sides
     auto addDestination = [this, visibleSize] ( bool right ) -> void
     {
@@ -225,6 +225,12 @@ bool Challenge1::init(bool showInfo)
 
     addDestination(true);
     addDestination(false);
+
+    // trolley sprite for animation guys
+    auto trolley = Sprite::create("trolley.png");
+    trolley->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    trolley->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/3 + 10));
+    this->addChild(trolley);
  
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([this, originalPos] () -> bool

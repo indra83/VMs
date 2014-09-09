@@ -44,9 +44,8 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 2. add mini map
     _minimap = Layer::create();
-    _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
-    //_minimap->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
     _minimap->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
 
     auto drawNode = DrawNode::create();
     drawNode->drawSegment(Vec2::ZERO, Vec2(visibleSize.width, 0.0), 1.0, Color4F::BLACK);
