@@ -76,16 +76,19 @@ public:
 class Challenge4: public Challenge<Challenge4>
 {
 public:
-	Challenge4(){}
+	Challenge4():
+		_timeLimit(60.0f),
+		_timeLeft(0.0f) {}
+
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
 
-	void countDownTimer();
-	float _timeLimit = 60.0f;
-	float _timeLeft = 0.0f;
-
+	void countDownTimer(float dt);
 	cocos2d::LabelTTF * _timeLabel;
 	std::string getTimeString();
+private:
+	float _timeLimit;
+	float _timeLeft;
 };
 
 #endif // __CHALLENGE_H__

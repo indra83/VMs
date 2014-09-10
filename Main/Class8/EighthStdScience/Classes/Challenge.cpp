@@ -471,16 +471,16 @@ bool Challenge4::init(bool showInfo)
     this->addChild(_timeLabel);
 
     //TODO: trigger this schedule after the popup is closed
-    this->schedule(Challenge4::countDownTimer , 1.0);
+    this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
 
     return true;
 }
 
-void Challenge4::countDownTimer()
+void Challenge4::countDownTimer(float dt)
 {
 	if(_timeLimit == 0.0f)
 	{
-		this->unschedule(Challenge4::countDownTimer);
+		this->unschedule(schedule_selector(Challenge4::countDownTimer));
 		// trigger challenge fail popup and restart the game challenge
 	}
 	else
@@ -495,6 +495,6 @@ void Challenge4::countDownTimer()
 std::string Challenge4::getTimeString()
 {
 	std::stringstream sstr;
-	sstr << _timeLeft << "sec";
+	sstr << (int)_timeLeft << "sec";
 	return sstr.str();
 }
