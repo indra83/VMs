@@ -400,18 +400,23 @@ void Challenge3::selectSurfaceFriction()
 	surf_label->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/6));
 	this->addChild(surf_label , SURF_ZINDEX);
 
-	auto surf_ice = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
+	// menu for radio button icons
+	auto surf_ice = MenuItemImage::create("low-fric-fade.png" , "low-fric.png" ,
+			CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
 	surf_ice->setTag((int)MenuLayer::ICE);
+	surf_ice->selected();
 
-	auto surf_grass = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
+	auto surf_grass = MenuItemImage::create("med-fric-fade.png" , "med-fric.png" ,
+			CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
 	surf_grass->setTag((int)MenuLayer::GRASS);
 
-	auto surf_gravel = MenuItemImage::create("radio_off.png" , "radio_on.png" , CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
+	auto surf_gravel = MenuItemImage::create("high-fric-fade.png" , "high-fric.png" ,
+			CC_CALLBACK_1(Challenge3::radioSelectSurface , this));
 	surf_gravel->setTag((int)MenuLayer::GRAVEL);
 
 	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
 	menu->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/13));
-	menu->alignItemsHorizontallyWithPadding(30.0f);
+	menu->alignItemsHorizontallyWithPadding(50.0f);
 	this->addChild(menu , SURF_ZINDEX);
 }
 
@@ -433,6 +438,7 @@ void Challenge3::radioSelectSurface(cocos2d::Object *pSender)
 		if(tag == child->getTag())
 		{
 			child->selected();
+			child->runAction(JumpBy::create(0.2f , Vec2::ZERO , 15 , 1));
 			// function call for surface change
 		}
 		else
