@@ -450,7 +450,7 @@ void Challenge3::radioSelectSurface(cocos2d::Object *pSender)
 
 Scene* Challenge4::createScene(bool showInfo)
 {
-    return Challenge<Challenge3>::createScene(showInfo);
+    return Challenge<Challenge4>::createScene(showInfo);
 }
 
 bool Challenge4::init(bool showInfo)
@@ -465,10 +465,18 @@ bool Challenge4::init(bool showInfo)
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    _timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 50);
+    _timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     _timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     _timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (_timeLabel->getContentSize().height)));
+    _timeLabel->setColor(Color3B::BLACK);
     this->addChild(_timeLabel);
+
+    _secLabel = LabelTTF::create("sec" , "fonts/Marker Felt.ttf" , 30);
+    _secLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    _secLabel->setPosition(Vec2(origin.x + visibleSize.width/2 + _timeLabel->getContentSize().width ,
+    		origin.y + visibleSize.height - _timeLabel->getContentSize().height));
+    _secLabel->setColor(Color3B::BLACK);
+    this->addChild(_secLabel);
 
     //TODO: trigger this schedule after the popup is closed
     this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
@@ -495,6 +503,6 @@ void Challenge4::countDownTimer(float dt)
 std::string Challenge4::getTimeString()
 {
 	std::stringstream sstr;
-	sstr << (int)_timeLeft << "sec";
+	sstr << (int)_timeLeft;
 	return sstr.str();
 }

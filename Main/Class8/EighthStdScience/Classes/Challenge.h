@@ -85,6 +85,7 @@ public:
 
 	void countDownTimer(float dt);
 	cocos2d::LabelTTF * _timeLabel;
+	cocos2d::LabelTTF * _secLabel;
 	std::string getTimeString();
 private:
 	float _timeLimit;
