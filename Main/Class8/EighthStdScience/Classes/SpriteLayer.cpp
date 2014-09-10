@@ -82,7 +82,7 @@ bool SpriteLayer::init()
     _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
     _massLabel->setColor(Color3B::BLACK);
     _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _massLabel->setPosition(Vec2(-_crate->getContentSize().width/2, 0.0));
+    _massLabel->setPosition(Vec2::ZERO);
     _crate->addChild(_massLabel, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);

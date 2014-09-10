@@ -386,6 +386,7 @@ bool Challenge3::init(bool showInfo)
         return false;
     }
 
+    selectSurfaceFriction();
     return true;
 }
 
@@ -441,4 +442,59 @@ void Challenge3::radioSelectSurface(cocos2d::Object *pSender)
 		}
 	}
 
+}
+
+//////////////////////////////
+// challenge4
+//////////////////////////////
+
+Scene* Challenge4::createScene(bool showInfo)
+{
+    return Challenge<Challenge3>::createScene(showInfo);
+}
+
+bool Challenge4::init(bool showInfo)
+{
+    //////////////////////////////
+    // 1. super init first
+    if ( !Challenge::init(showInfo) )
+    {
+        return false;
+    }
+
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    _timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 50);
+    _timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    _timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (_timeLabel->getContentSize().height)));
+    this->addChild(_timeLabel);
+
+    //TODO: trigger this schedule after the popup is closed
+    this->schedule(Challenge4::countDownTimer , 1.0);
+
+    return true;
+}
+
+void Challenge4::countDownTimer()
+{
+	if(_timeLimit == 0.0f)
+	{
+		this->unschedule(Challenge4::countDownTimer);
+		// trigger challenge fail popup and restart the game challenge
+	}
+	else
+	{
+		// decrease the timer by 1 on every second
+		_timeLimit -= 1.0f;
+		_timeLeft = _timeLimit;
+		_timeLabel->setString(getTimeString());
+	}
+}
+
+std::string Challenge4::getTimeString()
+{
+	std::stringstream sstr;
+	sstr << _timeLeft << "sec";
+	return sstr.str();
 }

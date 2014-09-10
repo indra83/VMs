@@ -135,33 +135,7 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     _forceLayer->addChild(labelH);
     addChild(_forceLayer);
 }
-/*
-void MenuLayer::addSurfaceMenu(std::function<void (Ref *)> cb)
-{
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // surface selection section
-    auto surf_label = LabelTTF::create("Set Friction :" , "fonts/Marker Felt.ttf" , 30);
-    surf_label->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/6));
-    this->addChild(surf_label , SURF_ZINDEX);
-
-    auto surf_ice = MenuItemImage::create("radio_off.png" , "radio_on.png", cb);
-    surf_ice->setTag((int)MenuLayer::ICE);
-    surf_ice->setEnabled(true);
-
-    auto surf_grass = MenuItemImage::create("radio_off.png" , "radio_on.png", cb);
-    surf_grass->setTag((int)MenuLayer::GRASS);
-
-    auto surf_gravel = MenuItemImage::create("radio_off.png" , "radio_off.png", cb);
-    surf_gravel->setTag((int)MenuLayer::GRAVEL);
-
-    auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
-    menu->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/13));
-    menu->alignItemsHorizontally();
-    this->addChild(menu , SURF_ZINDEX);
-}
-*/
 void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)> &cb)
 {
     item->setCallback(cb);

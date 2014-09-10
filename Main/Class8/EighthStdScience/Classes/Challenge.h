@@ -73,4 +73,19 @@ public:
 	void selectSurfaceFriction();
 };
 
+class Challenge4: public Challenge<Challenge4>
+{
+public:
+	Challenge4(){}
+	virtual bool init(bool showInfo) override;
+	static cocos2d::Scene * createScene(bool showInfo);
+
+	void countDownTimer();
+	float _timeLimit = 60.0f;
+	float _timeLeft = 0.0f;
+
+	cocos2d::LabelTTF * _timeLabel;
+	std::string getTimeString();
+};
+
 #endif // __CHALLENGE_H__
