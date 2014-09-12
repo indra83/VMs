@@ -195,7 +195,7 @@ Menu* Challenge<Derived>::selectSurfaceFriction(const std::string &surface_no , 
 	surf_gravel->setTag((int)MenuLayer::GRAVEL);
 
 	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
-	menu->setPosition(/*Vec2(visibleSize.width/2 , visibleSize.height/13)*/ menu_pos);
+	menu->setPosition(menu_pos);
 	menu->alignItemsHorizontallyWithPadding(20.0f);
 	this->addChild(menu , SURF_ZINDEX);
 
@@ -585,13 +585,16 @@ bool Challenge4::init(bool showInfo)
 
 	// surface 1 radio buttons
 	// play button
-	auto play = MenuItemImage::create("play.png" , "play.png" , [& , this] (Ref*) -> void
+	_play = MenuItemImage::create("play.png" , "play.png" , [& , this] (Ref*) -> void
 			{ _surfSelectionMenu1->setVisible(false);
 			  _surfSelectionMenu2->setVisible(false);
 			  this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
-			  this->setVisible(false);});
-	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
-	this->addChild(play , PLAY_ZINDEX);
+			  _play->setVisible(false);});
+	_play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+
+	auto playMenu = Menu::create(_play , nullptr);
+	playMenu->setPosition(Vec2::ZERO);
+	this->addChild(playMenu , PLAY_ZINDEX);
 
     return true;
 }

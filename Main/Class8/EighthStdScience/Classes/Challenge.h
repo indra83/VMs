@@ -92,6 +92,7 @@ public:
 	cocos2d::LabelTTF * _secLabel;
 	cocos2d::Menu * _surfSelectionMenu1;
 	cocos2d::Menu * _surfSelectionMenu2;
+	cocos2d::MenuItemImage * _play;
 	std::string getTimeString();
 private:
 	float _timeLimit;
