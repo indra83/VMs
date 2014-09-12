@@ -103,6 +103,16 @@ bool ChallengeMenu::init()
 	obj1->setPosition(Vec2(2*wd/5, 4*ht/5 - 2*LABEL_OFFSET));
 	scrollContainer->addChild(obj1);
 
+	// objective : challenge 2
+	// objective : challenge 3
+	// objective : challenge 4
+	auto obj4 = LabelTTF::create("Objective: Moving a box from point A to B in given time. "
+			"Selection of surfaces is key for completing this challenge." , "fonts/EraserDust.ttf" , 25 ,
+			Size(550,100) , TextHAlignment::LEFT);
+	obj4->setAnchorPoint(Vec2::ZERO);
+	obj4->setPosition(Vec2(2*wd/5 , ht/5 - 2*LABEL_OFFSET));
+	scrollContainer->addChild(obj4);
+
     // scroll view
     // TODO: investigate random crashes in srollview update
     auto scrollview = ScrollView::create(visibleSize, scrollContainer);

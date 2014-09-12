@@ -118,7 +118,7 @@ bool Challenge<Derived>::init(bool showInfo)
 
     // show initial info popup
     if (showInfo)
-        showInfoPopUp();
+	showInfoPopUp();
 
     return true;
 }
@@ -145,11 +145,7 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
 
 
 template< class Derived >
-void Challenge<Derived>::showInfoPopUp()
-{
-    addPopupMenu("INSTRUCTION", "Move the box to the right by applying force on it. Drag and hold the slider in position to apply a specific amount of force."
-    		" Help the box reach the house which is some distance away", false);
-}
+void Challenge<Derived>::showInfoPopUp(){/*going to be overridden*/}
 
 template< class Derived >
 void Challenge<Derived>::done()
@@ -170,6 +166,69 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 {
     ControlSlider* pSlider = (ControlSlider*)sender;
     _spriteLayer->changeFrictionValue(pSlider->getValue());
+}
+
+template< class Derived >
+Menu* Challenge<Derived>::selectSurfaceFriction(const std::string &surface_no , const Vec2 &label_pos , const Vec2 &menu_pos)
+{
+	// surface selection section
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	auto surf_label = LabelTTF::create(surface_no , "fonts/Marker Felt.ttf" , 30);
+	surf_label->setPosition(label_pos);
+	this->addChild(surf_label , SURF_ZINDEX);
+
+	// menu for radio button icons
+	auto surf_ice = MenuItemImage::create("low-fric-fade.png" , "low-fric.png" ,
+			CC_CALLBACK_1(Derived::radioSelectSurface , this));
+	surf_ice->setTag((int)MenuLayer::ICE);
+	surf_ice->selected();
+
+	auto surf_grass = MenuItemImage::create("med-fric-fade.png" , "med-fric.png" ,
+			CC_CALLBACK_1(Derived::radioSelectSurface , this));
+	surf_grass->setTag((int)MenuLayer::GRASS);
+
+	auto surf_gravel = MenuItemImage::create("high-fric-fade.png" , "high-fric.png" ,
+			CC_CALLBACK_1(Derived::radioSelectSurface , this));
+	surf_gravel->setTag((int)MenuLayer::GRAVEL);
+
+	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
+	menu->setPosition(/*Vec2(visibleSize.width/2 , visibleSize.height/13)*/ menu_pos);
+	menu->alignItemsHorizontallyWithPadding(20.0f);
+	this->addChild(menu , SURF_ZINDEX);
+
+	return menu;
+}
+
+template< class Derived >
+void Challenge<Derived>::radioSelectSurface(cocos2d::Object *pSender)
+{
+	auto menuItem = (MenuItem *)pSender;
+	auto tag = menuItem->getTag();
+
+	auto parent = menuItem->getParent();
+
+	Vector<Node *> &children = parent->getChildren();
+
+	for( auto node : children )
+	{
+		auto child = dynamic_cast<MenuItem *>(node);
+		if(!child)
+			continue;
+
+		if(tag == child->getTag())
+		{
+			child->selected();
+			child->runAction(JumpBy::create(0.2f , Vec2::ZERO , 15 , 1));
+			// TODO:function call for surface change
+		}
+		else
+		{
+			if (child->isSelected())
+					child->unselected();
+		}
+	}
 }
 
 template< class Derived >
@@ -236,6 +295,8 @@ bool Challenge1::init(bool showInfo)
         return true;
     });
 
+    // calling show info popup
+    showInfoPopup();
    return true;
 }
 
@@ -278,6 +339,12 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
         _friendHelpShown = true;
     }
     prevValue = _spriteLayer->getExternalForceValue();
+}
+
+void Challenge1::showInfoPopup()
+{
+	addPopupMenu("INSTRUCTION", "Move the box to the right by applying force on it. Drag and hold the slider in position to apply a specific amount of force."
+	    		" Help the box reach the house which is some distance away", false);
 }
 
 //////////////////////////////
@@ -365,7 +432,16 @@ bool Challenge2::init(bool showInfo)
                 // also check if there is a sprite at 0,0 and for how long
                 return true;
             });
+
+    // calling show info popup
+	showInfoPopup();
+
     return true;
+}
+
+void Challenge2::showInfoPopup()
+{
+	addPopupMenu("INSTRUCTION", "This is a test message of challenge 2", false);
 }
 
 //////////////////////////////
@@ -386,10 +462,14 @@ bool Challenge3::init(bool showInfo)
         return false;
     }
 
-    selectSurfaceFriction();
+    //selectSurfaceFriction();
+
+    // calling show info popup
+	showInfoPopup();
+
     return true;
 }
-
+/*
 void Challenge3::selectSurfaceFriction()
 {
 	// surface selection section
@@ -449,6 +529,11 @@ void Challenge3::radioSelectSurface(cocos2d::Object *pSender)
 	}
 
 }
+*/
+void Challenge3::showInfoPopup()
+{
+	addPopupMenu("INSTRUCTION", "This is a test message of challenge 3", false);
+}
 
 //////////////////////////////
 // challenge4
@@ -485,7 +570,26 @@ bool Challenge4::init(bool showInfo)
     this->addChild(_secLabel);
 
     //TODO: trigger this schedule after the popup is closed
-    this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
+    //this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
+
+    // calling show info popup
+	showInfoPopup();
+
+	// using menu layer to show surface selectors and play button for challenge 4
+	// surface selector section callfunc
+	_surfSelectionMenu1 = selectSurfaceFriction("Surface 1 Friction :" , Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/4) ,
+			Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6));
+	_surfSelectionMenu2 = selectSurfaceFriction("Surface 2 Friction :" , Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/4) ,
+			Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6));
+
+	// surface 1 radio buttons
+	// play button
+	auto play = MenuItemImage::create("play.png" , "play.png" , [& , this] (Ref*) -> void
+			{ _surfSelectionMenu1->setEnabled(false);
+			  _surfSelectionMenu2->setEnabled(false);
+			  this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);});
+	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+	_menuLayer->addChild(play , MN_ZINDEX);
 
     return true;
 }
@@ -511,4 +615,12 @@ std::string Challenge4::getTimeString()
 	std::stringstream sstr;
 	sstr << (int)_timeLeft;
 	return sstr.str();
+}
+
+void Challenge4::showInfoPopup()
+{
+	addPopupMenu("INSTRUCTION", "Start by selecting a surface type for the two segments of the path. "
+			"The friction varies depending on the surface selected. "
+			"Once you choose the surfaces, click on the play button to begin your attempt (Your time starts ticking!). "
+			"Accelerate/Decelerate as required and get the box from point A and stop it precisely at point B (do not overshoot!)", false);
 }

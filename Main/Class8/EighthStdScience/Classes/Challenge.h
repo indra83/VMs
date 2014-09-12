@@ -27,11 +27,13 @@ public:
     // implement the "static create()" method manually
     static Derived * create(bool showInfo);
 
-    void showInfoPopUp();
+    virtual void showInfoPopUp();
     void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
+    cocos2d::Menu* selectSurfaceFriction(const std::string &surface_no , const cocos2d::Vec2 &label_pos , const cocos2d::Vec2 &menu_pos);
+    void radioSelectSurface(cocos2d::Object *pSender);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 
@@ -48,6 +50,7 @@ public:
     Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
+    void showInfoPopup();
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
 private:
     bool _friendHelpShown;
@@ -61,6 +64,7 @@ public:
     Challenge2(): _trollies(){}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
+    void showInfoPopup();
 };
 
 class Challenge3: public Challenge<Challenge3>
@@ -69,8 +73,7 @@ public:
 	Challenge3(){}
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
-	void radioSelectSurface(cocos2d::Object *pSender);
-	void selectSurfaceFriction();
+	void showInfoPopup();
 };
 
 class Challenge4: public Challenge<Challenge4>
@@ -82,10 +85,13 @@ public:
 
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
-
+	void showInfoPopup();
+	void enableChal4Logic();
 	void countDownTimer(float dt);
 	cocos2d::LabelTTF * _timeLabel;
 	cocos2d::LabelTTF * _secLabel;
+	cocos2d::Menu * _surfSelectionMenu1;
+	cocos2d::Menu * _surfSelectionMenu2;
 	std::string getTimeString();
 private:
 	float _timeLimit;
