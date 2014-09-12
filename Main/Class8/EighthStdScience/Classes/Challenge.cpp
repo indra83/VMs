@@ -14,6 +14,7 @@ static const int MN_ZINDEX=2;
 static const int INF_ZINDEX=3;
 static const int DEST_ZINDEX=4;
 static const int SURF_ZINDEX=5;
+static const int PLAY_ZINDEX=6;
 
 
 USING_NS_CC;
@@ -585,11 +586,12 @@ bool Challenge4::init(bool showInfo)
 	// surface 1 radio buttons
 	// play button
 	auto play = MenuItemImage::create("play.png" , "play.png" , [& , this] (Ref*) -> void
-			{ _surfSelectionMenu1->setEnabled(false);
-			  _surfSelectionMenu2->setEnabled(false);
-			  this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);});
+			{ _surfSelectionMenu1->setVisible(false);
+			  _surfSelectionMenu2->setVisible(false);
+			  this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
+			  this->setVisible(false);});
 	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
-	_menuLayer->addChild(play , MN_ZINDEX);
+	this->addChild(play , PLAY_ZINDEX);
 
     return true;
 }
@@ -619,8 +621,7 @@ std::string Challenge4::getTimeString()
 
 void Challenge4::showInfoPopup()
 {
-	addPopupMenu("INSTRUCTION", "Start by selecting a surface type for the two segments of the path. "
-			"The friction varies depending on the surface selected. "
-			"Once you choose the surfaces, click on the play button to begin your attempt (Your time starts ticking!). "
-			"Accelerate/Decelerate as required and get the box from point A and stop it precisely at point B (do not overshoot!)", false);
+	addPopupMenu("INSTRUCTION", "Start by selecting a surface type for the two segments (Friction depends on surface type). "
+			"Click on the play button to begin (Your time starts ticking!). "
+			"Move the box from point A and stop it precisely at point B (do not overshoot!)", false);
 }
