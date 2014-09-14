@@ -90,7 +90,7 @@ bool Challenge<Derived>::init(bool showInfo)
     _menuLayer->addToTopMenu(info,
                              [this](Ref * sender) -> void
                              {
-                                showInfoPopUp();
+                                showInfoPopup();
                              });
 
     // add the challenges menu
@@ -119,7 +119,7 @@ bool Challenge<Derived>::init(bool showInfo)
 
     // show initial info popup
     if (showInfo)
-	showInfoPopUp();
+        showInfoPopup();
 
     return true;
 }
@@ -143,10 +143,6 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
                         Director::getInstance()->pushScene(scene);
                 });
 }
-
-
-template< class Derived >
-void Challenge<Derived>::showInfoPopUp(){/*going to be overridden*/}
 
 template< class Derived >
 void Challenge<Derived>::done()
@@ -296,8 +292,6 @@ bool Challenge1::init(bool showInfo)
         return true;
     });
 
-    // calling show info popup
-    showInfoPopup();
    return true;
 }
 
@@ -431,9 +425,6 @@ bool Challenge2::init(bool showInfo)
                 return true;
             });
 
-    // calling show info popup
-	showInfoPopup();
-
     return true;
 }
 
@@ -461,9 +452,6 @@ bool Challenge3::init(bool showInfo)
     }
 
     //selectSurfaceFriction();
-
-    // calling show info popup
-	showInfoPopup();
 
     return true;
 }
@@ -509,9 +497,6 @@ bool Challenge4::init(bool showInfo)
 
     //TODO: trigger this schedule after the popup is closed
     //this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
-
-    // calling show info popup
-	showInfoPopup();
 
 	// using menu layer to show surface selectors and play button for challenge 4
 	// surface selector section callfunc

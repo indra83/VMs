@@ -27,7 +27,7 @@ public:
     // implement the "static create()" method manually
     static Derived * create(bool showInfo);
 
-    virtual void showInfoPopUp();
+    virtual void showInfoPopup() = 0;
     void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
@@ -50,7 +50,7 @@ public:
     Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
-    void showInfoPopup();
+    void showInfoPopup() override;
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
 private:
     bool _friendHelpShown;
@@ -64,7 +64,7 @@ public:
     Challenge2(): _trollies(){}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
-    void showInfoPopup();
+    void showInfoPopup() override;
 };
 
 class Challenge3: public Challenge<Challenge3>
@@ -73,7 +73,7 @@ public:
 	Challenge3(){}
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
-	void showInfoPopup();
+	void showInfoPopup() override;
 };
 
 class Challenge4: public Challenge<Challenge4>
@@ -85,7 +85,7 @@ public:
 
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
-	void showInfoPopup();
+	void showInfoPopup() override;
 	void enableChal4Logic();
 	void countDownTimer(float dt);
 	void getSurfaceLabel(cocos2d::Menu * surf_labels /*, const cocos2d::Vec2 &surf_label_pos*/);
