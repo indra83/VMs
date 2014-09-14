@@ -330,7 +330,7 @@ void SpriteLayer::update(float dt)
     _velocity += dv;
     float dx = 0.0;
     if(fabs(_velocity) > EPSILON)
-        dx = _velocity * dt * PTM_RATIO;
+        dx = floor(_velocity) * dt * PTM_RATIO;
     _speedLabel->setString(getSpeedString());
 
     for( auto mov: _movables )

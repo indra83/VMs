@@ -66,6 +66,12 @@ public :
         setValue(_base);
     }
 
+    // clip to ints
+    void setValue(float value) override
+    {
+        ControlSlider::setValue(floor(value));
+    }
+
 };
 
 // on "init" you need to initialize your instance
