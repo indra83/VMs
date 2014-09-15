@@ -11,10 +11,6 @@
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
-static const int INF_ZINDEX=3;
-static const int DEST_ZINDEX=4;
-static const int SURF_ZINDEX=5;
-static const int PLAY_ZINDEX=6;
 
 
 USING_NS_CC;
@@ -163,69 +159,6 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 {
     ControlSlider* pSlider = (ControlSlider*)sender;
     _spriteLayer->changeFrictionValue(pSlider->getValue());
-}
-
-template< class Derived >
-Menu* Challenge<Derived>::selectSurfaceFriction(const std::string &surface_no , const Vec2 &label_pos , const Vec2 &menu_pos)
-{
-	// surface selection section
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-	auto surf_label = LabelTTF::create(surface_no , "fonts/Marker Felt.ttf" , 30);
-	surf_label->setPosition(label_pos);
-	this->addChild(surf_label , SURF_ZINDEX);
-
-	// menu for radio button icons
-	auto surf_ice = MenuItemImage::create("low-fric-fade.png" , "low-fric.png" ,
-			CC_CALLBACK_1(Derived::radioSelectSurface , this));
-	surf_ice->setTag((int)MenuLayer::ICE);
-	surf_ice->selected();
-
-	auto surf_grass = MenuItemImage::create("med-fric-fade.png" , "med-fric.png" ,
-			CC_CALLBACK_1(Derived::radioSelectSurface , this));
-	surf_grass->setTag((int)MenuLayer::GRASS);
-
-	auto surf_gravel = MenuItemImage::create("high-fric-fade.png" , "high-fric.png" ,
-			CC_CALLBACK_1(Derived::radioSelectSurface , this));
-	surf_gravel->setTag((int)MenuLayer::GRAVEL);
-
-	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
-	menu->setPosition(menu_pos);
-	menu->alignItemsHorizontallyWithPadding(20.0f);
-	this->addChild(menu , SURF_ZINDEX);
-
-	return menu;
-}
-
-template< class Derived >
-void Challenge<Derived>::radioSelectSurface(cocos2d::Object *pSender)
-{
-	auto menuItem = (MenuItem *)pSender;
-	auto tag = menuItem->getTag();
-
-	auto parent = menuItem->getParent();
-
-	Vector<Node *> &children = parent->getChildren();
-
-	for( auto node : children )
-	{
-		auto child = dynamic_cast<MenuItem *>(node);
-		if(!child)
-			continue;
-
-		if(tag == child->getTag())
-		{
-			child->selected();
-			child->runAction(JumpBy::create(0.2f , Vec2::ZERO , 15 , 1));
-			// TODO:function call for surface change
-		}
-		else
-		{
-			if (child->isSelected())
-					child->unselected();
-		}
-	}
 }
 
 template< class Derived >
@@ -482,120 +415,70 @@ bool Challenge4::init(bool showInfo)
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    _timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
-    _timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    _timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (_timeLabel->getContentSize().height)));
-    _timeLabel->setColor(Color3B::BLACK);
-    this->addChild(_timeLabel);
+    auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
+    timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (timeLabel->getContentSize().height)));
+    timeLabel->setColor(Color3B::BLACK);
+    this->addChild(timeLabel);
+    _timeLabel = timeLabel;
 
-    _secLabel = LabelTTF::create("sec" , "fonts/Marker Felt.ttf" , 30);
-    _secLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _secLabel->setPosition(Vec2(origin.x + visibleSize.width/2 + _timeLabel->getContentSize().width ,
-    		origin.y + visibleSize.height - _timeLabel->getContentSize().height));
-    _secLabel->setColor(Color3B::BLACK);
-    this->addChild(_secLabel);
+    auto secLabel = LabelTTF::create("sec" , "fonts/Marker Felt.ttf" , 30);
+    secLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    secLabel->setPosition(Vec2(origin.x + visibleSize.width/2 + timeLabel->getContentSize().width,
+    		origin.y + visibleSize.height - timeLabel->getContentSize().height));
+    secLabel->setColor(Color3B::BLACK);
+    this->addChild(secLabel);
 
-    //TODO: trigger this schedule after the popup is closed
-    //this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
+    auto selectCB = [](int surf) -> void
+    {
+        // dummy for now
+        // TODO : react to surfce changes
+    };
 
 	// using menu layer to show surface selectors and play button for challenge 4
 	// surface selector section callfunc
-	_surfSelectionMenu1 = selectSurfaceFriction("Surface 1 Friction" , Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/4) ,
-			Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6));
-	_surfSelectionMenu2 = selectSurfaceFriction("Surface 2 Friction" , Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/4) ,
-			Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6));
+	auto surfSelectionMenu1 = _menuLayer->selectSurfaceFriction("Surface 1 Friction :", 
+            Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/4),
+			Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB);
+	auto surfSelectionMenu2 = _menuLayer->selectSurfaceFriction("Surface 2 Friction :", 
+            Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/4),
+			Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB);
 
-	// surface 1 radio buttons
 	// play button
-	_play = MenuItemImage::create("play.png" , "play.png" , [& , this] (Ref*) -> void
-			{ _surfSelectionMenu1->setVisible(false);
-			  auto pos1 = Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/5);
-			  getSurfaceLabel(_surfSelectionMenu1);
+	auto play = MenuItemImage::create("play.png",
+                                  "play.png", 
+                                  [=] (Ref* sender) -> void
+                                  { 
+                                        surfSelectionMenu1->setVisible(false);
+                                        surfSelectionMenu2->setVisible(false);
+                                        schedule(schedule_selector(Challenge4::countDownTimer), 1.0);
+                                        dynamic_cast<Node *>(sender)->setVisible(false);
+                                  });
+	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
 
-			  _surfSelectionMenu2->setVisible(false);
-			  auto pos2 = Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/5);
-			  getSurfaceLabel(_surfSelectionMenu2);
-
-			  this->schedule(schedule_selector(Challenge4::countDownTimer) , 1.0);
-			  _play->setVisible(false);});
-	_play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
-
-	auto playMenu = Menu::create(_play , nullptr);
+	auto playMenu = Menu::create(play , nullptr);
 	playMenu->setPosition(Vec2::ZERO);
-	this->addChild(playMenu , PLAY_ZINDEX);
+	this->addChild(playMenu , MN_ZINDEX);
 
     return true;
 }
 
-void Challenge4::getSurfaceLabel(Menu * surf_labels /*, const Vec2 &surf_label_pos*/)
+std::string Challenge4::getTimeString() 
 {
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-	auto childrenArray = surf_labels->getChildren();
-
-	  for( auto node : childrenArray )
-		{
-			auto child = dynamic_cast<MenuItem *>(node);
-			if(!child)
-				continue;
-
-			if(child->isSelected())
-			{
-				auto surf_tag = child->getTag();
-
-				switch(surf_tag)
-				{
-					case 1:
-					{
-						auto surf_ice_label = LabelTTF::create("ICE" , "fonts/Marker Felt.ttf" , 25);
-						surf_ice_label->setPosition(/*surf_label_pos*/Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/5));
-						this->addChild(surf_ice_label , PLAY_ZINDEX);
-						break;
-					}
-
-					case 2:
-					{
-						auto surf_grass_label = LabelTTF::create("GRASS" , "fonts/Marker Felt.ttf" , 25);
-						surf_grass_label->setPosition(/*surf_label_pos*/Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/5));
-						this->addChild(surf_grass_label , PLAY_ZINDEX);
-						break;
-					}
-
-					case 3:
-					{
-						auto surf_gravel_label = LabelTTF::create("GRAVEL" , "fonts/Marker Felt.ttf" , 25);
-						surf_gravel_label->setPosition(/*surf_label_pos*/Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/5));
-						this->addChild(surf_gravel_label , PLAY_ZINDEX);
-						break;
-					}
-
-				}
-			}
-		}
+    std::stringstream sstr;
+    sstr << (int)_timeLeft;
+    return sstr.str();
 }
 
 void Challenge4::countDownTimer(float dt)
 {
-	if(_timeLimit == 0.0f)
-	{
-		this->unschedule(schedule_selector(Challenge4::countDownTimer));
-		// trigger challenge fail popup and restart the game challenge
-	}
-	else
-	{
-		// decrease the timer by 1 on every second
-		_timeLimit -= 1.0f;
-		_timeLeft = _timeLimit;
-		_timeLabel->setString(getTimeString());
-	}
-}
-
-std::string Challenge4::getTimeString()
-{
-	std::stringstream sstr;
-	sstr << (int)_timeLeft;
-	return sstr.str();
+    _timeLeft -= dt;
+    if(floor(_timeLeft) <= 0)
+    {
+        unschedule(schedule_selector(Challenge4::countDownTimer));
+        // TODO: trigger challenge fail popup and restart the game challenge
+    }
+    _timeLabel->setString(getTimeString());
 }
 
 void Challenge4::showInfoPopup()

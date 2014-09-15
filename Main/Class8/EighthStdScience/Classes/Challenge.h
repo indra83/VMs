@@ -32,8 +32,6 @@ public:
     void done();
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
-    cocos2d::Menu* selectSurfaceFriction(const std::string &surface_no , const cocos2d::Vec2 &label_pos , const cocos2d::Vec2 &menu_pos);
-    void radioSelectSurface(cocos2d::Object *pSender);
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 
@@ -79,25 +77,16 @@ public:
 class Challenge4: public Challenge<Challenge4>
 {
 public:
-	Challenge4():
-		_timeLimit(60.0f),
-		_timeLeft(0.0f) {}
+	Challenge4() : _timeLeft(60.0), _timeLabel(nullptr) {}
 
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
 	void showInfoPopup() override;
-	void enableChal4Logic();
-	void countDownTimer(float dt);
-	void getSurfaceLabel(cocos2d::Menu * surf_labels /*, const cocos2d::Vec2 &surf_label_pos*/);
-	cocos2d::LabelTTF * _timeLabel;
-	cocos2d::LabelTTF * _secLabel;
-	cocos2d::Menu * _surfSelectionMenu1;
-	cocos2d::Menu * _surfSelectionMenu2;
-	cocos2d::MenuItemImage * _play;
-	std::string getTimeString();
-private:
-	float _timeLimit;
-	float _timeLeft;
+    std::string getTimeString(); 
+    void countDownTimer(float dt);
+private :
+    float _timeLeft;
+    cocos2d::LabelTTF * _timeLabel;
 };
 
 #endif // __CHALLENGE_H__

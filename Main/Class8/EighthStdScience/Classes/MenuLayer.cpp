@@ -87,7 +87,6 @@ bool MenuLayer::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
     //////////////////////////////
     // 2. common display controls
     _topMenu = Menu::create();
@@ -142,6 +141,87 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
                              _forceSlider->getPosition().y - 30));
     _forceLayer->addChild(labelH);
     addChild(_forceLayer);
+}
+
+Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec2 &label_pos , const Vec2 &menu_pos, std::function<void (int)> cb)
+{
+    auto surf_label = LabelTTF::create(surface_no , "fonts/Marker Felt.ttf" , 30);
+    surf_label->setPosition(label_pos);
+	this->addChild(surf_label);
+
+    auto surf = LabelTTF::create("", "fonts/Marker Felt.ttf" , 30);
+    surf->setPosition(label_pos + Vec2(surf_label->getContentSize().width + 5, 0));
+	this->addChild(surf);
+
+    auto setSurfFromTag = [=](int tag) -> void
+    {
+        // TODO: this could be done from an array
+        std::string tagStr;
+        switch(tag) {
+            case ICE :
+                tagStr = "ICE";
+                break;
+            case GRASS :
+                tagStr = "GRASS";
+                break;
+            case GRAVEL :
+                tagStr = "GRAVEL";
+                break;
+        };
+        surf->setString(tagStr);
+    };
+
+    auto selectSurfaceCB = [=] ( Ref * pSender) -> void 
+    {
+        auto menuItem = (MenuItem *)pSender;
+        auto tag = menuItem->getTag();
+
+        auto parent = menuItem->getParent();
+
+        Vector<Node *> &children = parent->getChildren();
+
+        for( auto node : children )
+        {
+            auto child = dynamic_cast<MenuItem *>(node);
+            if(!child)
+                continue;
+
+            if(tag == child->getTag())
+            {
+                child->selected();
+                child->runAction(JumpBy::create(0.2f , Vec2::ZERO , 15 , 1));
+                setSurfFromTag(tag);
+                cb(tag);
+            }
+            else
+            {
+                if (child->isSelected())
+                    child->unselected();
+            }
+        }
+
+    };
+    
+	// menu for radio button icons
+	auto surf_ice = MenuItemImage::create("low-fric-fade.png" , "low-fric.png" , selectSurfaceCB);
+	surf_ice->setTag((int)ICE);
+
+	auto surf_grass = MenuItemImage::create("med-fric-fade.png" , "med-fric.png" , selectSurfaceCB);
+	surf_grass->setTag((int)GRASS);
+
+	auto surf_gravel = MenuItemImage::create("high-fric-fade.png" , "high-fric.png" , selectSurfaceCB);
+	surf_gravel->setTag((int)GRAVEL);
+
+	auto menu = Menu::create(surf_ice , surf_grass , surf_gravel ,nullptr);
+	menu->setPosition(menu_pos);
+	menu->alignItemsHorizontallyWithPadding(20.0f);
+	this->addChild(menu);
+
+    // select ICE by default
+	surf_ice->selected();
+    setSurfFromTag(ICE);
+
+	return menu;
 }
 
 void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)> &cb)
