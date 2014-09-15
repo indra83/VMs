@@ -112,6 +112,8 @@ void MenuLayer::addForceMenu(float min, float max, float start, Ref * target, Co
     // programatically change the value of the slider on change of force.
     
     auto scaleX = (max-min)/(2*SpriteLayer::MAX_FORCE);
+    _forceSlider->getThumbSprite()->setScaleX(1/scaleX);
+    _forceSlider->getSelectedThumbSprite()->setScaleX(1/scaleX);
     _forceSlider->setScaleX(scaleX);
     _forceSlider->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4 - 20));
     _forceSlider->setValue(start);

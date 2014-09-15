@@ -88,6 +88,7 @@ public:
 	void showInfoPopup();
 	void enableChal4Logic();
 	void countDownTimer(float dt);
+	void getSurfaceLabel(cocos2d::Menu * surf_labels /*, const cocos2d::Vec2 &surf_label_pos*/);
 	cocos2d::LabelTTF * _timeLabel;
 	cocos2d::LabelTTF * _secLabel;
 	cocos2d::Menu * _surfSelectionMenu1;
