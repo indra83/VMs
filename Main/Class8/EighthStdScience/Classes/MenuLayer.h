@@ -15,7 +15,14 @@ private :
     ControlSliderRollBack * _forceSlider;
 
 public :
-    enum SurfaceType { ICE, GRASS, GRAVEL };
+    enum SurfaceType { ICE, GRASS, GRAVEL, LAST };
+    struct SurfInfo
+    {
+        float coeff;
+        std::string label;
+    };
+
+    static SurfInfo SURF_INFO[LAST];  
     MenuLayer() :
           _topMenu(nullptr),
           _topMenuOffsetX(0.0),

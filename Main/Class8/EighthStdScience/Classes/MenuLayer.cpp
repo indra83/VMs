@@ -74,6 +74,14 @@ public :
 
 };
 
+
+MenuLayer::SurfInfo MenuLayer::SURF_INFO[MenuLayer::LAST] = 
+{
+    { 0.0, "ICE"    },
+    { 0.5, "GRASS"  },
+    { 1.0, "GRAVEL" }
+};
+
 // on "init" you need to initialize your instance
 bool MenuLayer::init()
 {
@@ -155,20 +163,8 @@ Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec
 
     auto setSurfFromTag = [=](int tag) -> void
     {
-        // TODO: this could be done from an array
-        std::string tagStr;
-        switch(tag) {
-            case ICE :
-                tagStr = "ICE";
-                break;
-            case GRASS :
-                tagStr = "GRASS";
-                break;
-            case GRAVEL :
-                tagStr = "GRAVEL";
-                break;
-        };
-        surf->setString(tagStr);
+        surf->setString(SURF_INFO[tag].label);
+        cb(tag);
     };
 
     auto selectSurfaceCB = [=] ( Ref * pSender) -> void 
@@ -191,7 +187,6 @@ Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec
                 child->selected();
                 child->runAction(JumpBy::create(0.2f , Vec2::ZERO , 15 , 1));
                 setSurfFromTag(tag);
-                cb(tag);
             }
             else
             {

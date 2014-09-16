@@ -412,6 +412,8 @@ bool Challenge4::init(bool showInfo)
         return false;
     }
 
+    _spriteLayer->setMass(10.0);
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -429,10 +431,11 @@ bool Challenge4::init(bool showInfo)
     secLabel->setColor(Color3B::BLACK);
     this->addChild(secLabel);
 
-    auto selectCB = [](int surf) -> void
+    auto selectCB = [this](int surf) -> void
     {
         // dummy for now
         // TODO : react to surfce changes
+        _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[surf].coeff);
     };
 
 	// using menu layer to show surface selectors and play button for challenge 4
@@ -453,6 +456,9 @@ bool Challenge4::init(bool showInfo)
                                         surfSelectionMenu2->setVisible(false);
                                         schedule(schedule_selector(Challenge4::countDownTimer), 1.0);
                                         dynamic_cast<Node *>(sender)->setVisible(false);
+                                        // add the force menu
+                                        _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge4::forceValueChanged));
+
                                   });
 	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
 
