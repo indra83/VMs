@@ -146,9 +146,6 @@ void ChallengeMenu::touchDownAction(Ref *sender)
         case 3 :    
         	scene = Challenge3::createScene(true);
         	break;
-        case 4 :
-        	scene = Challenge4::createScene(true);
-        	break;
     };
 
     if (_fromChallenge)

@@ -105,6 +105,7 @@ bool Challenge<Derived>::init(bool showInfo)
     _spriteLayer = SpriteLayer::create();
     _spriteLayer->addToMovables(_bgLayer);
     _spriteLayer->changeForceValue(0.0);
+    // hack to make life easier
     _spriteLayer->setMenuLayer(_menuLayer);
     this->addChild(_spriteLayer, SP_ZINDEX);
 
@@ -384,34 +385,6 @@ bool Challenge3::init(bool showInfo)
         return false;
     }
 
-    //selectSurfaceFriction();
-
-    return true;
-}
-
-void Challenge3::showInfoPopup()
-{
-	addPopupMenu("INSTRUCTION", "This is a test message of challenge 3", false);
-}
-
-//////////////////////////////
-// challenge4
-//////////////////////////////
-
-Scene* Challenge4::createScene(bool showInfo)
-{
-    return Challenge<Challenge4>::createScene(showInfo);
-}
-
-bool Challenge4::init(bool showInfo)
-{
-    //////////////////////////////
-    // 1. super init first
-    if ( !Challenge::init(showInfo) )
-    {
-        return false;
-    }
-
     _spriteLayer->setMass(10.0);
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -454,10 +427,10 @@ bool Challenge4::init(bool showInfo)
                                   { 
                                         surfSelectionMenu1->setVisible(false);
                                         surfSelectionMenu2->setVisible(false);
-                                        schedule(schedule_selector(Challenge4::countDownTimer), 1.0);
+                                        schedule(schedule_selector(Challenge3::countDownTimer), 1.0);
                                         dynamic_cast<Node *>(sender)->setVisible(false);
                                         // add the force menu
-                                        _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge4::forceValueChanged));
+                                        _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge3::forceValueChanged));
 
                                   });
 	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
@@ -469,25 +442,25 @@ bool Challenge4::init(bool showInfo)
     return true;
 }
 
-std::string Challenge4::getTimeString() 
+std::string Challenge3::getTimeString() 
 {
     std::stringstream sstr;
     sstr << (int)_timeLeft;
     return sstr.str();
 }
 
-void Challenge4::countDownTimer(float dt)
+void Challenge3::countDownTimer(float dt)
 {
     _timeLeft -= dt;
     if(floor(_timeLeft) <= 0)
     {
-        unschedule(schedule_selector(Challenge4::countDownTimer));
+        unschedule(schedule_selector(Challenge3::countDownTimer));
         // TODO: trigger challenge fail popup and restart the game challenge
     }
     _timeLabel->setString(getTimeString());
 }
 
-void Challenge4::showInfoPopup()
+void Challenge3::showInfoPopup()
 {
 	addPopupMenu("INSTRUCTION", "Start by selecting a surface type for the two segments (Friction depends on surface type). "
 			"Click on the play button to begin (Your time starts ticking!). "
