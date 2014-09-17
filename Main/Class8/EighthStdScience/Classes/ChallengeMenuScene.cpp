@@ -67,7 +67,7 @@ bool ChallengeMenu::init()
     auto menu = Menu::create();
     // container item icons
     auto addChallenge =
-    [&](std::string fileName, int id) -> void
+    [&](std::string fileName, int id, const std::string &objective) -> void
     {
         auto chal = MenuItemImage::create(fileName, fileName, CC_CALLBACK_1(ChallengeMenu::touchDownAction, this));
         chal->setTag(id);
@@ -80,12 +80,17 @@ bool ChallengeMenu::init()
         label->setAnchorPoint(Vec2::ZERO);
         label->setPosition(2*wd/5, (5 - id) * ht/5 + LABEL_OFFSET);
         menu->addChild(label);
+        auto obj = LabelTTF::create( std::string("Objective: ") + objective,
+                "fonts/EraserDust.ttf" , 25 ,
+                Size(550,100) , TextHAlignment::LEFT);
+        obj->setAnchorPoint(Vec2::ZERO);
+        obj->setPosition(Vec2(2*wd/5, (5-id)*ht/5 - 2*LABEL_OFFSET));
+        scrollContainer->addChild(obj);
     };
 
-    addChallenge("chal_1.png", 1);
-    addChallenge("chl.png", 2);
-    addChallenge("chl.png", 3);
-    addChallenge("chl.png", 4);
+    addChallenge("chal_1.png", 1, "To move the box by applying force. Notice the behavior of friction as you apply force");
+    addChallenge("chl.png", 2, "dummy text");
+    addChallenge("chl.png", 3, "Moving a box from point A to B in given time. Selection of surfaces is key for completing this challenge." );
 
     menu->setPosition(Vec2::ZERO);
     scrollContainer->addChild(menu);
@@ -94,24 +99,6 @@ bool ChallengeMenu::init()
 	auto label = LabelTTF::create("CHALLENGES" , "fonts/EraserDust.ttf" , 60);
 	label->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + 2*visibleSize.height - label->getContentSize().height));
 	scrollContainer->addChild(label);
-
-	// objective : challenge 1
-	auto obj1 = LabelTTF::create("Objective: To move the box by applying force. "
-			"Notice the behavior of friction as you apply force" , "fonts/EraserDust.ttf" , 25 ,
-			Size(550,100) , TextHAlignment::LEFT);
-	obj1->setAnchorPoint(Vec2::ZERO);
-	obj1->setPosition(Vec2(2*wd/5, 4*ht/5 - 2*LABEL_OFFSET));
-	scrollContainer->addChild(obj1);
-
-	// objective : challenge 2
-	// objective : challenge 3
-	// objective : challenge 4
-	auto obj4 = LabelTTF::create("Objective: Moving a box from point A to B in given time. "
-			"Selection of surfaces is key for completing this challenge." , "fonts/EraserDust.ttf" , 25 ,
-			Size(550,100) , TextHAlignment::LEFT);
-	obj4->setAnchorPoint(Vec2::ZERO);
-	obj4->setPosition(Vec2(2*wd/5 , ht/5 - 2*LABEL_OFFSET));
-	scrollContainer->addChild(obj4);
 
     // scroll view
     // TODO: investigate random crashes in srollview update
@@ -145,9 +132,6 @@ void ChallengeMenu::touchDownAction(Ref *sender)
         	break;
         case 3 :    
         	scene = Challenge3::createScene(true);
-        	break;
-        case 4 :
-        	scene = Challenge4::createScene(true);
         	break;
     };
 

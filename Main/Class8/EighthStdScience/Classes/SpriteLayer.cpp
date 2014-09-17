@@ -13,8 +13,8 @@ const int SpriteLayer::STATIONARY_ZINDEX = 0;
 const int SpriteLayer::TROLLEY_RIGHT_ZINDEX = 1;
 const int SpriteLayer::SPRITE_ZINDEX = 2;
 const int SpriteLayer::PERSON_ZINDEX = 3;
-const int SpriteLayer::LABEL_ZINDEX = 4;
-const int SpriteLayer::TROLLEY_LEFT_ZINDEX = 5;
+const int SpriteLayer::TROLLEY_LEFT_ZINDEX = 4;
+const int SpriteLayer::LABEL_ZINDEX = 5;
 
 static const float EPSILON=0.2;
 static const int NUM_IMAGES=15;
