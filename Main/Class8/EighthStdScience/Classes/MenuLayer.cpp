@@ -158,7 +158,8 @@ Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec
 	this->addChild(surf_label);
 
     auto surf = LabelTTF::create("", "fonts/Marker Felt.ttf" , 30);
-    surf->setPosition(label_pos + Vec2(surf_label->getContentSize().width + 5, 0));
+    surf->setFontFillColor(Color3B::GREEN);
+    surf->setPosition(label_pos + Vec2(surf_label->getContentSize().width, 0));
 	this->addChild(surf);
 
     auto setSurfFromTag = [=](int tag) -> void
