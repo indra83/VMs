@@ -77,7 +77,6 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 4. add mass label
-    // TODO: fix the label pos
     _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
     _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
     _massLabel->setColor(Color3B::BLACK);
@@ -90,19 +89,21 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 5. add the force arrows
     Vec2 curr(visibleSize.width/2, visibleSize.height/2);
-    ValueArrow::setBaseValue(SpriteLayer::MAX_FORCE);
-    auto addArrow = [&](const Color4B & color, const std::string & name) -> ValueArrow *
+//    ValueArrow::setBaseValue(SpriteLayer::MAX_FORCE);
+
+    auto addArrow = [&](const std::string &fileName , const cocos2d::Rect &capInset) -> ValueArrow *
     {
-        auto arrow = ValueArrow::create(color, name);
+        auto arrow = ValueArrow::create(fileName , capInset);
         arrow->setPosition(curr);
+        arrow->setCapInsets(capInset);
         curr = curr + Vec2(0, arrow->getContentSize().height);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
     };
 
-    _forceExternal = addArrow(Color4B::GREENISH, "Applied");
-    _forceFriction = addArrow(Color4B::BROWNISH, "Friction");
-    _sumOfForces = addArrow(Color4B::BLUEISH, "Net");
+    _forceExternal = addArrow("arrow_force.png" , Rect(10,15,30,20));
+    _forceFriction = addArrow("arrow_fric.png" , Rect(10,15,30,20));
+    _sumOfForces = addArrow("arrow_sof.png" , Rect(10,15,30,20));
 
 
     //////////////////////////////
