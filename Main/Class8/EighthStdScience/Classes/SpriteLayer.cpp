@@ -94,6 +94,7 @@ bool SpriteLayer::init()
     auto addArrow = [&](const std::string &fileName , const cocos2d::Rect &capInset) -> ValueArrow *
     {
         auto arrow = ValueArrow::create(fileName , capInset);
+        arrow->setAnchorPoint(Vec2(0 , 0.5));
         arrow->setPosition(curr);
         arrow->setCapInsets(capInset);
         curr = curr + Vec2(0, arrow->getContentSize().height);
@@ -101,11 +102,11 @@ bool SpriteLayer::init()
         return arrow;
     };
 
-    _forceExternal = addArrow("arrow_force.png" , Rect(10,15,30,20));
     _forceFriction = addArrow("arrow_fric.png" , Rect(10,15,30,20));
+    _forceExternal = addArrow("arrow_force.png" , Rect(10,15,30,20));
     _sumOfForces = addArrow("arrow_sof.png" , Rect(10,15,30,20));
 
-
+    // calling
     //////////////////////////////
     // 6. add the speed related display
     auto speedLayer = Layer::create();
