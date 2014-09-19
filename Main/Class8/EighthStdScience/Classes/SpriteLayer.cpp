@@ -89,22 +89,21 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 5. add the force arrows
     Vec2 curr(visibleSize.width/2, visibleSize.height/2);
-//    ValueArrow::setBaseValue(SpriteLayer::MAX_FORCE);
 
     auto addArrow = [&](const std::string &fileName , const cocos2d::Rect &capInset) -> ValueArrow *
     {
         auto arrow = ValueArrow::create(fileName , capInset);
-        arrow->setAnchorPoint(Vec2(0 , 0.5));
+        arrow->setAnchorPoint(Vec2(0,0.5));
         arrow->setPosition(curr);
         arrow->setCapInsets(capInset);
-        curr = curr + Vec2(0, arrow->getContentSize().height);
+        curr = curr + Vec2(0 , 100);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
     };
 
-    _forceFriction = addArrow("arrow_fric.png" , Rect(10,15,30,20));
-    _forceExternal = addArrow("arrow_force.png" , Rect(10,15,30,20));
-    _sumOfForces = addArrow("arrow_sof.png" , Rect(10,15,30,20));
+    _forceFriction = addArrow("arrow_fric.png" , Rect(2,20,10,40));
+    _forceExternal = addArrow("arrow_force.png" , Rect(2,20,10,40));
+    _sumOfForces = addArrow("arrow_sof.png" , Rect(2,20,10,40));
 
     // calling
     //////////////////////////////
