@@ -11,8 +11,8 @@ USING_NS_CC;
 static const Color4B BLUEISH(173, 255, 250, 255);
 static const Color4B GRAYISH (70, 70, 70, 255);
 
-// due to lack of access to the Vec2Object class in ParallaxNode, replicate it here
-class Vec2Object : public Ref
+// due to lack of access to the Point2Object class in ParallaxNode, replicate it here
+class Point2Object : public Ref
 {
 public:
     inline void setRatio(Vec2 ratio) {_ratio = ratio;}
@@ -38,7 +38,7 @@ public:
         {
             // Add it to autorelease pool
             node->autorelease();
-        } 
+        }
         else 
         {
             // Otherwise delete
@@ -63,7 +63,7 @@ public:
             auto child = cb();
             ParallaxNode::addChild(child, zIndex, ratio, offsetIter);
             totalSize += getScaledSizeX( child );
-            offsetIter += Vec2(child->getContentSize().width * child->getScaleX(), 0);
+            offsetIter += Vec2( getScaledSizeX(child), 0 );
         }
     }
 
@@ -87,12 +87,12 @@ public:
             else if (pointInWorld.x > visibleSize.width - safeOffset)
                 whichSide = -1;
 
-            if (whichSide != 0) 
+            if (whichSide != 0)
             {
-                // 3. Find Vec2Object that corresponds to current node
+                // 3. Find Point2Object that corresponds to current node
                 for (int i = 0; i < _parallaxArray->num; i++)
                 {
-                    auto po = (Vec2Object*)_parallaxArray->arr[i];
+                    auto po = (Point2Object*)_parallaxArray->arr[i];
                     // If yes increase its current offset on the value of visible width
                     if (po->getChild() == node)
                         po->setOffset(po->getOffset() +
@@ -124,7 +124,7 @@ bool BackGroundLayer::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    float lower_boundary = visibleSize.height/3;
+    _lower_boundary = visibleSize.height/3;
 
     auto parallaxNode = HorInfiniteParallaxNode::create();
 
@@ -133,19 +133,19 @@ bool BackGroundLayer::init()
     parallaxNode->addChild(
             [&] () -> Node * { 
                 return LayerColor::create(BLUEISH,
-                		visibleSize.width,
-                		visibleSize.height);
+                    visibleSize.width,
+                    visibleSize.height);
             },
             zIndex,
             Vec2(1.0, 1.0),
             Vec2(0 , 0)
-    );   
+    );
 
     //////////////////////////////
     //add gray ground layer
     parallaxNode->addChild(
             [&]() -> Node * {
-                auto layer = LayerColor::create(GRAYISH, visibleSize.width, lower_boundary);
+                auto layer = LayerColor::create(GRAYISH, visibleSize.width, _lower_boundary);
                 layer->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
                 return layer;
             },
@@ -166,7 +166,7 @@ bool BackGroundLayer::init()
             ++zIndex,
             Vec2(0.025, 1.0),
             Vec2(0, 9*visibleSize.height/10)
-    );   
+    );
 
     //////////////////////////////
     // add mountains
@@ -179,8 +179,8 @@ bool BackGroundLayer::init()
             },
             ++zIndex,
             Vec2(0.05, 1.0),
-            Vec2(0, lower_boundary)
-    );   
+            Vec2(0, _lower_boundary)
+    );
 
     //////////////////////////////
     //add trees
@@ -193,8 +193,8 @@ bool BackGroundLayer::init()
             },
             ++zIndex,
             Vec2(0.75, 1.0),
-            Vec2(0, lower_boundary)
-    );   
+            Vec2(0, _lower_boundary)
+    );
 
     //////////////////////////////
     //add grass
@@ -206,8 +206,8 @@ bool BackGroundLayer::init()
             },
             ++zIndex,
             Vec2(1.0, 1.0),
-            Vec2(0, lower_boundary + 2*BUF_HT)
-    );   
+            Vec2(0, _lower_boundary + 2*BUF_HT)
+    );
 
     //////////////////////////////
     //add bricks
@@ -220,9 +220,26 @@ bool BackGroundLayer::init()
             },
             ++zIndex,
             Vec2(1.0, 1.0),
-            Vec2(0, lower_boundary + BUF_HT)
-    );   
+            Vec2(0, _lower_boundary + BUF_HT)
+    );
 
     addChild(parallaxNode, 0);
     return true;
+}
+
+void BackGroundLayer::setSurface(const std::string &name, float startPos, float endPos)
+{
+    auto offset = startPos;
+    do {
+        if (offset >= endPos)
+            break;
+        auto surface = Sprite::create(name);
+        if ( endPos - offset < surface->getContentSize().width )
+            surface->setScaleX( endPos - offset / surface->getContentSize().width );
+        //CCLOG( "scale: %f", surface->getScaleX());
+        offset += surface->getContentSize().width * surface->getScaleX();
+        surface->setPosition(Vec2(offset, _lower_boundary + BUF_HT));
+        surface->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+        addChild(surface, 100);
+    } while(true);
 }

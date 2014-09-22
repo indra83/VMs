@@ -11,6 +11,9 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(BackGroundLayer);
+    void setSurface(const std::string &name, float startPos, float endPos);
+private:
+    float _lower_boundary;
 };
 
 #endif // __BACKGROUND_LAYER_H__

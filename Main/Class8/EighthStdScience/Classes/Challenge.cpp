@@ -404,21 +404,25 @@ bool Challenge3::init(bool showInfo)
     secLabel->setColor(Color3B::BLACK);
     this->addChild(secLabel);
 
-    auto selectCB = [this](int surf) -> void
+    auto selectCB = [this](int surf, float startPos, float endPos) -> void
     {
-        // dummy for now
-        // TODO : react to surfce changes
         _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[surf].coeff);
+        // TODO: remove prev surface
+        _bgLayer->setSurface(MenuLayer::SURF_INFO[surf].sprite, startPos, endPos);
+        // TODO: change in minimap as well
     };
+
+    auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width);
+    auto selectCB2 = std::bind(selectCB, std::placeholders::_1, visibleSize.width, 3*visibleSize.width/2);
 
 	// using menu layer to show surface selectors and play button for challenge 4
 	// surface selector section callfunc
 	auto surfSelectionMenu1 = _menuLayer->selectSurfaceFriction("Surface 1 Friction :", 
             Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/4),
-			Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB);
+			Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB1);
 	auto surfSelectionMenu2 = _menuLayer->selectSurfaceFriction("Surface 2 Friction :", 
             Vec2(origin.x + 6*visibleSize.width/8 - 5 , origin.y + visibleSize.height/4),
-			Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB);
+			Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB2);
 
 	// play button
 	auto play = MenuItemImage::create("play.png",
