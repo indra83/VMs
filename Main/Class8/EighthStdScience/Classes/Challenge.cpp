@@ -191,7 +191,7 @@ bool Challenge1::init(bool showInfo)
     }
 
     _spriteLayer->setMass(30.0);
-    _spriteLayer->setFrictionCoefficient(0.5);
+    _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
 
@@ -301,7 +301,7 @@ bool Challenge2::init(bool showInfo)
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge2::forceValueChanged));
 
     _spriteLayer->setMass(15.0);
-    _spriteLayer->setFrictionCoefficient(0.5);
+    _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -385,12 +385,21 @@ bool Challenge3::init(bool showInfo)
         return false;
     }
 
-
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     _spriteLayer->setMass(10.0);
+    _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
     _spriteLayer->setMiniMapOffset(-visibleSize.width/2);
+
+    auto gen = []() -> Node *
+    {
+        auto dest = Sprite::create("destination.png");
+        dest->setScale(0.8);
+        dest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        return dest;
+    };
+    _spriteLayer->addStationaryChild(gen, Vec2(6 * visibleSize.width, visibleSize.height/3 + 10));
 
     auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -412,8 +421,8 @@ bool Challenge3::init(bool showInfo)
         _bgLayer->setSurface(MenuLayer::SURF_INFO[surf].sprite, startPos, endPos);
     };
 
-    auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width);
-    auto selectCB2 = std::bind(selectCB, std::placeholders::_1, visibleSize.width, 3*visibleSize.width/2);
+    auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width/2 + 3*visibleSize.width);
+    auto selectCB2 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2 + 3*visibleSize.width, visibleSize.width/2 + 6*visibleSize.width);
 
 	// using menu layer to show surface selectors and play button for challenge 4
 	// surface selector section callfunc
@@ -442,6 +451,13 @@ bool Challenge3::init(bool showInfo)
 	auto playMenu = Menu::create(play , nullptr);
 	playMenu->setPosition(Vec2::ZERO);
 	this->addChild(playMenu , MN_ZINDEX);
+
+
+    _spriteLayer->setPeriodicCB([=]() -> bool
+    {
+        //TODO: check where the crate is and what its velocity is
+        return true;
+    });
 
     return true;
 }

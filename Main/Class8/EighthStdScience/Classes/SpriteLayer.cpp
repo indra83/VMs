@@ -52,9 +52,8 @@ bool SpriteLayer::init()
     // 2. add mini map
     _minimap = Layer::create();
 
-    _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
     _minimap->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    _minimap->setPosition(Vec2(_minimapOffset, visibleSize.height/10));
+    _minimap->setPosition(Vec2(_minimapOffset, visibleSize.height/12));
 
 
     auto drawNode = DrawNode::create();
@@ -105,7 +104,6 @@ bool SpriteLayer::init()
     _forceExternal = addArrow("arrow_force.png" , Rect(2,20,10,40));
     _sumOfForces = addArrow("arrow_sof.png" , Rect(2,20,10,40));
 
-    // calling
     //////////////////////////////
     // 6. add the speed related display
     auto speedLayer = Layer::create();
@@ -395,8 +393,9 @@ void SpriteLayer::setFriction(float coeff, Color4F color, float startPos, float 
     auto drawNode = DrawNode::create();
     drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, color);
     drawNode->setPosition(Vec2((startPos * MINI_MAP_SCALE) + visibleSize.width/2, 0.0)); 
-    _minimap->addChild(drawNode, 1);
-    // TODO: friction value should be positional too
+    _minimap->addChild(drawNode, 100);
+    addToMovables(drawNode, 0.0, MINI_MAP_SCALE);
+    //setFrictionCoefficientOverride(coeff);
     setFrictionCoefficient(coeff);
 }
 
