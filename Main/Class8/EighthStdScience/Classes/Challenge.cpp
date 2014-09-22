@@ -358,7 +358,7 @@ bool Challenge2::init(bool showInfo)
                         move(trolley, true);
                     }
                 };
-                // also check if there is a sprite at 0,0 and for how long
+                // TODO: also check if there is a sprite at 0,0 and for how long
                 return true;
             });
 
@@ -395,6 +395,7 @@ bool Challenge3::init(bool showInfo)
     _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
     _spriteLayer->setMiniMapOffset(-visibleSize.width/2);
 
+    static float TARGET_LOC = 6 * visibleSize.width;
     auto gen = []() -> Node *
     {
         auto dest = Sprite::create("destination.png");
@@ -402,7 +403,7 @@ bool Challenge3::init(bool showInfo)
         dest->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
         return dest;
     };
-    _spriteLayer->addStationaryChild(gen, Vec2(6 * visibleSize.width, visibleSize.height/3 + 10));
+    _spriteLayer->addStationaryChild(gen, Vec2(TARGET_LOC, visibleSize.height/3 + 10));
 
     auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -424,8 +425,8 @@ bool Challenge3::init(bool showInfo)
         _bgLayer->setSurface(MenuLayer::SURF_INFO[surf].sprite, startPos, endPos);
     };
 
-    auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width/2 + 3*visibleSize.width);
-    auto selectCB2 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2 + 3*visibleSize.width, visibleSize.width/2 + 6*visibleSize.width);
+    auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width/2 + TARGET_LOC/2);
+    auto selectCB2 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2 + TARGET_LOC/2, visibleSize.width/2 + TARGET_LOC);
 
 	// using menu layer to show surface selectors and play button for challenge 4
 	// surface selector section callfunc
@@ -455,10 +456,15 @@ bool Challenge3::init(bool showInfo)
 	playMenu->setPosition(Vec2::ZERO);
 	this->addChild(playMenu , MN_ZINDEX);
 
-
+    Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([=](float vel) -> bool
     {
-        //TODO: check where the crate is and what its velocity is
+        //TODO: needs more tweaking
+        if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC )
+        {
+            done(vel == 0.0);
+            return false;
+        }
         return true;
     });
 
