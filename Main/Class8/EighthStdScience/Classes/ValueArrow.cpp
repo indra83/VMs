@@ -31,7 +31,7 @@ bool ValueArrow::initWithFile(const std::string &fileName , const Rect &capInset
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	// force value label
-	_labelForce = LabelTTF::create("", "fonts/American Typewriter.ttf", 30);
+	_labelForce = LabelTTF::create("", "fonts/Marker Felt.ttf", 30);
 	_labelForce->setHorizontalAlignment(TextHAlignment::LEFT);
 	_labelForce->setColor(Color3B::BLACK);
 	this->addChild(_labelForce, 1);
@@ -68,7 +68,6 @@ void ValueArrow::adjustSize()
 		std::stringstream sstr;
 		sstr << (int)val << " N";
 		_labelForce->setString(sstr.str());
-		_labelForce->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2));
 
 		// scaling the arrows
 		auto cont_wd = _contWD;
@@ -83,14 +82,14 @@ void ValueArrow::adjustSize()
 		if(direction == -1)
 		{
 			this->setRotation(-180);
-//			_labelForce->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
-//			_labelForce->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2));
+			_labelForce->setPosition(Vec2(this->getContentSize().width + 40 , this->getContentSize().height/2));
+			_labelForce->runAction(RotateTo::create(0.01 , 180));
 		}
 		else
 		{
 			this->setRotation(0);
-//			_labelForce->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-//			_labelForce->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2));
+			_labelForce->setPosition(Vec2(this->getContentSize().width + 40 , this->getContentSize().height/2));
+			_labelForce->runAction(RotateTo::create(0.01 , 0));
 		}
 	}
 
