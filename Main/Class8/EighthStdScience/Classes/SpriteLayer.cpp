@@ -274,7 +274,7 @@ void SpriteLayer::changeForceValue(float value)
     if(value != _forceExternalValue)
     {
         _forceExternalValue = value;
-        if (_forceExternalValue > 0.0)
+        if (fabs(_forceExternalValue) > 0.0)
            _personFell = false; 
         addPersonOfForce();
     }
@@ -299,7 +299,7 @@ std::string SpriteLayer::getMassString()
 std::string SpriteLayer::getSpeedString()
 {
     std::stringstream sstr;
-    sstr << "Speed - " << (int)_velocity << " m/sec";
+    sstr << "Speed - " << abs((int)_velocity) << " m/sec";
     return sstr.str();
 }
 
@@ -314,7 +314,7 @@ void SpriteLayer::update(float dt)
     if (_periodicCB && !_periodicCB())
         return;
 
-    if (fabs(_velocity) > MAX_SPEED)
+    if (!_personFell && fabs(_velocity) > MAX_SPEED)
     {
         _personFell = true;
         
