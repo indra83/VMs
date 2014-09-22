@@ -78,6 +78,7 @@ private :
     bool _personFell;
     MenuLayer * _menuLayer;
     Layer * _minimap;
+    float _minimapOffset;
 
 public :  
     SpriteLayer() : 
@@ -102,13 +103,14 @@ public :
        _movables(),
        _personFell(false),
        _menuLayer(nullptr),
-       _minimap(nullptr) {}
+       _minimap(nullptr),
+       _minimapOffset(0.0) {}
 
     ~SpriteLayer();
 
     CREATE_FUNC(SpriteLayer);
 
-    virtual bool init() override;  
+    bool init() override;
     void changeForceValue(float value);
     void changeFrictionValue(float value);
     void setBackGroundLayer(Layer *layer);
@@ -116,6 +118,7 @@ public :
     void update(float) override;
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
+    void setFriction(float coeff, cocos2d::Color4F color, float startPos, float endPos);
     void setPeriodicCB( std::function< bool () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
@@ -124,6 +127,7 @@ public :
     void addToMovables( Node * node, float vel=0.0, float scale=1.0 );
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
+    void setMiniMapOffset(float off);
 
 private :    
     std::string getMassString();

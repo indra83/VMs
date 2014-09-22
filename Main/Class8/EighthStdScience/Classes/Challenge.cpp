@@ -385,10 +385,12 @@ bool Challenge3::init(bool showInfo)
         return false;
     }
 
-    _spriteLayer->setMass(10.0);
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    _spriteLayer->setMass(10.0);
+    _spriteLayer->setMiniMapOffset(-visibleSize.width/2);
 
     auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -406,10 +408,8 @@ bool Challenge3::init(bool showInfo)
 
     auto selectCB = [this](int surf, float startPos, float endPos) -> void
     {
-        _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[surf].coeff);
-        // TODO: remove prev surface
+        _spriteLayer->setFriction(MenuLayer::SURF_INFO[surf].coeff, MenuLayer::SURF_INFO[surf].color, startPos, endPos);
         _bgLayer->setSurface(MenuLayer::SURF_INFO[surf].sprite, startPos, endPos);
-        // TODO: change in minimap as well
     };
 
     auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width);

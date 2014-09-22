@@ -54,10 +54,11 @@ bool SpriteLayer::init()
 
     _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
     _minimap->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    _minimap->setPosition(Vec2(0.0, visibleSize.height/10));
+    _minimap->setPosition(Vec2(_minimapOffset, visibleSize.height/10));
+
 
     auto drawNode = DrawNode::create();
-    drawNode->drawSegment(Vec2::ZERO, Vec2(visibleSize.width, 0.0), 1.0, Color4F::BLACK);
+    drawNode->drawSegment(Vec2::ZERO, Vec2(2*visibleSize.width, 0.0), 1.0, Color4F::GREEN);
     drawNode->setPosition(Vec2::ZERO);
     _minimap->addChild(drawNode);
 
@@ -299,7 +300,7 @@ std::string SpriteLayer::getMassString()
 std::string SpriteLayer::getSpeedString()
 {
     std::stringstream sstr;
-    sstr << "Speed - " << abs((int)_velocity) << " m/sec";
+    sstr << "Speed : " << abs((int)_velocity) << " m/sec";
     return sstr.str();
 }
 
@@ -355,7 +356,7 @@ Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float v
     {
         auto scale = mini ? MINI_MAP_SCALE : 1.0;
         Node * node = generator();
-        node->setScale( node->getScale() * scale);
+        node->setScale(node->getScale() * scale);
 
         node->setPosition(Vec2((pos.x*scale) + visibleSize.width/2, mini ? 0.0 : pos.y)); 
         if (!baseMover)
@@ -388,11 +389,28 @@ void SpriteLayer::removeFromMovables( Node * node )
         _movables.erase(f); 
 }
 
+void SpriteLayer::setFriction(float coeff, Color4F color, float startPos, float endPos)
+{
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    auto drawNode = DrawNode::create();
+    drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, color);
+    drawNode->setPosition(Vec2((startPos * MINI_MAP_SCALE) + visibleSize.width/2, 0.0)); 
+    _minimap->addChild(drawNode, 1);
+    // TODO: friction value should be positional too
+    setFrictionCoefficient(coeff);
+}
+
 void SpriteLayer::addAnotherPerson()
 {
     _showAnotherPerson = true;
     addPersonOfForce();
 }
+
+void SpriteLayer::setMiniMapOffset(float off)
+{
+    _minimapOffset = off;
+    _minimap->setPosition(Vec2(_minimapOffset, _minimap->getPosition().y));
+};
 
 SpriteLayer::~SpriteLayer()
 {

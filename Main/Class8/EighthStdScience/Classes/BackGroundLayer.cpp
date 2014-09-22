@@ -230,16 +230,31 @@ bool BackGroundLayer::init()
 void BackGroundLayer::setSurface(const std::string &name, float startPos, float endPos)
 {
     auto offset = startPos;
+    static const int SURF_TAG = 1;
+
+    // drop existing surface
+    // TODO: this is currently rudimentary
+    for (auto child : getChildren())
+    {
+        if (child->getTag() == SURF_TAG)
+        {
+            float start = child->getPosition().x;
+            float end = start + (child->getContentSize().width * child->getScaleX());
+            if (start >= startPos && end <= endPos) 
+                removeChild(child);
+        }
+    }
+
     do {
         if (offset >= endPos)
             break;
         auto surface = Sprite::create(name);
-        if ( endPos - offset < surface->getContentSize().width )
-            surface->setScaleX( endPos - offset / surface->getContentSize().width );
-        //CCLOG( "scale: %f", surface->getScaleX());
+        surface->setTag(SURF_TAG);
+        if ( (endPos - offset) < surface->getContentSize().width )
+            surface->setScaleX( (endPos - offset) / surface->getContentSize().width );
+        surface->setPosition(Vec2(offset, _lower_boundary + 2*BUF_HT));
         offset += surface->getContentSize().width * surface->getScaleX();
-        surface->setPosition(Vec2(offset, _lower_boundary + BUF_HT));
         surface->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-        addChild(surface, 100);
+        addChild(surface, 1);
     } while(true);
 }
