@@ -118,7 +118,7 @@ public :
     void update(float) override;
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
-    void setFriction(float coeff, cocos2d::Color4F color, float startPos, float endPos);
+    void setFriction(float coeff, cocos2d::Color3B color, float startPos, float endPos);
     void setPeriodicCB( std::function< bool () > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();

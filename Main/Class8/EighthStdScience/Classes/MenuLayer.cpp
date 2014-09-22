@@ -77,9 +77,9 @@ public :
 
 MenuLayer::SurfInfo MenuLayer::SURF_INFO[MenuLayer::LAST] = 
 {
-    { 0.1, "ICE",    "ice.png",    Color4F::WHITE },
-    { 0.5, "GRASS",  "grass.png",  Color4F::GREEN },
-    { 1.0, "GRAVEL", "gravel.png", Color4F::RED   }
+    { 0.1, "ICE",    "ice.png",    Color3B::WHITE },
+    { 0.5, "GRASS",  "grass.png",  Color3B::GREEN },
+    { 1.0, "GRAVEL", "gravel.png", Color3B::RED   }
 };
 
 // on "init" you need to initialize your instance
@@ -158,13 +158,15 @@ Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec
 	this->addChild(surf_label);
 
     auto surf = LabelTTF::create("", "fonts/Marker Felt.ttf" , 30);
-    surf->setFontFillColor(Color3B::GREEN);
-    surf->setPosition(label_pos + Vec2(surf_label->getContentSize().width, 0));
+    surf->setHorizontalAlignment(TextHAlignment::LEFT);
+    surf->setAnchorPoint(Vec2::ANCHOR_MIDDLE_LEFT);
+    surf->setPosition(label_pos + Vec2(surf_label->getContentSize().width/2 + 30 , 0));
 	this->addChild(surf);
 
     auto setSurfFromTag = [=](int tag) -> void
     {
         surf->setString(SURF_INFO[tag].label);
+        surf->setFontFillColor(SURF_INFO[tag].color);
         cb(tag);
     };
 
