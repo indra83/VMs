@@ -310,7 +310,7 @@ void SpriteLayer::setMass(float mass)
 
 void SpriteLayer::update(float dt)
 {
-    if (_periodicCB && !_periodicCB())
+    if (_periodicCB && !_periodicCB(_velocity))
         return;
 
     if (!_personFell && fabs(_velocity) > MAX_SPEED)

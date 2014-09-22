@@ -142,10 +142,13 @@ void Challenge<Derived>::addPopupMenu(const std::string & title, const std::stri
 }
 
 template< class Derived >
-void Challenge<Derived>::done()
+void Challenge<Derived>::done(bool success)
 {
     _spriteLayer->pause();
-    addPopupMenu("Challenge Complete", "Congrats!!", true, true, true);
+    if (success)
+        addPopupMenu("Challenge Complete", "Congrats!!", true, true, true);
+    else
+        addPopupMenu("Failed!!", "Try Again", true, true, true);
 }
 
 template< class Derived >
@@ -216,11 +219,11 @@ bool Challenge1::init(bool showInfo)
     addDestination(false);
 
     Vec2 originalPos = _bgLayer->getPosition();
-    _spriteLayer->setPeriodicCB([this, originalPos] () -> bool
+    _spriteLayer->setPeriodicCB([this, originalPos] (float unused) -> bool
     {
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_METRES * SpriteLayer::PTM_RATIO )
         {
-            done();
+            done(true);
             return false;
         }
         return true;
@@ -333,7 +336,7 @@ bool Challenge2::init(bool showInfo)
     initTrollies(true);
     initTrollies(false);
 
-    _spriteLayer->setPeriodicCB([=]() -> bool
+    _spriteLayer->setPeriodicCB([=](float unused) -> bool
             {    
                 auto move = [=]( Node * node, bool right) -> void
                 {
@@ -453,7 +456,7 @@ bool Challenge3::init(bool showInfo)
 	this->addChild(playMenu , MN_ZINDEX);
 
 
-    _spriteLayer->setPeriodicCB([=]() -> bool
+    _spriteLayer->setPeriodicCB([=](float vel) -> bool
     {
         //TODO: check where the crate is and what its velocity is
         return true;
@@ -478,12 +481,12 @@ void Challenge3::countDownTimer(float dt)
     	_timeLabel->runAction(Blink::create(10 , 10));
     }
 
+    _timeLabel->setString(getTimeString());
     if(floor(_timeLeft) <= 0)
     {
         unschedule(schedule_selector(Challenge3::countDownTimer));
-        // TODO: trigger challenge fail popup and restart the game challenge
+        done(false);
     }
-    _timeLabel->setString(getTimeString());
 }
 
 void Challenge3::showInfoPopup()
