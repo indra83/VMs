@@ -65,11 +65,10 @@ void ValueArrow::adjustSize()
 		auto val = fabs(_val);
 
 		// label for value of forces
-		// TODO: check why passing string fails and crashes the game
 		std::stringstream sstr;
 		sstr << (int)val << " N";
-//		_labelForce->setString(sstr.str());
-//		_labelForce->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2));
+		_labelForce->setString(sstr.str());
+		_labelForce->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2));
 
 		// scaling the arrows
 		auto cont_wd = _contWD;

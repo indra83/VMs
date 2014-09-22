@@ -95,7 +95,6 @@ bool SpriteLayer::init()
         auto arrow = ValueArrow::create(fileName , capInset);
         arrow->setAnchorPoint(Vec2(0,0.5));
         arrow->setPosition(curr);
-        arrow->setCapInsets(capInset);
         curr = curr + Vec2(0 , 100);
         this->addChild(arrow, LABEL_ZINDEX);
         return arrow;
