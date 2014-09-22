@@ -234,6 +234,7 @@ void BackGroundLayer::setSurface(const std::string &name, float startPos, float 
 
     // drop existing surface
     // TODO: this is currently rudimentary
+    std::vector< Node * > toRemove;
     for (auto child : getChildren())
     {
         if (child->getTag() == SURF_TAG)
@@ -241,9 +242,11 @@ void BackGroundLayer::setSurface(const std::string &name, float startPos, float 
             float start = child->getPosition().x;
             float end = start + (child->getContentSize().width * child->getScaleX());
             if (start >= startPos && end <= endPos) 
-                removeChild(child);
+                toRemove.push_back(child);
         }
     }
+    for (auto child : toRemove)
+        removeChild(child);
 
     do {
         if (offset >= endPos)

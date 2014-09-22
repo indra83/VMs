@@ -61,7 +61,7 @@ private :
     cocos2d::Layer * _personLayer;
     cocos2d::Sprite * _person;
     cocos2d::Sprite * _anotherPerson;
-    std::function< bool () > _periodicCB;
+    std::function< bool (float) > _periodicCB;
     cocos2d::LabelTTF * _speedLabel;
     cocos2d::LabelTTF * _massLabel;
     cocos2d::Sprite * _needle;
@@ -120,6 +120,8 @@ public :
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
     void setFriction(float coeff, cocos2d::Color3B color, float startPos, float endPos);
     void setPeriodicCB( std::function< bool () > cb ) { _periodicCB = cb; }
+    void setFriction(float coeff, cocos2d::Color4F color, float startPos, float endPos);
+    void setPeriodicCB( std::function< bool (float) > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
     Node * addStationaryChild(std::function< cocos2d::Node * () > generator, cocos2d::Vec2 pos);
