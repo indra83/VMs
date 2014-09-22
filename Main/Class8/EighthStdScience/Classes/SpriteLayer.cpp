@@ -299,7 +299,7 @@ std::string SpriteLayer::getMassString()
 std::string SpriteLayer::getSpeedString()
 {
     std::stringstream sstr;
-    sstr << "Speed - " << (int)_velocity << " m/sec";
+    sstr << "Speed - " << abs((int)_velocity) << " m/sec";
     return sstr.str();
 }
 
