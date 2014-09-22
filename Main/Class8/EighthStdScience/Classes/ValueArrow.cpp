@@ -31,7 +31,7 @@ bool ValueArrow::initWithFile(const std::string &fileName , const Rect &capInset
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	// force value label
-	_labelForce = LabelTTF::create("", "fonts/Maven Pro Black.otf", 30);
+	_labelForce = LabelTTF::create("", "fonts/American Typewriter.ttf", 30);
 	_labelForce->setHorizontalAlignment(TextHAlignment::LEFT);
 	_labelForce->setColor(Color3B::BLACK);
 	this->addChild(_labelForce, 1);
@@ -69,6 +69,7 @@ void ValueArrow::adjustSize()
 		std::stringstream sstr;
 		sstr << (int)val << " N";
 //		_labelForce->setString(sstr.str());
+//		_labelForce->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2));
 
 		// scaling the arrows
 		auto cont_wd = _contWD;

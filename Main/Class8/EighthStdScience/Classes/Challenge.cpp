@@ -452,6 +452,12 @@ std::string Challenge3::getTimeString()
 void Challenge3::countDownTimer(float dt)
 {
     _timeLeft -= dt;
+    if(_timeLeft <= 11.0)
+    {
+    	_timeLabel->setColor(Color3B::RED);
+    	_timeLabel->runAction(Blink::create(10 , 10));
+    }
+
     if(floor(_timeLeft) <= 0)
     {
         unschedule(schedule_selector(Challenge3::countDownTimer));
