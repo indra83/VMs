@@ -48,6 +48,8 @@ bool SpriteLayer::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+    _posX = visibleSize.width/2;
+
     //////////////////////////////
     // 2. add mini map
     _minimap = Layer::create();
@@ -243,11 +245,25 @@ void SpriteLayer::addPersonOfForce()
         addToMovables(_personLayer);
 }
 
+float SpriteLayer::getFrictionCoefficient()
+{
+    float coeff = _frictionCoefficient;
+    auto found = std::find_if(_frictionOverrides.begin(), _frictionOverrides.end(),
+                 [this](FrictionOverride &f) -> bool
+                 {
+                    return ( _posX >= f.startPos ) && ( _posX < f.endPos );
+                 });
+    if (found != _frictionOverrides.end())
+        coeff = (*found).coeff;
+
+    return coeff;
+}
+
 float SpriteLayer::getFrictionalForce()
 {
     float fric = 0.0;
     float gravity = 10.0;
-    float max = _frictionCoefficient * _mass * gravity;
+    float max = getFrictionCoefficient() * _mass * gravity;
     if (fabs(_velocity) > EPSILON)
         fric = _velocity > 0.0 ? -max : max;
     else if (fabs(_forceExternalValue) != 0.0)
@@ -332,6 +348,8 @@ void SpriteLayer::update(float dt)
         dx = floor(_velocity) * dt * PTM_RATIO;
     _speedLabel->setString(getSpeedString());
 
+    _posX += dx;
+
     for( auto mov: _movables )
     {
         auto node = mov.getNode();
@@ -391,12 +409,25 @@ void SpriteLayer::setFriction(float coeff, Color4F color, float startPos, float 
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
     auto drawNode = DrawNode::create();
-    drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, Color4F(color.r,color.g,color.b,color.a));
+    drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, color);
     drawNode->setPosition(Vec2((startPos * MINI_MAP_SCALE) + visibleSize.width/2, 0.0)); 
     _minimap->addChild(drawNode, 100);
     addToMovables(drawNode, 0.0, MINI_MAP_SCALE);
-    //setFrictionCoefficientOverride(coeff);
-    setFrictionCoefficient(coeff);
+    setFrictionCoefficientOverride(coeff, startPos, endPos);
+}
+
+void SpriteLayer::setFrictionCoefficientOverride(float coeff, float startPos, float endPos)
+{
+    FrictionOverride overlay = {coeff, startPos, endPos};
+    auto found = std::find_if(_frictionOverrides.begin(), _frictionOverrides.end(),
+                                [&](FrictionOverride &f) -> bool
+                                {
+                                    return (overlay.startPos == f.startPos) && (overlay.endPos == f.endPos);
+                                });
+    if (found != _frictionOverrides.end())
+        _frictionOverrides.erase(found);
+
+    _frictionOverrides.push_back(overlay);
 }
 
 void SpriteLayer::addAnotherPerson()
