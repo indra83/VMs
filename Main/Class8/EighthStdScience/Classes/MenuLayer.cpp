@@ -77,9 +77,9 @@ public :
 
 MenuLayer::SurfInfo MenuLayer::SURF_INFO[MenuLayer::LAST] = 
 {
-    { 0.1, "ICE",    "ice.png",    Color3B::WHITE },
-    { 0.5, "GRASS",  "grass.png",  Color3B::GREEN },
-    { 1.0, "GRAVEL", "gravel.png", Color3B::RED   }
+    { 0.1, "ICE",    "ice.png",    Color4F(210,220,255,255) },
+    { 0.5, "GRASS",  "grass.png",  Color4F(104,145,16,255) },
+    { 1.0, "GRAVEL", "gravel.png", Color4F(208,194,156,255)   }
 };
 
 // on "init" you need to initialize your instance
@@ -166,7 +166,7 @@ Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec
     auto setSurfFromTag = [=](int tag) -> void
     {
         surf->setString(SURF_INFO[tag].label);
-        surf->setFontFillColor(SURF_INFO[tag].color);
+        surf->setColor(Color3B(SURF_INFO[tag].color.r,SURF_INFO[tag].color.g,SURF_INFO[tag].color.b));
         cb(tag);
     };
 

@@ -21,7 +21,7 @@ public :
         float coeff;
         std::string label;
         std::string sprite;
-        cocos2d::Color3B color;
+        cocos2d::Color4F color;
     };
 
     static SurfInfo SURF_INFO[LAST];  
