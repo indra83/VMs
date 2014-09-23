@@ -395,6 +395,7 @@ bool Challenge3::init(bool showInfo)
     _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
     _spriteLayer->setMiniMapOffset(-visibleSize.width/2);
 
+    //add destination
     static float TARGET_LOC = 6 * visibleSize.width;
     auto gen = []() -> Node *
     {
@@ -405,6 +406,7 @@ bool Challenge3::init(bool showInfo)
     };
     _spriteLayer->addStationaryChild(gen, Vec2(TARGET_LOC, visibleSize.height/3 + 10));
 
+    // add countdown timer
     auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (timeLabel->getContentSize().height)));
@@ -419,6 +421,7 @@ bool Challenge3::init(bool showInfo)
     secLabel->setColor(Color3B::BLACK);
     this->addChild(secLabel);
 
+    // add surface selection menus
     auto selectCB = [this](int surf, float startPos, float endPos) -> void
     {
         _spriteLayer->setFriction(MenuLayer::SURF_INFO[surf].coeff, MenuLayer::SURF_INFO[surf].color, startPos, endPos);
@@ -456,6 +459,7 @@ bool Challenge3::init(bool showInfo)
 	playMenu->setPosition(Vec2::ZERO);
 	this->addChild(playMenu , MN_ZINDEX);
 
+    // setup challenege completion checks
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([=](float vel) -> bool
     {
