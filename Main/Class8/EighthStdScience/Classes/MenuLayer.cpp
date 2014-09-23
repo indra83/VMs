@@ -79,7 +79,7 @@ MenuLayer::SurfInfo MenuLayer::SURF_INFO[MenuLayer::LAST] =
 {
     { 0.1, "ICE",    "ice.png",    Color4F(210,220,255,255) },
     { 0.5, "GRASS",  "grass.png",  Color4F(104,145,16,255) },
-    { 1.0, "GRAVEL", "gravel.png", Color4F(208,194,156,255)   }
+    { 0.8, "GRAVEL", "gravel.png", Color4F(208,194,156,255) }
 };
 
 // on "init" you need to initialize your instance

@@ -391,7 +391,7 @@ void SpriteLayer::setFriction(float coeff, Color4F color, float startPos, float 
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
     auto drawNode = DrawNode::create();
-    drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, color);
+    drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, Color4F(color.r,color.g,color.b,color.a));
     drawNode->setPosition(Vec2((startPos * MINI_MAP_SCALE) + visibleSize.width/2, 0.0)); 
     _minimap->addChild(drawNode, 100);
     addToMovables(drawNode, 0.0, MINI_MAP_SCALE);
