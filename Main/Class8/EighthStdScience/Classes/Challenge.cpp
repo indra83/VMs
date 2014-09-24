@@ -404,6 +404,14 @@ bool Challenge3::init(bool showInfo)
     };
     _spriteLayer->addStationaryChild(gen, Vec2(6 * visibleSize.width, visibleSize.height/3 + 10));
 
+    auto gen2 = [] () -> Node *
+	{
+    	auto tanker = Sprite::create("tanker.png");
+    	tanker->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    	return tanker;
+	};
+    _spriteLayer->addStationaryChild(gen2, Vec2(7 * visibleSize.width, visibleSize.height/3 + 10));
+
     auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (timeLabel->getContentSize().height)));
