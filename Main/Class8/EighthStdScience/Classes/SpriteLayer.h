@@ -37,6 +37,13 @@ public:
 
 };
 
+struct FrictionOverride
+{
+    float coeff;
+    float startPos;
+    float endPos;
+};
+
 class SpriteLayer : public cocos2d::Layer 
 {
 public :
@@ -72,6 +79,7 @@ private :
     float _velocity;
     float _mass;
     float _frictionCoefficient;
+    std::vector<FrictionOverride> _frictionOverrides;
     float _angle;
     bool _showAnotherPerson;
     std::vector< Movable > _movables;
@@ -79,6 +87,7 @@ private :
     MenuLayer * _menuLayer;
     Layer * _minimap;
     float _minimapOffset;
+    float _posX;
 
 public :  
     SpriteLayer() : 
@@ -98,13 +107,15 @@ public :
        _velocity(0.0),
        _mass(0.0),
        _frictionCoefficient(0.0),
+       _frictionOverrides(),
        _showAnotherPerson(false),
        _periodicCB(),
        _movables(),
        _personFell(false),
        _menuLayer(nullptr),
        _minimap(nullptr),
-       _minimapOffset(0.0) {}
+       _minimapOffset(0.0),
+       _posX(0.0) {}
 
     ~SpriteLayer();
 
@@ -118,6 +129,8 @@ public :
     void update(float) override;
     void setMass(float mass);
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
+    float getFrictionCoefficient();
+    void setFrictionCoefficientOverride(float coeff, float startPos, float endPos);
     void setFriction(float coeff, cocos2d::Color4F color, float startPos, float endPos);
     void setPeriodicCB( std::function< bool (float) > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
