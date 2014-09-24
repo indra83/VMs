@@ -477,7 +477,13 @@ bool Challenge3::init(bool showInfo)
         //TODO: needs more tweaking
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC )
         {
-            done(vel == 0.0);
+        	auto boom = Sprite::create("boom.png");
+        	boom->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+        	this->addChild(boom , MN_ZINDEX);
+        	// TODO: add a blast sound
+
+        	// action on boom sprite after blast
+//        	done(vel == 0.0);
             return false;
         }
         return true;
