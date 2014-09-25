@@ -131,7 +131,8 @@ public :
     void setFrictionCoefficient(float coeff) { _frictionCoefficient = coeff; }
     float getFrictionCoefficient();
     void setFrictionCoefficientOverride(float coeff, float startPos, float endPos);
-    void setFriction(float coeff, cocos2d::Color4F color, float startPos, float endPos);
+    void setFriction(float coeff, const std::string & sprite, float startPos, float endPos);
+    void addMiniSurface(float startPos, float endPos, const std::string &sprite, bool movable);
     void setPeriodicCB( std::function< bool (float) > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
@@ -141,6 +142,7 @@ public :
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
     void setMiniMapOffset(float off);
+    void setBaseSurface(float coeff, const std::string & sprite);
 
 private :    
     std::string getMassString();

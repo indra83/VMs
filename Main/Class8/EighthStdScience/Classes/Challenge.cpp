@@ -121,6 +121,11 @@ bool Challenge<Derived>::init(bool showInfo)
     return true;
 }
 
+template< class Derived >
+void Challenge<Derived>::addBaseSurface(MenuLayer::SurfaceType surf)
+{
+    _spriteLayer->setBaseSurface(MenuLayer::SURF_INFO[surf].coeff, MenuLayer::SURF_INFO[surf].sprite);
+}
 
 template< class Derived >
 void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption, bool loud, bool vibrate, bool replace)
@@ -194,7 +199,7 @@ bool Challenge1::init(bool showInfo)
     }
 
     _spriteLayer->setMass(30.0);
-    _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
+    addBaseSurface(MenuLayer::GRASS);
     // add the force menu
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge1::forceValueChanged));
 
@@ -304,7 +309,7 @@ bool Challenge2::init(bool showInfo)
     _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge2::forceValueChanged));
 
     _spriteLayer->setMass(15.0);
-    _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
+    addBaseSurface(MenuLayer::GRASS);
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -392,7 +397,7 @@ bool Challenge3::init(bool showInfo)
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     _spriteLayer->setMass(10.0);
-    _spriteLayer->setFrictionCoefficient(MenuLayer::SURF_INFO[MenuLayer::GRASS].coeff);
+    addBaseSurface(MenuLayer::GRASS);
     _spriteLayer->setMiniMapOffset(-visibleSize.width/2);
 
     //add destination
@@ -435,7 +440,7 @@ bool Challenge3::init(bool showInfo)
     // add surface selection menus
     auto selectCB = [this](int surf, float startPos, float endPos) -> void
     {
-        _spriteLayer->setFriction(MenuLayer::SURF_INFO[surf].coeff, MenuLayer::SURF_INFO[surf].color, startPos, endPos);
+        _spriteLayer->setFriction(MenuLayer::SURF_INFO[surf].coeff, MenuLayer::SURF_INFO[surf].sprite, startPos, endPos);
         _bgLayer->setSurface(MenuLayer::SURF_INFO[surf].sprite, startPos, endPos);
     };
 

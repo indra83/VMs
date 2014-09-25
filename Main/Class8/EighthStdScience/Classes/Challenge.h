@@ -4,9 +4,10 @@
 #include "cocos2d.h"
 #include "extensions/cocos-ext.h"
 
+#include "MenuLayer.h"
+
 class BackGroundLayer;
 class SpriteLayer;
-class MenuLayer;
 
 
 template< class Derived >
@@ -29,6 +30,7 @@ public:
 
     virtual void showInfoPopup() = 0;
     void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
+    void addBaseSurface(MenuLayer::SurfaceType surf);
     void done(bool);
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);

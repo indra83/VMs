@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "NativeHelper.h"
 #include "ValueArrow.h"
+#include "Util.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -53,21 +54,12 @@ bool SpriteLayer::init()
     //////////////////////////////
     // 2. add mini map
     _minimap = Layer::create();
-
     _minimap->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     _minimap->setPosition(Vec2(_minimapOffset, visibleSize.height/12));
-
-
-    auto drawNode = DrawNode::create();
-    drawNode->drawSegment(Vec2::ZERO, Vec2(2*visibleSize.width, 0.0), 1.0, Color4F::GREEN);
-    drawNode->setPosition(Vec2::ZERO);
-    _minimap->addChild(drawNode);
-
     addChild(_minimap, LABEL_ZINDEX);
 
     //////////////////////////////
     // 3. add crate
-    
     auto gen = []() -> Node *
     {
         auto node = Sprite::create("crate.png");
@@ -365,6 +357,7 @@ void SpriteLayer::update(float dt)
     Node::update(dt);
 }
 
+// N.B. coordinates are w.r.t. to crate
 Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float velocity, int zindex, Vec2 pos, bool baseMover)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -405,14 +398,69 @@ void SpriteLayer::removeFromMovables( Node * node )
         _movables.erase(f); 
 }
 
-void SpriteLayer::setFriction(float coeff, Color4F color, float startPos, float endPos)
+void SpriteLayer::addMiniSurface(float startPos, float endPos, const std::string &sprite, bool movable)
+{
+    static int SURF_TAG = 1;
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    // TODO: calculate startPos
+    auto origStartPos = startPos;
+    startPos = (origStartPos - visibleSize.width/2)*MINI_MAP_SCALE;
+    endPos = startPos + ( (endPos - origStartPos ) * MINI_MAP_SCALE );
+
+    // drop existing surface
+    // TODO: this is currently rudimentary
+    std::vector< Node * > toRemove;
+    for (auto child : _minimap->getChildren())
+    {
+        if (child->getTag() == SURF_TAG)
+        {
+            float start = child->getPosition().x;
+            float end = start + (child->getContentSize().width * child->getScaleX());
+            if (start >= startPos && end <= endPos) 
+                toRemove.push_back(child);
+        }
+    }
+
+    for (auto child : toRemove)
+    {
+        _minimap->removeChild(child);
+        if (movable)
+            removeFromMovables(child);
+    }
+
+    auto offset = startPos;
+    do {
+        if (offset >= endPos)
+            break;
+        auto surface = Sprite::create(sprite);
+        if (movable)
+            surface->setTag(SURF_TAG);
+        surface->setScaleY(MINI_MAP_SCALE);
+        if ( (endPos - offset) < surface->getContentSize().width )
+            surface->setScaleX( (endPos - offset) / surface->getContentSize().width );
+        surface->setPosition(Vec2(offset + visibleSize.width/2, 0));
+        offset += surface->getContentSize().width * surface->getScaleX();
+        surface->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+        _minimap->addChild(surface, 1);
+        if (movable)
+            addToMovables(surface, 0.0, MINI_MAP_SCALE);
+    } while(true);
+
+}
+
+void SpriteLayer::setBaseSurface(float coeff, const std::string & sprite)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    auto drawNode = DrawNode::create();
-    drawNode->drawSegment(Vec2::ZERO, Vec2((endPos - startPos) * MINI_MAP_SCALE, 0.0), 1.0, color);
-    drawNode->setPosition(Vec2((startPos * MINI_MAP_SCALE) + visibleSize.width/2, 0.0)); 
-    _minimap->addChild(drawNode, 100);
-    addToMovables(drawNode, 0.0, MINI_MAP_SCALE);
+    addMiniSurface(0.0, 2*visibleSize.width/MINI_MAP_SCALE, sprite, false);
+    setFrictionCoefficient(coeff);
+}
+
+void SpriteLayer::setFriction(float coeff, const std::string &sprite, float startPos, float endPos)
+{
+    static int SURF_TAG = 1;
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+
+    addMiniSurface(startPos, endPos, sprite, true);
     setFrictionCoefficientOverride(coeff, startPos, endPos);
 }
 
