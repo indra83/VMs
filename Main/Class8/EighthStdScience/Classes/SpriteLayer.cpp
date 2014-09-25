@@ -451,7 +451,7 @@ void SpriteLayer::addMiniSurface(float startPos, float endPos, const std::string
 void SpriteLayer::setBaseSurface(float coeff, const std::string & sprite)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    addMiniSurface(0.0, 2*visibleSize.width/MINI_MAP_SCALE, sprite, false);
+    addMiniSurface(-2*visibleSize.width/MINI_MAP_SCALE, 2*visibleSize.width/MINI_MAP_SCALE, sprite, false);
     setFrictionCoefficient(coeff);
 }
 
