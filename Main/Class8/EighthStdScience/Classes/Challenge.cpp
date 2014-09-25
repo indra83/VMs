@@ -9,6 +9,8 @@
 #include "Util.h"
 #include "SimpleAudioEngine.h"
 
+#include <iomanip> // setw, setfill
+
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
@@ -316,16 +318,46 @@ bool Challenge2::init(bool showInfo)
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
+    static const int PEOPLE_TAG = 1; 
     auto limitWidth = visibleSize.width / SpriteLayer::MINI_MAP_SCALE;
+
     // fill up the limits
     auto initTrollies = [=] (bool right) -> void
     {
 
         auto gen = [=](bool mini) -> Node *
         {
-            auto node = Sprite::create("trolley.png");
+            auto trolley = Sprite::create("trolley.png");
+            trolley->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            if (mini)
+                return trolley;
+
+            auto node = Node::create();
             node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-            // TODO: add people on top based on mini flag
+
+            trolley->setPosition(Vec2::ZERO);
+            node->addChild(trolley);
+
+            auto people = Sprite::create("lift00.png");
+            people->setPosition(Vec2(0.0, trolley->getContentSize().height * trolley->getScale()));
+            people->setTag(PEOPLE_TAG);
+            people->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            node->addChild(people, 1);
+
+            /*
+            Vector<SpriteFrame*> frames;
+            for ( int i=0; i<=15; i++)
+            {
+                std::stringstream sstr;
+                sstr << "lift" << std::setfill('0') << std::setw(2) << i << ".png";
+                auto frame = SpriteFrame::create(sstr.str(), Rect(0.0, 0.0, people->getContentSize().width, people->getContentSize().height));
+                frames.pushBack(frame);
+            }
+            Animation * anim = Animation::createWithSpriteFrames(frames, 0.1, -1);
+            auto theAnim = Animate::create(anim); 
+            people->runAction(theAnim);
+            */
+
             return node;
         };
 
@@ -333,10 +365,10 @@ bool Challenge2::init(bool showInfo)
         while(widthCovered < limitWidth)
         {
             auto trolley = _spriteLayer->addMovingChild(gen,
-                                         (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
-                                         right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
-                                         Vec2( widthCovered, visibleSize.height/3 + 10),
-                                         false);
+                    (right ? 1 : -1 ) * TROLLEY_VELOCITY, 
+                    right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
+                    Vec2( widthCovered, visibleSize.height/3 + 10),
+                    false);
             _trollies.push_back(trolley);
             widthCovered += ( INTERVAL * SpriteLayer::PTM_RATIO );
         };
@@ -358,6 +390,14 @@ bool Challenge2::init(bool showInfo)
                         miniNode->setPosition(miniNode->getPosition() + ( direction * Vec2(2*limitWidth*SpriteLayer::MINI_MAP_SCALE, 0.0) ));
                 };
 
+                auto getPeople = [=]( Node * node ) -> Node *
+                {
+                    for (auto child : node->getChildren())
+                        if (child->getTag() == PEOPLE_TAG)
+                            return child;
+                    return nullptr;
+                };
+
                 // periodically check where the current trolleys are.. add and remove sprites as they move out the visible region
                 for( auto trolley : _trollies )                 
                 {
@@ -369,14 +409,27 @@ bool Challenge2::init(bool showInfo)
                     {
                         move(trolley, true);
                     }
-                    if ( trolley->getPosition().x + trolley->getContentSize().width/2 >= visibleSize.width/2
-                       &&  trolley->getPosition().x - trolley->getContentSize().width/2 <= visibleSize.width/2 )
+
+                    //CCLOG("++++++++++++++++ SMK: trolley(%x) - abs(%f, %f), pos(%f,%f)", 
+                    //        trolley, getAbsolutePosition(trolley).x, getAbsolutePosition(trolley).y, trolley->getPosition().x, trolley->getPosition().y);
+                    auto trolleySize = trolley->getContentSize() * trolley->getScale());
+                    if ( trolley->getPosition().x + trolleySize.width/2 >= visibleSize.width/2
+                       &&  trolley->getPosition().x - trolleySize.width/2 <= visibleSize.width/2 )
                     {
                         float &existing = sTimeInfo[trolley]; 
                         existing += dt;
+                        
+                        //get the people on top
+                        auto people = getPeople(trolley);
+
+                        auto peopleSize = people->getContentSize() * people->getScale();
+                        auto skew = trolley->getPosition(); 
+                        CCLOG("++++++++++++++ SMK :skew - (%f)", skew.x);
+                        if (fabs(skew.x) < ( trolleySize.width/2 - peopleSize.width/2) )
+                            people->setPosition(-skew.x, people->getPosition().y);
 
                         // TODO : explaination
-                        static const float COINCIDENT_TIME = (trolley->getContentSize().width * trolley->getScaleX() / SpriteLayer::PTM_RATIO);
+                        static const float COINCIDENT_TIME = (trolley->getContentSize().width * trolley->getScale() / SpriteLayer::PTM_RATIO);
                         if (existing > COINCIDENT_TIME) 
                         {
                             done(true);
