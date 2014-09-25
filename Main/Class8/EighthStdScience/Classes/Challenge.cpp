@@ -209,7 +209,7 @@ bool Challenge1::init(bool showInfo)
     // add destinations on both sides
     auto addDestination = [this, visibleSize] ( bool right ) -> void
     {
-        auto gen = []() -> Node *
+        auto gen = [](bool mini) -> Node *
         {
             auto dest = Sprite::create("destination.png");
             dest->setScale(0.8);
@@ -224,7 +224,7 @@ bool Challenge1::init(bool showInfo)
     addDestination(false);
 
     Vec2 originalPos = _bgLayer->getPosition();
-    _spriteLayer->setPeriodicCB([this, originalPos] (float unused) -> bool
+    _spriteLayer->setPeriodicCB([this, originalPos] (float unused, float dt) -> bool
     {
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_METRES * SpriteLayer::PTM_RATIO )
         {
@@ -318,10 +318,11 @@ bool Challenge2::init(bool showInfo)
     auto initTrollies = [=] (bool right) -> void
     {
 
-        auto gen = [=]() -> Node *
+        auto gen = [=](bool mini) -> Node *
         {
             auto node = Sprite::create("trolley.png");
             node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            // TODO: add people on top based on mini flag
             return node;
         };
 
@@ -341,7 +342,8 @@ bool Challenge2::init(bool showInfo)
     initTrollies(true);
     initTrollies(false);
 
-    _spriteLayer->setPeriodicCB([=](float unused) -> bool
+    //struct 
+    _spriteLayer->setPeriodicCB([=](float unused, float dt) -> bool
             {    
                 auto move = [=]( Node * node, bool right) -> void
                 {
@@ -351,6 +353,8 @@ bool Challenge2::init(bool showInfo)
                     if ( miniNode )
                         miniNode->setPosition(miniNode->getPosition() + ( direction * Vec2(2*limitWidth*SpriteLayer::MINI_MAP_SCALE, 0.0) ));
                 };
+                //static std;;vector<> coinciding_trollies
+
                 // periodically check where the current trolleys are.. add and remove sprites as they move out the visible region
                 for( auto trolley : _trollies )                 
                 {
@@ -362,8 +366,15 @@ bool Challenge2::init(bool showInfo)
                     {
                         move(trolley, true);
                     }
+                    if ( trolley->getPosition().x + trolley->getContentSize().width/2 >= visibleSize.width/2
+                       &&  trolley->getPosition().x - trolley->getContentSize().width/2 <= visibleSize.width/2 )
+                    {
+                        // trolley is alongside crate
+                        //done(true);
+                    }
                 };
                 // TODO: also check if there is a sprite at 0,0 and for how long
+                
                 return true;
             });
 
@@ -402,7 +413,7 @@ bool Challenge3::init(bool showInfo)
 
     //add destination
     static float TARGET_LOC = 6 * visibleSize.width;
-    auto gen = []() -> Node *
+    auto gen = [](bool mini) -> Node *
     {
         auto dest = Sprite::create("destination.png");
         dest->setScale(0.8);
@@ -412,7 +423,7 @@ bool Challenge3::init(bool showInfo)
     _spriteLayer->addStationaryChild(gen, Vec2(TARGET_LOC, visibleSize.height/3 + 10));
 
 
-    auto gen2 = [] () -> Node *
+    auto gen2 = [] (bool mini) -> Node *
 	{
     	auto tanker = Sprite::create("tanker.png");
     	tanker->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -420,9 +431,7 @@ bool Challenge3::init(bool showInfo)
 	};
     _spriteLayer->addStationaryChild(gen2, Vec2(7 * visibleSize.width, visibleSize.height/3 + 10));
 
-
     // add countdown timer
-
     auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
     timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
     timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (timeLabel->getContentSize().height)));
@@ -477,7 +486,7 @@ bool Challenge3::init(bool showInfo)
 
     // setup challenege completion checks
     Vec2 originalPos = _bgLayer->getPosition();
-    _spriteLayer->setPeriodicCB([=](float vel) -> bool
+    _spriteLayer->setPeriodicCB([=](float vel, float dt) -> bool
     {
         //TODO: needs more tweaking
         if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC )

@@ -60,7 +60,7 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 3. add crate
-    auto gen = []() -> Node *
+    auto gen = [](bool mini) -> Node *
     {
         auto node = Sprite::create("crate.png");
         node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
@@ -318,7 +318,7 @@ void SpriteLayer::setMass(float mass)
 
 void SpriteLayer::update(float dt)
 {
-    if (_periodicCB && !_periodicCB(_velocity))
+    if (_periodicCB && !_periodicCB(_velocity, dt))
         return;
 
     if (!_personFell && fabs(_velocity) > MAX_SPEED)
@@ -358,13 +358,13 @@ void SpriteLayer::update(float dt)
 }
 
 // N.B. coordinates are w.r.t. to crate
-Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float velocity, int zindex, Vec2 pos, bool baseMover)
+Node * SpriteLayer::addMovingChild(std::function< Node * (bool) > generator, float velocity, int zindex, Vec2 pos, bool baseMover)
 {
     Size visibleSize = Director::getInstance()->getVisibleSize();
     auto create = [=] (bool mini) ->  Node *
     {
         auto scale = mini ? MINI_MAP_SCALE : 1.0;
-        Node * node = generator();
+        Node * node = generator(mini);
         node->setScale(node->getScale() * scale);
 
         node->setPosition(Vec2((pos.x*scale) + visibleSize.width/2, mini ? 0.0 : pos.y)); 
@@ -381,7 +381,7 @@ Node * SpriteLayer::addMovingChild(std::function< Node * () > generator, float v
     return node;
 }
 
-Node * SpriteLayer::addStationaryChild(std::function< Node * () > generator, Vec2 pos)
+Node * SpriteLayer::addStationaryChild(std::function< Node * (bool) > generator, Vec2 pos)
 {
     return addMovingChild(generator, 0.0, STATIONARY_ZINDEX, pos, false);
 }

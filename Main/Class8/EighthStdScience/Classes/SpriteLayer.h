@@ -68,7 +68,7 @@ private :
     cocos2d::Layer * _personLayer;
     cocos2d::Sprite * _person;
     cocos2d::Sprite * _anotherPerson;
-    std::function< bool (float) > _periodicCB;
+    std::function< bool (float, float) > _periodicCB;
     cocos2d::LabelTTF * _speedLabel;
     cocos2d::LabelTTF * _massLabel;
     cocos2d::Sprite * _needle;
@@ -133,11 +133,11 @@ public :
     void setFrictionCoefficientOverride(float coeff, float startPos, float endPos);
     void setFriction(float coeff, const std::string & sprite, float startPos, float endPos);
     void addMiniSurface(float startPos, float endPos, const std::string &sprite, bool movable);
-    void setPeriodicCB( std::function< bool (float) > cb ) { _periodicCB = cb; }
+    void setPeriodicCB( std::function< bool (float, float) > cb ) { _periodicCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
     void addAnotherPerson();
-    Node * addStationaryChild(std::function< cocos2d::Node * () > generator, cocos2d::Vec2 pos);
-    Node * addMovingChild(std::function< cocos2d::Node * () > generator, float vel, int zIndex, cocos2d::Vec2 pos, bool baseMover);
+    Node * addStationaryChild(std::function< cocos2d::Node * (bool) > generator, cocos2d::Vec2 pos);
+    Node * addMovingChild(std::function< cocos2d::Node * (bool) > generator, float vel, int zIndex, cocos2d::Vec2 pos, bool baseMover);
     void addToMovables( Node * node, float vel=0.0, float scale=1.0 );
     void removeFromMovables( cocos2d::Node * node );
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
