@@ -342,7 +342,8 @@ bool Challenge2::init(bool showInfo)
     initTrollies(true);
     initTrollies(false);
 
-    //struct 
+    static std::map<Node *, float> sTimeInfo;
+    sTimeInfo.clear();
     _spriteLayer->setPeriodicCB([=](float unused, float dt) -> bool
             {    
                 auto move = [=]( Node * node, bool right) -> void
@@ -353,7 +354,6 @@ bool Challenge2::init(bool showInfo)
                     if ( miniNode )
                         miniNode->setPosition(miniNode->getPosition() + ( direction * Vec2(2*limitWidth*SpriteLayer::MINI_MAP_SCALE, 0.0) ));
                 };
-                //static std;;vector<> coinciding_trollies
 
                 // periodically check where the current trolleys are.. add and remove sprites as they move out the visible region
                 for( auto trolley : _trollies )                 
@@ -369,11 +369,24 @@ bool Challenge2::init(bool showInfo)
                     if ( trolley->getPosition().x + trolley->getContentSize().width/2 >= visibleSize.width/2
                        &&  trolley->getPosition().x - trolley->getContentSize().width/2 <= visibleSize.width/2 )
                     {
-                        // trolley is alongside crate
-                        //done(true);
+                        float &existing = sTimeInfo[trolley]; 
+                        existing += dt;
+
+                        // TODO : explaination
+                        static const float COINCIDENT_TIME = (trolley->getContentSize().width * trolley->getScaleX() / SpriteLayer::PTM_RATIO);
+                        if (existing > COINCIDENT_TIME) 
+                        {
+                            done(true);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        auto found = sTimeInfo.find(trolley);
+                        if (found != sTimeInfo.end())
+                            sTimeInfo.erase(found);
                     }
                 };
-                // TODO: also check if there is a sprite at 0,0 and for how long
                 
                 return true;
             });
