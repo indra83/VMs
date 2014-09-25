@@ -48,4 +48,14 @@ void captureScreenAsSprite(std::function< void (Sprite *) > cb)
     Director::getInstance()->getRenderer()->addCommand(&captureScreenCommand);
 }
 
-
+Vec2 getAbsolutePosition( Node * node)
+{
+    Vec2 ret = node->getPosition();
+    Node *cn = node;
+    while (cn->getParent() != nullptr)
+    {
+        cn = cn->getParent();
+        ret = ret + cn->getPosition();
+    }
+    return ret;
+}
