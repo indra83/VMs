@@ -510,7 +510,7 @@ bool Challenge3::init(bool showInfo)
     _spriteLayer->setPeriodicCB([=](float vel, float dt) -> bool
     {
     	if(fabs(_bgLayer->getPosition().x - originalPos.x) > TARGET_LOC &&
-    			fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END)
+    			fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END - 75)	// 75 is half the crate width
     	{
     		// TODO: check why it's not working
     		if(vel == 0.0)
@@ -520,7 +520,7 @@ bool Challenge3::init(bool showInfo)
     			}
     	}
 
-    	else if( fabs(_bgLayer->getPosition().x - originalPos.x - 75) >= TARGET_LOC_END )
+    	else if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC_END - 75 )
         {
 			if (_count == 0)
 			{
@@ -532,8 +532,17 @@ bool Challenge3::init(bool showInfo)
 				// playing blast sound effect
 				SimpleAudioEngine::getInstance()->playEffect("audio/explosion.mp3");
 
-				// TODO: introduce a delay of 3 seconds
-				done(false);
+				// tint by white action
+				auto zoomin  = ScaleBy::create(0.5 , 2);
+				auto zoomout = ScaleTo::create(0.5, 1);
+				auto seq = Sequence::create(zoomin , zoomout , nullptr);
+				boom->runAction(RepeatForever::create(seq));
+
+				auto delay = DelayTime::create(3);
+				boom->runAction(delay);
+
+				// TODO: show done dialog after 3 seconds
+//				done(false);
 				return false;	// returning false to stop updating the background layer
 			}
 			return false; 	// returning false to stop updating background layer for points > TARGET_LOC_END
