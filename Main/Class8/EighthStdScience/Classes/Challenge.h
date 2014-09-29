@@ -70,7 +70,7 @@ public:
 class Challenge3: public Challenge<Challenge3>
 {
 public:
-	Challenge3() : _timeLeft(60.0), _timeLabel(nullptr) {}
+	Challenge3() : _count(0), _timeLeft(60.0), _timeLabel(nullptr) {}
 
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
@@ -78,6 +78,7 @@ public:
     std::string getTimeString(); 
     void countDownTimer(float dt);
 private :
+    int _count;
     float _timeLeft;
     cocos2d::LabelTTF * _timeLabel;
 };

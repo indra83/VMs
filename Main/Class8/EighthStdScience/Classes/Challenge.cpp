@@ -7,6 +7,7 @@
 #include "NativeHelper.h"
 #include "PopUpScene.h"
 #include "Util.h"
+#include "SimpleAudioEngine.h"
 
 static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
@@ -15,6 +16,8 @@ static const int MN_ZINDEX=2;
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+
+using namespace CocosDenshion;
 
 template< class Derived >
 Derived * Challenge<Derived>::create(bool showInfo)
@@ -420,12 +423,17 @@ bool Challenge3::init(bool showInfo)
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	// pre-loading effect for blast
+	SimpleAudioEngine::getInstance()->preloadEffect("audio/explosion.mp3");
+
     _spriteLayer->setMass(10.0);
     addBaseSurface(MenuLayer::GRASS);
     _spriteLayer->setMiniMapOffset(-visibleSize.width/2);
 
     //add destination
     static float TARGET_LOC = 6 * visibleSize.width;
+    static float TARGET_LOC_END = 7 * visibleSize.width;
+
     auto gen = [](bool mini) -> Node *
     {
         auto dest = Sprite::create("destination.png");
@@ -497,26 +505,43 @@ bool Challenge3::init(bool showInfo)
 	playMenu->setPosition(Vec2::ZERO);
 	this->addChild(playMenu , MN_ZINDEX);
 
-    // setup challenege completion checks
+    // setup challenge completion checks
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([=](float vel, float dt) -> bool
     {
-        //TODO: needs more tweaking
-        if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC )
-        {
-        	auto boom = Sprite::create("boom.png");
-        	boom->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
-        	this->addChild(boom , MN_ZINDEX);
-        	// TODO: add a blast sound
+    	if(fabs(_bgLayer->getPosition().x - originalPos.x) > TARGET_LOC &&
+    			fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END)
+    	{
+    		// TODO: check why it's not working
+    		if(vel == 0.0)
+    			{
+    				done(true);
+    				return false;	// returning false to stop updating the background layer
+    			}
+    	}
 
-        	// action on boom sprite after blast
-//        	done(vel == 0.0);
-            return false;
+    	else if( fabs(_bgLayer->getPosition().x - originalPos.x - 75) >= TARGET_LOC_END )
+        {
+			if (_count == 0)
+			{
+				_count += 1;
+				auto boom = Sprite::create("boom.png");
+				boom->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+				this->addChild(boom , MN_ZINDEX);
+
+				// playing blast sound effect
+				SimpleAudioEngine::getInstance()->playEffect("audio/explosion.mp3");
+
+				// TODO: introduce a delay of 3 seconds
+				done(false);
+				return false;	// returning false to stop updating the background layer
+			}
+			return false; 	// returning false to stop updating background layer for points > TARGET_LOC_END
         }
-        return true;
+        return true;	// no condition met then return true to update the background layer
     });
 
-    return true;
+    return true;	// return true of init()
 }
 
 std::string Challenge3::getTimeString() 
