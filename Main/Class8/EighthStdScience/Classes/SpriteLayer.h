@@ -144,6 +144,8 @@ public :
     void setMiniMapOffset(float off);
     void setBaseSurface(float coeff, const std::string & sprite);
 
+    cocos2d::Size getCrateSize() { return _crate->getContentSize()*_crate->getScale(); }
+
 private :    
     std::string getMassString();
     std::string getSpeedString();

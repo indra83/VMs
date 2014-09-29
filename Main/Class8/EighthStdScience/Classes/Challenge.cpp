@@ -474,10 +474,10 @@ bool Challenge3::init(bool showInfo)
     }
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	// pre-loading effect for blast
-	SimpleAudioEngine::getInstance()->preloadEffect("audio/explosion.mp3");
+    // pre-loading effect for blast
+    SimpleAudioEngine::getInstance()->preloadEffect("audio/explosion.mp3");
 
     _spriteLayer->setMass(10.0);
     addBaseSurface(MenuLayer::GRASS);
@@ -498,11 +498,11 @@ bool Challenge3::init(bool showInfo)
 
 
     auto gen2 = [] (bool mini) -> Node *
-	{
-    	auto tanker = Sprite::create("tanker.png");
-    	tanker->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    	return tanker;
-	};
+    {
+        auto tanker = Sprite::create("tanker.png");
+        tanker->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+        return tanker;
+    };
     _spriteLayer->addStationaryChild(gen2, Vec2(7 * visibleSize.width, visibleSize.height/3 + 10));
 
     // add countdown timer
@@ -516,7 +516,7 @@ bool Challenge3::init(bool showInfo)
     auto secLabel = LabelTTF::create("sec" , "fonts/Marker Felt.ttf" , 30);
     secLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     secLabel->setPosition(Vec2(origin.x + visibleSize.width/2 + timeLabel->getContentSize().width,
-    		origin.y + visibleSize.height - timeLabel->getContentSize().height));
+                origin.y + visibleSize.height - timeLabel->getContentSize().height));
     secLabel->setColor(Color3B::BLACK);
     this->addChild(secLabel);
 
@@ -530,17 +530,17 @@ bool Challenge3::init(bool showInfo)
     auto selectCB1 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2, visibleSize.width/2 + TARGET_LOC/2);
     auto selectCB2 = std::bind(selectCB, std::placeholders::_1, visibleSize.width/2 + TARGET_LOC/2, visibleSize.width/2 + TARGET_LOC);
 
-	// using menu layer to show surface selectors and play button for challenge 4
-	// surface selector section callfunc
-	auto surfSelectionMenu1 = _menuLayer->selectSurfaceFriction("Surface 1 Friction :", 
+    // using menu layer to show surface selectors and play button for challenge 4
+    // surface selector section callfunc
+    auto surfSelectionMenu1 = _menuLayer->selectSurfaceFriction("Surface 1 Friction :", 
             Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/4),
-			Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB1);
-	auto surfSelectionMenu2 = _menuLayer->selectSurfaceFriction("Surface 2 Friction :", 
+            Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB1);
+    auto surfSelectionMenu2 = _menuLayer->selectSurfaceFriction("Surface 2 Friction :", 
             Vec2(origin.x + 6*visibleSize.width/8 - 5 , origin.y + visibleSize.height/4),
-			Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB2);
+            Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB2);
 
-	// play button
-	auto play = MenuItemImage::create("play.png",
+    // play button
+    auto play = MenuItemImage::create("play.png",
                                   "play.png", 
                                   [=] (Ref* sender) -> void
                                   { 
@@ -552,54 +552,61 @@ bool Challenge3::init(bool showInfo)
                                         _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge3::forceValueChanged));
 
                                   });
-	play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+    play->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
 
-	auto playMenu = Menu::create(play , nullptr);
-	playMenu->setPosition(Vec2::ZERO);
-	this->addChild(playMenu , MN_ZINDEX);
-
+    auto playMenu = Menu::create(play , nullptr);
+    playMenu->setPosition(Vec2::ZERO);
+    this->addChild(playMenu , MN_ZINDEX);
+    auto halfCrateWidth = _spriteLayer->getCrateSize().width/2;
     // setup challenge completion checks
     Vec2 originalPos = _bgLayer->getPosition();
     _spriteLayer->setPeriodicCB([=](float vel, float dt) -> bool
     {
-    	if(fabs(_bgLayer->getPosition().x - originalPos.x) > TARGET_LOC &&
-    			fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END - 75)	// 75 is half the crate width
-    	{
-    		// TODO: check why it's not working
-    		if(vel == 0.0)
-    			{
-    				done(true);
-    				return false;	// returning false to stop updating the background layer
-    			}
-    	}
-
-    	else if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC_END - 75 )
+        static bool sPastSafePoint = false;
+        if(fabs(_bgLayer->getPosition().x - originalPos.x) > TARGET_LOC &&
+            fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END - halfCrateWidth)
         {
-			if (_count == 0)
-			{
-				_count += 1;
-				auto boom = Sprite::create("boom.png");
-				boom->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
-				this->addChild(boom , MN_ZINDEX);
-
-				// playing blast sound effect
-				SimpleAudioEngine::getInstance()->playEffect("audio/explosion.mp3");
-
-				// tint by white action
-				auto zoomin  = ScaleBy::create(0.5 , 2);
-				auto zoomout = ScaleTo::create(0.5, 1);
-				auto seq = Sequence::create(zoomin , zoomout , nullptr);
-				boom->runAction(RepeatForever::create(seq));
-
-				auto delay = DelayTime::create(3);
-				boom->runAction(delay);
-
-				// TODO: show done dialog after 3 seconds
-//				done(false);
-				return false;	// returning false to stop updating the background layer
-			}
-			return false; 	// returning false to stop updating background layer for points > TARGET_LOC_END
+            // TODO: check why it's not working
+            if(vel == 0.0)
+            {
+                done(true);
+                return false;	// returning false to stop updating the background layer
+            }
         }
+        else if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC_END - halfCrateWidth)
+        {
+            if (!sPastSafePoint)
+            {
+                sPastSafePoint = true;
+
+                auto boom = Sprite::create("boom.png");
+                boom->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height/2));
+                this->addChild(boom , MN_ZINDEX);
+
+                // playing blast sound effect
+                SimpleAudioEngine::getInstance()->playEffect("audio/explosion.mp3");
+                NativeHelper::vibrate(500);
+
+                // tint by white action
+                auto zoomin  = ScaleBy::create(0.5 , 2);
+                auto zoomout = ScaleTo::create(0.5, 1);
+                auto seq = Sequence::create(zoomin , zoomout , nullptr);
+                boom->runAction(RepeatForever::create(seq));
+
+                auto delay = DelayTime::create(3);
+                auto doneAction = CallFunc::create([=]() -> void { done(false); });
+                auto seq1 = Sequence::create(delay, doneAction, nullptr);
+                boom->runAction(seq1);
+
+                // TODO: show done dialog after 3 seconds
+                //				done(false);
+                return false;	// returning false to stop updating the background layer
+            }
+            return false; 	// returning false to stop updating background layer for points > TARGET_LOC_END
+        }
+        else
+            sPastSafePoint = false;
+
         return true;	// no condition met then return true to update the background layer
     });
 
