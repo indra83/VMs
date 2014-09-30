@@ -60,23 +60,25 @@ bool SpriteLayer::init()
 
     //////////////////////////////
     // 3. add crate
-    auto gen = [](bool mini) -> Node *
+    auto gen = [&](bool mini) -> Node *
     {
         auto node = Sprite::create("crate.png");
         node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+        if( !mini )
+        {
+
+            //////////////////////////////
+            // 4. add mass label
+            _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
+            _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
+            _massLabel->setColor(Color3B::BLACK);
+            _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+            _massLabel->setPosition(Vec2::ZERO);
+            node->addChild(_massLabel, LABEL_ZINDEX);
+        }
         return node;
     };
     _crate = addMovingChild(gen, 0.0, SPRITE_ZINDEX, Vec2(0.0, visibleSize.height/3 + 15), true);
-
-
-    //////////////////////////////
-    // 4. add mass label
-    _massLabel = LabelTTF::create(getMassString().c_str(), "fonts/Marker Felt.ttf", 30);
-    _massLabel->setHorizontalAlignment(TextHAlignment::LEFT);
-    _massLabel->setColor(Color3B::BLACK);
-    _massLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _massLabel->setPosition(Vec2::ZERO);
-    _crate->addChild(_massLabel, LABEL_ZINDEX);
 
     this->addChild(_crate, SPRITE_ZINDEX);
 

@@ -333,31 +333,29 @@ bool Challenge2::init(bool showInfo)
                 return trolley;
 
             auto node = Node::create();
-            node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+            //node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 
+            auto trolleySize = trolley->getContentSize() * trolley->getScale();
             trolley->setPosition(Vec2::ZERO);
             node->addChild(trolley);
 
-            auto people = Sprite::create("lift00.png");
-            people->setPosition(Vec2(0.0, trolley->getContentSize().height * trolley->getScale()));
+            auto people = Sprite::createWithSpriteFrameName("lift00.png");
+            //auto people = Sprite::create("pusher_straight_on.png");
+            people->setPosition(Vec2(0.0, trolleySize.height - 100.0));
             people->setTag(PEOPLE_TAG);
             people->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
             node->addChild(people, 1);
 
-            /*
-            Vector<SpriteFrame*> frames;
-            for ( int i=0; i<=15; i++)
-            {
-                std::stringstream sstr;
-                sstr << "lift" << std::setfill('0') << std::setw(2) << i << ".png";
-                auto frame = SpriteFrame::create(sstr.str(), Rect(0.0, 0.0, people->getContentSize().width, people->getContentSize().height));
-                frames.pushBack(frame);
-            }
-            Animation * anim = Animation::createWithSpriteFrames(frames, 0.1, -1);
-            auto theAnim = Animate::create(anim); 
-            people->runAction(theAnim);
-            */
+            std::stringstream sstr;
+            sstr << TROLLEY_VELOCITY << " m/s";
+            auto speedLabel = LabelTTF::create(sstr.str().c_str(), "fonts/Marker Felt.ttf", 20);
+            speedLabel->setHorizontalAlignment(TextHAlignment::LEFT);
+            speedLabel->setColor(Color3B::BLACK);
+            speedLabel->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            speedLabel->setPosition(Vec2(0.0, trolleySize.height - 10.0));
+            node->addChild(speedLabel, 2);
 
+            node->setContentSize(trolley->getContentSize());
             return node;
         };
 
