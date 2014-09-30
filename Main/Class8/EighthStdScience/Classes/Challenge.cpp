@@ -374,6 +374,8 @@ bool Challenge2::init(bool showInfo)
     static const int PEOPLE_TAG = 1; 
     auto limitWidth = visibleSize.width / SpriteLayer::MINI_MAP_SCALE;
 
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("pull_box.plist");                                                                                                                   
+
     // fill up the limits
     auto initTrollies = [=] (bool right) -> void
     {
