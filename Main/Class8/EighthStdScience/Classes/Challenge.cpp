@@ -176,6 +176,59 @@ void Challenge<Derived>::frictionValueChanged(Ref* sender, Control::EventType co
 }
 
 template< class Derived >
+void Challenge<Derived>::setupTimer(float howLong, float warning)
+{
+    _timeLeft = howLong;
+    _warningTime = warning;
+
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    // add countdown timer
+    auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
+    timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
+    timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (timeLabel->getContentSize().height)));
+    timeLabel->setColor(Color3B::BLACK);
+    this->addChild(timeLabel);
+    _timeLabel = timeLabel;
+
+    auto secLabel = LabelTTF::create("sec" , "fonts/Marker Felt.ttf" , 30);
+    secLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
+    secLabel->setPosition(Vec2(origin.x + visibleSize.width/2 + timeLabel->getContentSize().width,
+                origin.y + visibleSize.height - timeLabel->getContentSize().height));
+    secLabel->setColor(Color3B::BLACK);
+    this->addChild(secLabel);
+
+    schedule(schedule_selector(Challenge<Derived>::countDownTimer), 1.0);
+}
+
+template< class Derived >
+void Challenge<Derived>::countDownTimer(float dt)
+{
+    _timeLeft -= dt;
+    _timeLabel->setString(getTimeString());
+
+    if(floor(_timeLeft) <= 0)
+    {
+        unschedule(schedule_selector(Challenge<Derived>::countDownTimer));
+        done(false);
+    }
+
+    if(_timeLeft <= _warningTime)
+    {
+    	_timeLabel->setColor(Color3B::RED);
+    	_timeLabel->runAction(Blink::create(10 , 10));
+    }
+}
+
+template< class Derived >
+std::string Challenge<Derived>::getTimeString() 
+{
+    std::stringstream sstr;
+    sstr << (int)_timeLeft;
+    return sstr.str();
+}
+
+template< class Derived >
 void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
 {
     Director::getInstance()->popScene();
@@ -333,7 +386,6 @@ bool Challenge2::init(bool showInfo)
                 return trolley;
 
             auto node = Node::create();
-            //node->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
 
             auto trolleySize = trolley->getContentSize() * trolley->getScale();
             trolley->setPosition(Vec2::ZERO);
@@ -410,7 +462,7 @@ bool Challenge2::init(bool showInfo)
 
                     //CCLOG("++++++++++++++++ SMK: trolley(%x) - abs(%f, %f), pos(%f,%f)", 
                     //        trolley, getAbsolutePosition(trolley).x, getAbsolutePosition(trolley).y, trolley->getPosition().x, trolley->getPosition().y);
-                    auto trolleySize = trolley->getContentSize() * trolley->getScale());
+                    auto trolleySize = trolley->getContentSize() * trolley->getScale();
                     if ( trolley->getPosition().x + trolleySize.width/2 >= visibleSize.width/2
                        &&  trolley->getPosition().x - trolleySize.width/2 <= visibleSize.width/2 )
                     {
@@ -503,21 +555,6 @@ bool Challenge3::init(bool showInfo)
     };
     _spriteLayer->addStationaryChild(gen2, Vec2(7 * visibleSize.width, visibleSize.height/3 + 10));
 
-    // add countdown timer
-    auto timeLabel = LabelTTF::create(getTimeString().c_str() , "fonts/digital-7.ttf" , 100);
-    timeLabel->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-    timeLabel->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + visibleSize.height - (timeLabel->getContentSize().height)));
-    timeLabel->setColor(Color3B::BLACK);
-    this->addChild(timeLabel);
-    _timeLabel = timeLabel;
-
-    auto secLabel = LabelTTF::create("sec" , "fonts/Marker Felt.ttf" , 30);
-    secLabel->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    secLabel->setPosition(Vec2(origin.x + visibleSize.width/2 + timeLabel->getContentSize().width,
-                origin.y + visibleSize.height - timeLabel->getContentSize().height));
-    secLabel->setColor(Color3B::BLACK);
-    this->addChild(secLabel);
-
     // add surface selection menus
     auto selectCB = [this](int surf, float startPos, float endPos) -> void
     {
@@ -544,7 +581,7 @@ bool Challenge3::init(bool showInfo)
                                   { 
                                         surfSelectionMenu1->setVisible(false);
                                         surfSelectionMenu2->setVisible(false);
-                                        schedule(schedule_selector(Challenge3::countDownTimer), 1.0);
+                                        setupTimer(60, 11);
                                         dynamic_cast<Node *>(sender)->setVisible(false);
                                         // add the force menu
                                         _menuLayer->addForceMenu(-SpriteLayer::MAX_FORCE, SpriteLayer::MAX_FORCE, 0, this, cccontrol_selector(Challenge3::forceValueChanged));
@@ -564,7 +601,6 @@ bool Challenge3::init(bool showInfo)
         if(fabs(_bgLayer->getPosition().x - originalPos.x) > TARGET_LOC &&
             fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END - halfCrateWidth)
         {
-            // TODO: check why it's not working
             if(vel == 0.0)
             {
                 done(true);
@@ -596,8 +632,6 @@ bool Challenge3::init(bool showInfo)
                 auto seq1 = Sequence::create(delay, doneAction, nullptr);
                 boom->runAction(seq1);
 
-                // TODO: show done dialog after 3 seconds
-                //				done(false);
                 return false;	// returning false to stop updating the background layer
             }
             return false; 	// returning false to stop updating background layer for points > TARGET_LOC_END
@@ -609,30 +643,6 @@ bool Challenge3::init(bool showInfo)
     });
 
     return true;	// return true of init()
-}
-
-std::string Challenge3::getTimeString() 
-{
-    std::stringstream sstr;
-    sstr << (int)_timeLeft;
-    return sstr.str();
-}
-
-void Challenge3::countDownTimer(float dt)
-{
-    _timeLeft -= dt;
-    if(_timeLeft <= 11.0)
-    {
-    	_timeLabel->setColor(Color3B::RED);
-    	_timeLabel->runAction(Blink::create(10 , 10));
-    }
-
-    _timeLabel->setString(getTimeString());
-    if(floor(_timeLeft) <= 0)
-    {
-        unschedule(schedule_selector(Challenge3::countDownTimer));
-        done(false);
-    }
 }
 
 void Challenge3::showInfoPopup()
