@@ -10,9 +10,22 @@
 
 USING_NS_CC;
 
+AdvanceSprite * AdvanceSprite::createWithFile( const std::string & fileName )
+{
+    auto pRet = new AdvanceSprite(); 
+    if( pRet && pRet->init() )
+    {
+        pRet->addFrames(fileName);
+        pRet->autorelease();
+    }
+    else
+        CC_SAFE_DELETE(pRet);
+
+    return pRet;
+}
+
 AdvanceSprite::AdvanceSprite()
 :m_AnimationFrames()
-,m_isPlistLoaded(false)
 ,m_ElaspeTime(0.0)
 ,m_IncrementValue(0)
 ,m_isAnimationRunning(false)
@@ -23,16 +36,22 @@ AdvanceSprite::AdvanceSprite()
 
 void AdvanceSprite::populateFramesFromPList(const std::string &pList)
 {
-    m_isPlistLoaded = true;
     m_AnimationFrames.clear();
     auto pszPath = FileUtils::getInstance()->fullPathForFilename(pList);
 	auto valueMap = FileUtils::getInstance()->getValueMapFromFile(pszPath);
     auto frames = valueMap["frames"].asValueMap();
     
+    // MAJOR HACK ALERT: adding frames in the alphabetical order of names
+    std::vector<std::string> keys; 
     for ( auto keyVal : frames )
-    {
-        m_AnimationFrames.pushBack(SpriteFrameCache::getInstance()->spriteFrameByName(keyVal.first));
-    }
+        keys.push_back(keyVal.first);
+
+    sort(keys.begin(), keys.end());
+
+    for ( auto key : keys )
+        m_AnimationFrames.pushBack(SpriteFrameCache::getInstance()->spriteFrameByName(key));
+
+
 }
 
 void AdvanceSprite::addFrames(const std::string &pList)
@@ -86,8 +105,7 @@ void AdvanceSprite::update(float dt)
     {
         m_ElaspeTime -= m_FrameRate;
         
-        m_CurrentIndex += m_IncrementValue;
-        setDisplayFrame(m_CurrentIndex);
+        setDisplayFrame(m_CurrentIndex + m_IncrementValue);
         
          //Forward Animation....
         if (m_CurrentIndex == m_EndingIndex) 
@@ -107,9 +125,6 @@ void AdvanceSprite::update(float dt)
                 if ( m_callback )
                     m_callback(this);
 
-                //Remove Object by Itself.
-                if(m_NeedToDeleteItself)
-                    removeObjectItself();
                 return;
             }
             else
@@ -129,9 +144,6 @@ void AdvanceSprite::update(float dt)
                 if (m_callback)
                     m_callback(this);
                 
-                //Remove Object by Itself.
-                if(m_NeedToDeleteItself)
-                    removeObjectItself();
                 return;
             }
             else
@@ -169,7 +181,8 @@ void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, co
     m_RunningLoop = 0;
     m_IncrementValue = 0;
     increaseCurrentIndex();
-    this->scheduleUpdateWithPriority(-1);
+    //scheduleUpdateWithPriority(-1);
+    scheduleUpdate();
     resumeAnimation();
 }
 

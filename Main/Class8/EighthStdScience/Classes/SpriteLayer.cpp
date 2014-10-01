@@ -490,6 +490,7 @@ void SpriteLayer::forceSumOfForcesValue(float sum)
 {
     _sumOfForcesValueForced = true; 
     _sumOfForcesValue = sum;
+    _prevSumOfForcesValue = sum;
 }
 
 void SpriteLayer::addAnotherPerson()

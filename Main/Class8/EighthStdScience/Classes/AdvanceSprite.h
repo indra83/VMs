@@ -9,7 +9,7 @@
 #ifndef _AdvanceSprite_H
 #define _AdvanceSprite_H
 
-#include "cocos2d.h" // horrible, I know and don't care
+#include "cocos2d.h" 
 
 class AdvanceSprite : public cocos2d::Sprite
 {
@@ -30,21 +30,20 @@ class AdvanceSprite : public cocos2d::Sprite
     float m_ElaspeTime;
     
     //Animation mode variable.
-    bool m_NeedToRunReverseAnimation, m_AnimationMode, m_isPlistLoaded;
+    bool m_NeedToRunReverseAnimation, m_AnimationMode;
     bool m_isAnimationRunning;
-    bool m_NeedToDeleteItself;
     //Local funciton.
-    float calculateFrameRate(int number_frames){return 1.0f / number_frames;}
+    float calculateFrameRate(int number_frames) { return 1.0f / number_frames; }
     void increaseCurrentIndex();
     
     void populateFramesFromPList(const std::string &pList);
-    void removeObjectItself();
     
-    void setDisplayFrame(int i ) { setSpriteFrame(m_AnimationFrames.at(i)); };
+    void setDisplayFrame(int i) { m_CurrentIndex = i; setSpriteFrame(m_AnimationFrames.at(i)); };
     virtual void update(float dt);
 public:
 
     CREATE_FUNC(AdvanceSprite);
+    static AdvanceSprite * createWithFile( const std::string & fileName );
 
     //
     AdvanceSprite();
@@ -66,23 +65,27 @@ public:
      startInd - Starting index of loaded array for running Animation
      endInd - Ending index of loaded array for running Animation
      number_Loop - Number of Loop that Animaiton to run.
-     pfnSelectorDelegate - Function pointer for Notification.
-     pTarget - Class pointer for calling Funciton notification.
+     cb - notification callback on completion
      NumberOfFramesPerSecond - Number of Frames to run per Second.
      NeedToRunReverseAnimation - Needs to run reverse Animation.
      NeedToDeleteItself - Needs the object to delete after finish the animation.
      
     ***************************************************************************/
     
-    void startAnimation(int startInd, int endInd, int number_Loop, const std::function< void ( cocos2d::Ref * ) > &cb, int NumberOfFramesPerSecond, bool NeedToRunReverseAnimation, bool NeedToDeleteItself);
+    void startAnimation(int startInd, int endInd, int number_Loop, const std::function< void ( cocos2d::Ref * ) > &cb, int NumberOfFramesPerSecond, bool NeedToRunReverseAnimation);
     
     //Running Animation from Current index to Parameter Index.
-    void moveTo(int index){ startAnimation(m_CurrentIndex, index, 1, m_callback, -1, false, m_NeedToDeleteItself);}
+    void moveTo(int index) { startAnimation(m_CurrentIndex + 1, index, 1, m_callback, -1, false); }
+    void moveTo(int index, const std::function< void (Ref *) > &cb, int NumberOfFramesPerSecond ) { startAnimation(m_CurrentIndex + 1, index, 1, cb, NumberOfFramesPerSecond, false); }
     
     //Controller for Animation.
     void pauseAnimation() { pauseSchedulerAndActions(); }
     void resumeAnimation() { resumeSchedulerAndActions(); }
     void stopAnimaiton();
+
+    //data about the animation
+    int getNumFrames() { return m_AnimationFrames.size(); } 
+    bool isAnimating() { return m_isAnimationRunning; } 
 };
 
 #endif

@@ -71,9 +71,6 @@ class Challenge2: public Challenge<Challenge2>
 {
     struct TrolleyInfo
     {
-        float time;
-        cocos2d::Action *animationPlaying;
-        cocos2d::EventListener * eventListener;
         int direction;
     };
 

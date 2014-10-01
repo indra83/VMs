@@ -8,6 +8,7 @@
 #include "PopUpScene.h"
 #include "Util.h"
 #include "SimpleAudioEngine.h"
+#include "AdvanceSprite.h"
 
 #include <iomanip> // setw, setfill
 
@@ -391,14 +392,13 @@ bool Challenge2::init(bool showInfo)
 
             auto trolleySize = trolley->getContentSize() * trolley->getScale();
             trolley->setPosition(Vec2::ZERO);
-            node->addChild(trolley);
+            node->addChild(trolley, 1);
 
-            auto people = Sprite::createWithSpriteFrameName("lift00.png");
-            //auto people = Sprite::create("pusher_straight_on.png");
+            auto people = AdvanceSprite::createWithFile("pullbox.plist");
             people->setPosition(Vec2(0.0, 0.0));
             people->setTag(PEOPLE_TAG);
             people->setAnchorPoint(Vec2::ANCHOR_MIDDLE_BOTTOM);
-            node->addChild(people, 1);
+            node->addChild(people, right ? 3 : 0);
 
             std::stringstream sstr;
             sstr << TROLLEY_VELOCITY << " m/s";
@@ -421,16 +421,16 @@ bool Challenge2::init(bool showInfo)
                     right ? SpriteLayer::TROLLEY_RIGHT_ZINDEX : SpriteLayer::TROLLEY_LEFT_ZINDEX,
                     Vec2( widthCovered, visibleSize.height/3 + 10),
                     false);
-            _trollies[trolley] = TrolleyInfo{0.0, nullptr, nullptr, right ? 1 : -1 };
+            _trollies[trolley] = TrolleyInfo{ right ? 1 : -1 };
             widthCovered += ( INTERVAL * SpriteLayer::PTM_RATIO );
         };
     };
 
-    auto getPeople = [=]( Node * node ) -> Node *
+    auto getPeople = [=]( Node * node ) -> AdvanceSprite *
     {
         for (auto child : node->getChildren())
             if (child->getTag() == PEOPLE_TAG)
-                return child;
+                return dynamic_cast< AdvanceSprite * >(child);
         return nullptr;
     };
 
@@ -441,6 +441,10 @@ bool Challenge2::init(bool showInfo)
     auto trolleySize = _trollies.begin()->first->getContentSize() * _trollies.begin()->first->getScale();
     auto peopleSize = people->getContentSize() * people->getScale() - Size(300.0, 0.0);
 
+    const float COINCIDENT_TIME = (trolleySize.width / SpriteLayer::PTM_RATIO) + 2;
+    const int NUM_FRAMES = people->getNumFrames();
+    static const int TRIGGER_FRAME = 4;
+
 
     auto move = [=]( Node * node, bool right) -> void
     {
@@ -449,20 +453,6 @@ bool Challenge2::init(bool showInfo)
         auto miniNode = dynamic_cast< Node * >( node->getUserObject() ); 
         if ( miniNode )
             miniNode->setPosition(miniNode->getPosition() + ( direction * Vec2(2*limitWidth*SpriteLayer::MINI_MAP_SCALE, 0.0) ));
-    };
-
-    auto createAnimation = [=]( int start, int end, float delay) -> Animation *
-    {
-        Vector<SpriteFrame*> frames;
-        for ( int i=start; i<end; i++)
-        {
-            std::stringstream sstr;
-            sstr << "lift" << std::setfill('0') << std::setw(2) << i << ".png";
-            auto frame = SpriteFrameCache::getInstance()->spriteFrameByName(sstr.str());
-            frames.pushBack(frame);
-        }
-        Animation * anim = Animation::createWithSpriteFrames(frames, delay, 1);
-        return anim;
     };
 
     _spriteLayer->setPeriodicCB([=](float unused, float dt) -> bool
@@ -484,7 +474,6 @@ bool Challenge2::init(bool showInfo)
          return true;
      });
 
-    static Node * takenOver = nullptr;
     _spriteLayer->setPostUpdateCB([=](float dt) -> void
     {    
         for( auto &trolleyData : _trollies )
@@ -496,14 +485,8 @@ bool Challenge2::init(bool showInfo)
             bool undoAnimation = false;
             // check if trolley overlaps with the crate
             if (((trolley->getPosition().x + trolleySize.width/2) >= (visibleSize.width/2 - crateWidth/2))
-               &&((trolley->getPosition().x - trolleySize.width/2) <= (visibleSize.width/2 + crateWidth/2)))
+               && ((trolley->getPosition().x - trolleySize.width/2) <= (visibleSize.width/2 + crateWidth/2)))
             {
-                if (trolley == takenOver)
-                    CCLOG( "+++++++++++++++++ SMK: here after takeover" );
-                existing.time += dt;
-
-                //get the people on top
-
                 auto skew = trolley->getPosition() - visibleSize/2; 
                 auto skewMax = (trolleySize.width/2 - peopleSize.width/2);
                 if (skewMax < 0 )
@@ -513,41 +496,29 @@ bool Challenge2::init(bool showInfo)
                 if (fabs(skew.x) > skewMax)
                 {
                     undoAnimation = true;
-                    if (trolley == takenOver)
-                        CCLOG( "+++++++++++++++++ SMK: some after takeover" );
                     skew.x = (skew.x > 0 ? 1 : -1) * skewMax;
                 }
                 else
                 {
-                    if (!existing.animationPlaying && _spriteLayer->isCrateVisible())
+                    if ( _spriteLayer->isCrateVisible() && !people->isAnimating())
                     {
-                        const float COINCIDENT_TIME = (trolleySize.width / SpriteLayer::PTM_RATIO) + 2;
-                        static const int NUM_FRAMES = 16;
-                        static const int TRIGGER_FRAME = 4;
-                        auto anim = createAnimation(0, TRIGGER_FRAME, COINCIDENT_TIME/NUM_FRAMES);
-                        //auto anim = createAnimation(0, NUM_FRAMES, COINCIDENT_TIME/NUM_FRAMES);
-                        auto theAnim = Animate::create(anim); 
-                        auto takeOverAction = CallFunc::create([&]() -> void 
-                        {
-                            _menuLayer->setForceSliderValue(0.0);
-                            _menuLayer->showForceSlider(false);
-                            _spriteLayer->setVelocity(existing.direction*TROLLEY_VELOCITY);
-                            _spriteLayer->showCrate(false);
-                            _spriteLayer->showArrows(false);
-                            _spriteLayer->forceSumOfForcesValue(0.0);
-                            takenOver = trolley;
-                            CCLOG( "+++++++++++++++++ SMK: takeover" );
 
-                            auto anim = createAnimation(TRIGGER_FRAME, NUM_FRAMES, COINCIDENT_TIME/NUM_FRAMES);
-                            auto theAnim = Animate::create(anim); 
-                            auto doneAction = CallFunc::create([=]() -> void { done(true); });
-                            auto seq = Sequence::create(theAnim, doneAction, nullptr);
-                            people->runAction(seq);
-                            existing.animationPlaying = seq;
-                        });
-                        auto seq = Sequence::create(theAnim, takeOverAction, nullptr);
-                        people->runAction(seq);
-                        existing.animationPlaying = seq;
+                        people->moveTo(TRIGGER_FRAME,
+                                [=]( Ref * ref) -> void 
+                                {
+                                    _menuLayer->setForceSliderValue(0.0);
+                                    _menuLayer->showForceSlider(false);
+                                    _spriteLayer->setVelocity(existing.direction*TROLLEY_VELOCITY);
+                                    _spriteLayer->showCrate(false);
+                                    _spriteLayer->showArrows(false);
+                                    _spriteLayer->forceSumOfForcesValue(0.0);
+                                    auto sprite = dynamic_cast< AdvanceSprite * >( ref ); 
+                                    sprite->moveTo(NUM_FRAMES,
+                                        [=]( Ref * ref) -> void 
+                                        {
+                                            done(true);
+                                        }, NUM_FRAMES/COINCIDENT_TIME);
+                                }, NUM_FRAMES/COINCIDENT_TIME); 
                     }
                 }
 
@@ -556,17 +527,14 @@ bool Challenge2::init(bool showInfo)
             }
             else
             {
-                if (trolley == takenOver)
-                    CCLOG( "+++++++++++++++++ SMK: past after takeover" );
                 undoAnimation = true;
             }
 
-            if( undoAnimation && existing.animationPlaying)
+            if (undoAnimation)
             {
                 auto people = getPeople(trolley);
-                people->stopAction(existing.animationPlaying);
-
-                existing.animationPlaying = nullptr;
+                if (people->isAnimating())
+                    people->moveTo(1, std::function< void (Ref * ) >(), NUM_FRAMES/COINCIDENT_TIME);
             }
         }
     });
