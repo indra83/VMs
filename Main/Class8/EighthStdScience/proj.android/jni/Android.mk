@@ -22,7 +22,7 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
                    ../../Classes/Util.cpp \
                    ../../Classes/PopUpScene.cpp \
                    ../../Classes/ValueArrow.cpp \
-                   ../../Classes/AdvancedSprite.cpp \
+                   ../../Classes/AdvanceSprite.cpp \
                    ../../Classes/SpriteLayer.cpp
                
 
