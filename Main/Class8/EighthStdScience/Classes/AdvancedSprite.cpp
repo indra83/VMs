@@ -7,11 +7,12 @@
 //
 
 #include "AdvanceSprite.h"
-#include "CCSpriteFrameCache.h"
+#include "SpriteFrameCache.h"
 #include "CCFileUtils.h"
 #include "CCString.h"
 
-namespace   cocos2d {
+USING_NS_CC;
+
 AdvanceSprite::AdvanceSprite()
 :m_pfnSelectorDelegate(0)
 ,m_pTarget(0)
@@ -32,9 +33,9 @@ AdvanceSprite::~AdvanceSprite()
 void AdvanceSprite::addFrames(const char *pList)
 {
     m_isPlistLoaded = true;
-    m_AnimationFrames = new CCMutableArray<CCSpriteFrame *>;
+    m_AnimationFrames = new Vector<SpriteFrame *>;
     
-    CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile(pList);
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile(pList);
     
     const char *pszPath = CCFileUtils::fullPathFromRelativePath(pList);
 	CCDictionary<std::string, CCObject*> *dict = CCFileUtils::dictionaryWithContentsOfFile(pszPath);
@@ -44,7 +45,7 @@ void AdvanceSprite::addFrames(const char *pList)
 	std::string key = "";
 	while((CCDictionary<std::string, CCObject*>*)framesDict->next(&key))
 	{
-        m_AnimationFrames->addObject(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(key.c_str()));
+        m_AnimationFrames->addObject(SpriteFrameCache::getInstance()->spriteFrameByName(key.c_str()));
     }
     setDisplayFrame(m_AnimationFrames->getObjectAtIndex(0));
 }
@@ -52,9 +53,9 @@ void AdvanceSprite::addFrames(const char *pList)
 void AdvanceSprite::addFrames(const char *pList, const char *textureFileName)
 {
     m_isPlistLoaded = true;
-    m_AnimationFrames = new CCMutableArray<CCSpriteFrame *>;
+    m_AnimationFrames = new Vector<SpriteFrame *>;
     
-    CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile(pList, textureFileName);
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile(pList, textureFileName);
     
     const char *pszPath = CCFileUtils::fullPathFromRelativePath(pList);
 	CCDictionary<std::string, CCObject*> *dict = CCFileUtils::dictionaryWithContentsOfFile(pszPath);
@@ -64,18 +65,18 @@ void AdvanceSprite::addFrames(const char *pList, const char *textureFileName)
 	std::string key = "";
 	while((CCDictionary<std::string, CCObject*>*)framesDict->next(&key))
 	{
-        m_AnimationFrames->addObject(CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(key.c_str()));
+        m_AnimationFrames->addObject(SpriteFrameCache::getInstance()->spriteFrameByName(key.c_str()));
     }
     setDisplayFrame(m_AnimationFrames->getObjectAtIndex(0));    
 }
 
-void AdvanceSprite::addFrames(CCMutableArray<cocos2d::CCSpriteFrame *> *frames)
+void AdvanceSprite::addFrames(Vector<SpriteFrame *> *frames)
 {
     m_AnimationFrames = frames;
     setDisplayFrame(m_AnimationFrames->getObjectAtIndex(0));
 }
 
-void AdvanceSprite::addFrames(CCMutableArray<cocos2d::CCSpriteFrame *> *frames, int displayTextureIndex)
+void AdvanceSprite::addFrames(Vector<SpriteFrame *> *frames, int displayTextureIndex)
 {
     m_AnimationFrames = frames;
     setDisplayFrame(m_AnimationFrames->getObjectAtIndex(displayTextureIndex));
@@ -153,7 +154,7 @@ void AdvanceSprite::update(ccTime dt)
     }
 }
 
-void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, SEL_CallFunc pfnSelectorDelegate, cocos2d::SelectorProtocol *pTarget, int NumberOfFramesPerSecond, bool NeedToRunReverseAnimation, bool NeedToDeleteItself)
+void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, SEL_CallFunc pfnSelectorDelegate, SelectorProtocol *pTarget, int NumberOfFramesPerSecond, bool NeedToRunReverseAnimation, bool NeedToDeleteItself)
 {
     if(m_isAnimationRunning)
     {
@@ -201,4 +202,3 @@ void AdvanceSprite::removeObjectItself()
     this->removeFromParentAndCleanup(true);
     delete (this);
 }
-}//namespace   cocos2d 

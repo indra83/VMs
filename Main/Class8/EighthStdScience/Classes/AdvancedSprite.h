@@ -6,19 +6,14 @@
 //  Copyright 2011 __Sourcebits Technologies Pvt. Ltd., Bangalore.__. All rights reserved.
 //
 
-//#include "cocos2d.h"
-//using namespace cocos2d;
-
 #ifndef _AdvanceSprite_H
 #define _AdvanceSprite_H
 
-#include "CCSprite.h"
-#include "CCMutableArray.h"
-namespace   cocos2d {
-    
-class AdvanceSprite : public CCSprite
+#include "cocos2d.h" // horrible, I know and don't care
+
+class AdvanceSprite : public cocos2d::Sprite
 {
-    CCMutableArray<CCSpriteFrame *> *m_AnimationFrames;
+    cocos2d::Vector<cocos2d::SpriteFrame *> *m_AnimationFrames;
     //Indexing variable.
     int m_StartingIndex, m_EndingIndex, m_CurrentIndex, m_IncrementValue;
     
@@ -54,8 +49,8 @@ public:
     //Add Frames to run Animation.
     void addFrames(const char* pList); // Has Texture file name in pList.
     void addFrames(const char* pList, const char* textureFileName);
-    void addFrames(CCMutableArray<CCSpriteFrame*> *frames);
-    void addFrames(CCMutableArray<CCSpriteFrame*> *frames, int displayTextureIndex);
+    void addFrames(cocos2d::Vector<cocos2d::SpriteFrame*> *frames);
+    void addFrames(cocos2d::Vector<cocos2d::SpriteFrame*> *frames, int displayTextureIndex);
     
     //Sets Frame Rate for running Animation
     void setFrameRate(int NumberOfFramesPerSecond){m_FrameRate = calculateFrameRate(NumberOfFramesPerSecond);}
@@ -84,6 +79,5 @@ public:
     void resumeAnimation(){resumeSchedulerAndActions(); }
     void stopAnimaiton();
 };
-}//namespace   cocos2d 
 
 #endif
