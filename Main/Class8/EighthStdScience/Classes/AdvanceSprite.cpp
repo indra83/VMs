@@ -7,79 +7,68 @@
 //
 
 #include "AdvanceSprite.h"
-#include "SpriteFrameCache.h"
-#include "CCFileUtils.h"
-#include "CCString.h"
 
 USING_NS_CC;
 
 AdvanceSprite::AdvanceSprite()
-:m_pfnSelectorDelegate(0)
-,m_pTarget(0)
+:m_AnimationFrames()
 ,m_isPlistLoaded(false)
 ,m_ElaspeTime(0.0)
 ,m_IncrementValue(0)
 ,m_isAnimationRunning(false)
+,m_callback()
 {
    
 }
 
-AdvanceSprite::~AdvanceSprite()
-{
-    if(m_isPlistLoaded)
-        CC_SAFE_DELETE_ARRAY(m_AnimationFrames);
-}
-
-void AdvanceSprite::addFrames(const char *pList)
+void AdvanceSprite::populateFramesFromPList(const std::string &pList)
 {
     m_isPlistLoaded = true;
-    m_AnimationFrames = new Vector<SpriteFrame *>;
+    m_AnimationFrames.clear();
+    auto pszPath = FileUtils::getInstance()->fullPathForFilename(pList);
+	auto valueMap = FileUtils::getInstance()->getValueMapFromFile(pszPath);
+    auto frames = valueMap["frames"].asValueMap();
     
+    for ( auto keyVal : frames )
+    {
+        m_AnimationFrames.pushBack(SpriteFrameCache::getInstance()->spriteFrameByName(keyVal.first));
+    }
+}
+
+void AdvanceSprite::addFrames(const std::string &pList)
+{
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile(pList);
-    
-    const char *pszPath = CCFileUtils::fullPathFromRelativePath(pList);
-	CCDictionary<std::string, CCObject*> *dict = CCFileUtils::dictionaryWithContentsOfFile(pszPath);
-    CCDictionary<std::string, CCObject*> *framesDict = (CCDictionary<std::string, CCObject*>*)dict->objectForKey(std::string("frames"));
-    
-    framesDict->begin();
-	std::string key = "";
-	while((CCDictionary<std::string, CCObject*>*)framesDict->next(&key))
-	{
-        m_AnimationFrames->addObject(SpriteFrameCache::getInstance()->spriteFrameByName(key.c_str()));
-    }
-    setDisplayFrame(m_AnimationFrames->getObjectAtIndex(0));
+    populateFramesFromPList(pList);
+    setDisplayFrame(0);
 }
 
-void AdvanceSprite::addFrames(const char *pList, const char *textureFileName)
+void AdvanceSprite::addFrames(const std::string &pList, const std::string &textureFileName)
 {
-    m_isPlistLoaded = true;
-    m_AnimationFrames = new Vector<SpriteFrame *>;
-    
     SpriteFrameCache::getInstance()->addSpriteFramesWithFile(pList, textureFileName);
-    
-    const char *pszPath = CCFileUtils::fullPathFromRelativePath(pList);
-	CCDictionary<std::string, CCObject*> *dict = CCFileUtils::dictionaryWithContentsOfFile(pszPath);
-    CCDictionary<std::string, CCObject*> *framesDict = (CCDictionary<std::string, CCObject*>*)dict->objectForKey(std::string("frames"));
-    
-    framesDict->begin();
-	std::string key = "";
-	while((CCDictionary<std::string, CCObject*>*)framesDict->next(&key))
-	{
-        m_AnimationFrames->addObject(SpriteFrameCache::getInstance()->spriteFrameByName(key.c_str()));
-    }
-    setDisplayFrame(m_AnimationFrames->getObjectAtIndex(0));    
+    populateFramesFromPList(pList);
+    setDisplayFrame(0);    
 }
 
-void AdvanceSprite::addFrames(Vector<SpriteFrame *> *frames)
+void AdvanceSprite::addFrames(const Vector<SpriteFrame *> &frames, int displayTextureIndex)
 {
     m_AnimationFrames = frames;
-    setDisplayFrame(m_AnimationFrames->getObjectAtIndex(0));
+    setDisplayFrame(displayTextureIndex);
 }
 
-void AdvanceSprite::addFrames(Vector<SpriteFrame *> *frames, int displayTextureIndex)
+void AdvanceSprite::addFrames(const Vector<SpriteFrame *> &frames)
 {
-    m_AnimationFrames = frames;
-    setDisplayFrame(m_AnimationFrames->getObjectAtIndex(displayTextureIndex));
+    addFrames(frames, 0);
+}
+
+void AdvanceSprite::addFrames(Vector<SpriteFrame *> &&frames, int displayTextureIndex)
+{
+    m_AnimationFrames = std::move(frames);
+    setDisplayFrame(displayTextureIndex);
+}
+
+void AdvanceSprite::addFrames(Vector<SpriteFrame *> &&frames)
+{
+    addFrames(std::move(frames), 0);
 }
 
 void AdvanceSprite::increaseCurrentIndex()
@@ -90,7 +79,7 @@ void AdvanceSprite::increaseCurrentIndex()
         m_IncrementValue += (m_StartingIndex - m_CurrentIndex) / abs(m_StartingIndex - m_CurrentIndex);
 }
 
-void AdvanceSprite::update(ccTime dt)
+void AdvanceSprite::update(float dt)
 {
     m_ElaspeTime += dt;
     while (m_ElaspeTime >= m_FrameRate) 
@@ -98,7 +87,7 @@ void AdvanceSprite::update(ccTime dt)
         m_ElaspeTime -= m_FrameRate;
         
         m_CurrentIndex += m_IncrementValue;
-        setDisplayFrame(m_AnimationFrames->getObjectAtIndex(m_CurrentIndex));
+        setDisplayFrame(m_CurrentIndex);
         
          //Forward Animation....
         if (m_CurrentIndex == m_EndingIndex) 
@@ -115,9 +104,9 @@ void AdvanceSprite::update(ccTime dt)
             {
                 stopAnimaiton();
                 //Raising Callback.
-                if(m_pTarget != 0 && m_pfnSelectorDelegate != 0)
-                    (m_pTarget->*m_pfnSelectorDelegate)();
-                
+                if ( m_callback )
+                    m_callback(this);
+
                 //Remove Object by Itself.
                 if(m_NeedToDeleteItself)
                     removeObjectItself();
@@ -137,8 +126,8 @@ void AdvanceSprite::update(ccTime dt)
             {
                 stopAnimaiton();
                 //Raising Callback.
-                if(m_pTarget != 0 && m_pfnSelectorDelegate != 0)
-                    (m_pTarget->*m_pfnSelectorDelegate)();
+                if (m_callback)
+                    m_callback(this);
                 
                 //Remove Object by Itself.
                 if(m_NeedToDeleteItself)
@@ -154,16 +143,11 @@ void AdvanceSprite::update(ccTime dt)
     }
 }
 
-void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, SEL_CallFunc pfnSelectorDelegate, SelectorProtocol *pTarget, int NumberOfFramesPerSecond, bool NeedToRunReverseAnimation, bool NeedToDeleteItself)
+void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, const std::function< void (Ref *)> &cb, int NumberOfFramesPerSecond, bool NeedToRunReverseAnimation)
 {
     if(m_isAnimationRunning)
     {
         stopAnimaiton();
-        
-        //Reset pointer.
-        m_pfnSelectorDelegate = 0;
-        m_pTarget = 0;
-        m_ElaspeTime = 0.0f;
     }
     
     //Assign values.
@@ -174,8 +158,7 @@ void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, SE
     
     m_NumberOfLoop = number_Loop;
     
-    m_pfnSelectorDelegate = pfnSelectorDelegate;
-    m_pTarget = pTarget;
+    m_callback = cb;
     if(NumberOfFramesPerSecond != -1)
         m_FrameRate = calculateFrameRate(NumberOfFramesPerSecond);
     
@@ -185,7 +168,6 @@ void AdvanceSprite::startAnimation(int startInd, int endInd, int number_Loop, SE
     m_CurrentIndex = m_StartingIndex;
     m_RunningLoop = 0;
     m_IncrementValue = 0;
-    m_NeedToDeleteItself = NeedToDeleteItself;
     increaseCurrentIndex();
     this->scheduleUpdateWithPriority(-1);
     resumeAnimation();
@@ -195,10 +177,4 @@ void AdvanceSprite::stopAnimaiton()
 {
     m_isAnimationRunning = false;
     this->unscheduleUpdate();
-}
-
-void AdvanceSprite::removeObjectItself()
-{
-    this->removeFromParentAndCleanup(true);
-    delete (this);
 }
