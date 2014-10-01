@@ -441,9 +441,9 @@ bool Challenge2::init(bool showInfo)
     auto trolleySize = _trollies.begin()->first->getContentSize() * _trollies.begin()->first->getScale();
     auto peopleSize = people->getContentSize() * people->getScale() - Size(300.0, 0.0);
 
-    const float COINCIDENT_TIME = (trolleySize.width / SpriteLayer::PTM_RATIO) + 2;
+    const float COINCIDENT_TIME = (trolleySize.width / SpriteLayer::PTM_RATIO);
     const int NUM_FRAMES = people->getNumFrames();
-    static const int TRIGGER_FRAME = 4;
+    static const int TRIGGER_FRAME = 10;
 
 
     auto move = [=]( Node * node, bool right) -> void
