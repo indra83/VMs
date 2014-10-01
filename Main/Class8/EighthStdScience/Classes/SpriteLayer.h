@@ -69,6 +69,7 @@ private :
     cocos2d::Sprite * _person;
     cocos2d::Sprite * _anotherPerson;
     std::function< bool (float, float) > _periodicCB;
+    std::function< void (float) > _postUpdateCB;
     cocos2d::LabelTTF * _speedLabel;
     cocos2d::LabelTTF * _massLabel;
     cocos2d::Sprite * _needle;
@@ -76,6 +77,7 @@ private :
     float _forceFrictionValue;
     float _sumOfForcesValue;
     float _prevSumOfForcesValue;
+    bool _sumOfForcesValueForced;
     float _velocity;
     float _mass;
     float _frictionCoefficient;
@@ -104,12 +106,14 @@ public :
        _forceFrictionValue(0.0),
        _sumOfForcesValue(0.0),
        _prevSumOfForcesValue(0.0),
+       _sumOfForcesValueForced(false),
        _velocity(0.0),
        _mass(0.0),
        _frictionCoefficient(0.0),
        _frictionOverrides(),
        _showAnotherPerson(false),
        _periodicCB(),
+       _postUpdateCB(),
        _movables(),
        _personFell(false),
        _menuLayer(nullptr),
@@ -134,7 +138,9 @@ public :
     void setFriction(float coeff, const std::string & sprite, float startPos, float endPos);
     void addMiniSurface(float startPos, float endPos, const std::string &sprite, bool movable);
     void setPeriodicCB( std::function< bool (float, float) > cb ) { _periodicCB = cb; }
+    void setPostUpdateCB( std::function< void (float) > cb ) { _postUpdateCB = cb; }
     float getExternalForceValue() { return _forceExternalValue; }
+    float getFrictionalForceValue() { return _forceFrictionValue; }
     void addAnotherPerson();
     Node * addStationaryChild(std::function< cocos2d::Node * (bool) > generator, cocos2d::Vec2 pos);
     Node * addMovingChild(std::function< cocos2d::Node * (bool) > generator, float vel, int zIndex, cocos2d::Vec2 pos, bool baseMover);
@@ -143,13 +149,18 @@ public :
     void setMenuLayer( MenuLayer * layer) { _menuLayer = layer; }
     void setMiniMapOffset(float off);
     void setBaseSurface(float coeff, const std::string & sprite);
+    void showCrate(bool show) { _crate->setVisible(show); }
+    bool isCrateVisible() { return _crate->isVisible(); }
+    void setVelocity(float vel) { _velocity = vel; }
+    void showArrows(bool show);
+    void forceSumOfForcesValue(float sum);
 
     cocos2d::Size getCrateSize() { return _crate->getContentSize()*_crate->getScale(); }
 
 private :    
     std::string getMassString();
     std::string getSpeedString();
-    float getFrictionalForce();
+    float calculateFrictionalForce();
     void readjustForces();
 };
 

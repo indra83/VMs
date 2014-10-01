@@ -69,7 +69,15 @@ private:
 
 class Challenge2: public Challenge<Challenge2>
 {
-    std::list<Node *> _trollies;
+    struct TrolleyInfo
+    {
+        float time;
+        cocos2d::Action *animationPlaying;
+        cocos2d::EventListener * eventListener;
+        int direction;
+    };
+
+    std::map<Node *, TrolleyInfo> _trollies;
 public:
     Challenge2(): _trollies(){}
     virtual bool init(bool showInfo) override;

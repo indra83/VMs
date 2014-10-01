@@ -239,6 +239,11 @@ void MenuLayer::setForceSliderValue(float force)
     _forceSlider->forceSetValue(force);
 }
 
+void MenuLayer::showForceSlider(bool show) 
+{ 
+    _forceLayer->setVisible(show); 
+}
+
 MenuLayer::~MenuLayer()
 { 
 }

@@ -253,7 +253,7 @@ float SpriteLayer::getFrictionCoefficient()
     return coeff;
 }
 
-float SpriteLayer::getFrictionalForce()
+float SpriteLayer::calculateFrictionalForce()
 {
     float fric = 0.0;
     float gravity = 10.0;
@@ -272,9 +272,10 @@ float SpriteLayer::getFrictionalForce()
 
 void SpriteLayer::readjustForces()
 {
-    _forceFrictionValue = getFrictionalForce();
+    _forceFrictionValue = calculateFrictionalForce();
     _forceFriction->setValue(_forceFrictionValue);
-    _sumOfForcesValue = _forceExternalValue + _forceFrictionValue;
+    if ( !_sumOfForcesValueForced )
+        _sumOfForcesValue = _forceExternalValue + _forceFrictionValue;
     _sumOfForces->setValue(_sumOfForcesValue);
 }
 
@@ -347,14 +348,18 @@ void SpriteLayer::update(float dt)
     for( auto mov: _movables )
     {
         auto node = mov.getNode();
-        node->runAction(Place::create(node->getPosition() + Vec2( (-dx + mov.getVelocity() * dt * PTM_RATIO) * mov.getScale(), 0.0)));
+        node->setPosition(node->getPosition() + Vec2( (-dx + mov.getVelocity() * dt * PTM_RATIO) * mov.getScale(), 0.0));
     }
 
-    _prevSumOfForcesValue = _sumOfForcesValue;
 
     // speed-o-meter implementation
     auto angle = ( ( fabs(_velocity) / MAX_SPEED ) * MAX_ANGLE ) + OFFSET_ANGLE;
     _needle->setRotation(angle);
+
+    if (_postUpdateCB)
+        _postUpdateCB(dt);
+
+    _prevSumOfForcesValue = _sumOfForcesValue;
 
     Node::update(dt);
 }
@@ -437,7 +442,8 @@ void SpriteLayer::addMiniSurface(float startPos, float endPos, const std::string
         auto surface = Sprite::create(sprite);
         if (movable)
             surface->setTag(SURF_TAG);
-        surface->setScaleY(MINI_MAP_SCALE);
+        // TODO: fix grass image verical size, issues seen in nexus
+        surface->setScaleY(MINI_MAP_SCALE); 
         if ( (endPos - offset) < surface->getContentSize().width )
             surface->setScaleX( (endPos - offset) / surface->getContentSize().width );
         surface->setPosition(Vec2(offset + visibleSize.width/2, 0));
@@ -480,6 +486,12 @@ void SpriteLayer::setFrictionCoefficientOverride(float coeff, float startPos, fl
     _frictionOverrides.push_back(overlay);
 }
 
+void SpriteLayer::forceSumOfForcesValue(float sum)
+{
+    _sumOfForcesValueForced = true; 
+    _sumOfForcesValue = sum;
+}
+
 void SpriteLayer::addAnotherPerson()
 {
     _showAnotherPerson = true;
@@ -490,7 +502,14 @@ void SpriteLayer::setMiniMapOffset(float off)
 {
     _minimapOffset = off;
     _minimap->setPosition(Vec2(_minimapOffset, _minimap->getPosition().y));
-};
+}
+
+void SpriteLayer::showArrows(bool show) 
+{ 
+    _forceFriction->setVisible(show); 
+    _forceExternal->setVisible(show); 
+    _sumOfForces->setVisible(show); 
+}
 
 SpriteLayer::~SpriteLayer()
 {
