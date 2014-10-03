@@ -89,8 +89,8 @@ bool ChallengeMenu::init()
     };
 
     addChallenge("chal_1.png", 1, "To move the box by applying force. Notice the behavior of friction as you apply force");
-    addChallenge("chl.png", 2, "dummy text");
-    addChallenge("chl.png", 3, "Moving a box from point A to B in given time. Selection of surfaces is key for completing this challenge." );
+    addChallenge("chal_2.png", 2, "dummy text");
+    addChallenge("chal_3.png", 3, "Moving a box from point A to B in given time. Selection of surfaces is key for completing this challenge." );
 
     menu->setPosition(Vec2::ZERO);
     scrollContainer->addChild(menu);

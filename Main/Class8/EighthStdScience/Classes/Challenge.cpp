@@ -612,8 +612,8 @@ bool Challenge3::init(bool showInfo)
             Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/4),
             Vec2(origin.x + visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB1);
     auto surfSelectionMenu2 = _menuLayer->selectSurfaceFriction("Surface 2 Friction :", 
-            Vec2(origin.x + 6*visibleSize.width/8 - 5 , origin.y + visibleSize.height/4),
-            Vec2(origin.x + 7*visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB2);
+            Vec2(origin.x + 6 * visibleSize.width/8 - 5 , origin.y + visibleSize.height/4),
+            Vec2(origin.x + 7 * visibleSize.width/8 , origin.y + visibleSize.height/6), selectCB2);
 
     // play button
     auto play = MenuItemImage::create("play.png",
