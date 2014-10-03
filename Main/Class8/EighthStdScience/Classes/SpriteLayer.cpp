@@ -22,7 +22,7 @@ static const int NUM_IMAGES=15;
 
 static const float MAX_ANGLE=270.0;
 static const float OFFSET_ANGLE=-45.0;
-static const float MAX_SPEED=10.0;
+static const float MAX_SPEED=20.0;
 
 const float SpriteLayer::MINI_MAP_SCALE=0.10;
 
