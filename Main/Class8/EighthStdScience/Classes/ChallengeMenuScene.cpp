@@ -55,7 +55,7 @@ bool ChallengeMenu::init()
 
     // scroll container
     auto scrollContainer = Layer::create();
-    scrollContainer->setContentSize(Size(visibleSize.width , 2*visibleSize.height));
+    scrollContainer->setContentSize(Size(visibleSize.width , 1.5 * visibleSize.height));
     scrollContainer->setAnchorPoint(Vec2::ZERO);
     scrollContainer->setPosition(Vec2::ZERO);
     this->addChild(scrollContainer);
@@ -71,20 +71,20 @@ bool ChallengeMenu::init()
     {
         auto chal = MenuItemImage::create(fileName, fileName, CC_CALLBACK_1(ChallengeMenu::touchDownAction, this));
         chal->setTag(id);
-        chal->setPosition(wd/5, (5 - id) * ht/5);
+        chal->setPosition(wd/5, (4 - id) * ht/4);
         menu->addChild(chal);
 
         std::stringstream sstr;
         sstr << "challenge " << id;
         auto label = LabelTTF::create(sstr.str(), "fonts/EraserDust.ttf" , 40);
         label->setAnchorPoint(Vec2::ZERO);
-        label->setPosition(2*wd/5, (5 - id) * ht/5 + LABEL_OFFSET);
+        label->setPosition(2*wd/5, (4 - id) * ht/4 + LABEL_OFFSET);
         menu->addChild(label);
         auto obj = LabelTTF::create( std::string("Objective: ") + objective,
                 "fonts/EraserDust.ttf" , 25 ,
                 Size(550,100) , TextHAlignment::LEFT);
         obj->setAnchorPoint(Vec2::ZERO);
-        obj->setPosition(Vec2(2*wd/5, (5-id)*ht/5 - 2*LABEL_OFFSET));
+        obj->setPosition(Vec2(2*wd/5, (4 - id) * ht/4 - 2*LABEL_OFFSET));
         scrollContainer->addChild(obj);
     };
 
@@ -97,7 +97,7 @@ bool ChallengeMenu::init()
 
     // challenge label
 	auto label = LabelTTF::create("CHALLENGES" , "fonts/EraserDust.ttf" , 60);
-	label->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + 2*visibleSize.height - label->getContentSize().height));
+	label->setPosition(Vec2(origin.x + visibleSize.width/2 , origin.y + 1.5 * visibleSize.height - label->getContentSize().height));
 	scrollContainer->addChild(label);
 
     // scroll view
@@ -105,7 +105,7 @@ bool ChallengeMenu::init()
     auto scrollview = ScrollView::create(visibleSize, scrollContainer);
     scrollview->setDirection(ScrollView::Direction::VERTICAL);
     scrollview->setPosition(Vec2::ZERO);
-    scrollview->setContentOffset(Vec2(0 , -visibleSize.height), true);
+    scrollview->setContentOffset(Vec2(0 , - visibleSize.height/2), true);
 
     this->addChild(scrollview);
 
