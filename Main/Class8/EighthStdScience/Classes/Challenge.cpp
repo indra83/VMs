@@ -443,7 +443,7 @@ bool Challenge2::init(bool showInfo)
 
     const float COINCIDENT_TIME = (trolleySize.width / SpriteLayer::PTM_RATIO);
     const int NUM_FRAMES = people->getNumFrames();
-    static const int TRIGGER_FRAME = 10;
+    static const int TRIGGER_FRAME = 9;
 
 
     auto move = [=]( Node * node, bool right) -> void

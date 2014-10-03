@@ -7,7 +7,7 @@
             <key>lift00.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1818},{264,222}}</string>
+                <string>{{1652,232},{264,222}}</string>
                 <key>offset</key>
                 <string>{1,33}</string>
                 <key>rotated</key>
@@ -20,98 +20,98 @@
             <key>lift01.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,2},{276,342}}</string>
+                <string>{{800,236},{276,220}}</string>
                 <key>offset</key>
-                <string>{0,-29}</string>
+                <string>{0,32}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
-                <string>{{112,58},{276,342}}</string>
+                <string>{{112,58},{276,220}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift02.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,280},{278,334}}</string>
+                <string>{{1078,236},{278,212}}</string>
                 <key>offset</key>
-                <string>{1,-33}</string>
+                <string>{1,28}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
-                <string>{{112,66},{278,334}}</string>
+                <string>{{112,66},{278,212}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift03.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,560},{292,318}}</string>
+                <string>{{1358,236},{292,196}}</string>
                 <key>offset</key>
-                <string>{-1,-41}</string>
+                <string>{-1,20}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
-                <string>{{103,82},{292,318}}</string>
+                <string>{{103,82},{292,196}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift04.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,854},{264,296}}</string>
+                <string>{{2,268},{264,174}}</string>
                 <key>offset</key>
-                <string>{1,-52}</string>
+                <string>{1,9}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
-                <string>{{119,104},{264,296}}</string>
+                <string>{{119,104},{264,174}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift05.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{300,1086},{264,294}}</string>
+                <string>{{268,268},{264,172}}</string>
                 <key>offset</key>
-                <string>{1,-53}</string>
+                <string>{1,8}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
-                <string>{{119,106},{264,294}}</string>
+                <string>{{119,106},{264,172}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift06.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{322,820},{264,270}}</string>
+                <string>{{534,268},{264,148}}</string>
                 <key>offset</key>
-                <string>{1,-65}</string>
+                <string>{1,-4}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
-                <string>{{119,130},{264,270}}</string>
+                <string>{{119,130},{264,148}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift07.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1584},{266,232}}</string>
+                <string>{{1918,2},{266,110}}</string>
                 <key>offset</key>
-                <string>{2,-70}</string>
+                <string>{1,-22}</string>
                 <key>rotated</key>
-                <false/>
+                <true/>
                 <key>sourceColorRect</key>
-                <string>{{119,154},{266,232}}</string>
+                <string>{{118,167},{266,110}}</string>
                 <key>sourceSize</key>
                 <string>{500,400}</string>
             </dict>
             <key>lift08.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{338,288},{264,256}}</string>
+                <string>{{268,2},{264,256}}</string>
                 <key>offset</key>
                 <string>{1,-38}</string>
                 <key>rotated</key>
@@ -124,7 +124,7 @@
             <key>lift09.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{270,1586},{264,264}}</string>
+                <string>{{2,2},{264,264}}</string>
                 <key>offset</key>
                 <string>{1,-18}</string>
                 <key>rotated</key>
@@ -137,7 +137,7 @@
             <key>lift10.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{338,554},{264,254}}</string>
+                <string>{{526,2},{264,254}}</string>
                 <key>offset</key>
                 <string>{1,11}</string>
                 <key>rotated</key>
@@ -150,7 +150,7 @@
             <key>lift11.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{338,554},{264,254}}</string>
+                <string>{{526,2},{264,254}}</string>
                 <key>offset</key>
                 <string>{1,11}</string>
                 <key>rotated</key>
@@ -163,7 +163,7 @@
             <key>lift12.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1354},{268,228}}</string>
+                <string>{{1614,2},{268,228}}</string>
                 <key>offset</key>
                 <string>{1,28}</string>
                 <key>rotated</key>
@@ -176,7 +176,7 @@
             <key>lift13.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{278,1352},{268,232}}</string>
+                <string>{{1344,2},{268,232}}</string>
                 <key>offset</key>
                 <string>{2,30}</string>
                 <key>rotated</key>
@@ -189,7 +189,7 @@
             <key>lift14.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{2,1120},{274,232}}</string>
+                <string>{{1068,2},{274,232}}</string>
                 <key>offset</key>
                 <string>{1,30}</string>
                 <key>rotated</key>
@@ -202,11 +202,11 @@
             <key>lift15.png</key>
             <dict>
                 <key>frame</key>
-                <string>{{346,2},{284,232}}</string>
+                <string>{{782,2},{284,232}}</string>
                 <key>offset</key>
                 <string>{1,30}</string>
                 <key>rotated</key>
-                <true/>
+                <false/>
                 <key>sourceColorRect</key>
                 <string>{{109,54},{284,232}}</string>
                 <key>sourceSize</key>
@@ -220,9 +220,9 @@
             <key>realTextureFileName</key>
             <string>pullbox.png</string>
             <key>size</key>
-            <string>{596,2042}</string>
+            <string>{2030,458}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:ff107482a9b2bf99d6f04ec995b603f4:6f82fd7d9d144a9cbdfab4299fac08e9:57feaca525d6b601c72aad6695f1ddca$</string>
+            <string>$TexturePacker:SmartUpdate:34127a68bc57ca3c1ed6ee348ffc3ecc:88583b3124865103c27fbce23e90cff6:57feaca525d6b601c72aad6695f1ddca$</string>
             <key>textureFileName</key>
             <string>pullbox.png</string>
         </dict>
