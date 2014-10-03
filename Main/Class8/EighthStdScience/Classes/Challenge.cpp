@@ -639,8 +639,9 @@ bool Challenge3::init(bool showInfo)
     _spriteLayer->setPeriodicCB([=](float vel, float dt) -> bool
     {
         static bool sPastSafePoint = false;
-        if(fabs(_bgLayer->getPosition().x - originalPos.x) > TARGET_LOC &&
-            fabs(_bgLayer->getPosition().x - originalPos.x) < TARGET_LOC_END - halfCrateWidth)
+        auto posDeltaX = originalPos.x - _bgLayer->getPosition().x;
+        if(posDeltaX > TARGET_LOC &&
+           posDeltaX < TARGET_LOC_END - halfCrateWidth)
         {
             if(vel == 0.0)
             {
@@ -648,7 +649,7 @@ bool Challenge3::init(bool showInfo)
                 return false;	// returning false to stop updating the background layer
             }
         }
-        else if( fabs(_bgLayer->getPosition().x - originalPos.x) >= TARGET_LOC_END - halfCrateWidth)
+        else if(posDeltaX >= TARGET_LOC_END - halfCrateWidth)
         {
             if (!sPastSafePoint)
             {
