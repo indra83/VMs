@@ -14,6 +14,9 @@ public:
     
     // implement the "static create()" method manually
     CREATE_FUNC(GameLoad);
+
+    // back button exit
+    void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 };
 
 #endif // __GAMELOAD_SCENE_H__

@@ -12,8 +12,11 @@ LOCAL_MODULE_FILENAME := libcocos2dcpp
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
-                   ../../Classes/GameLoadScene.cpp
-
+                   ../../Classes/GameLoadScene.cpp \
+                   ../../Classes/BackGroundLayer.cpp \
+                   ../../Classes/SpriteLayer.cpp \
+                   ../../Classes/MenuLayer.cpp
+                   
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
