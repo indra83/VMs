@@ -1,4 +1,4 @@
-package co.in.divi.vms.test;
+package org.cocos2dx.cpp;
 
 import java.util.HashMap;
 
@@ -13,9 +13,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import co.in.divi.vms.common.ChallengeAttempt;
-import co.in.divi.vms.common.ChallengeXmlParser;
-import co.in.divi.vms.common.VM;
+import org.cocos2dx.cpp.common.ChallengeAttempt;
+import org.cocos2dx.cpp.common.ChallengeXmlParser;
+import org.cocos2dx.cpp.common.VM;
 
 public abstract class BaseVMActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private static final String					TAG				= BaseVMActivity.class.getSimpleName();

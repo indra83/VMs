@@ -1,4 +1,4 @@
-package co.in.divi.vms.common;
+package org.cocos2dx.cpp.common;
 
 public class VM {
 	public String		id;

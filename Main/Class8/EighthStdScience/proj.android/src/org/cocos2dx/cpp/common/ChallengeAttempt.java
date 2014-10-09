@@ -1,6 +1,6 @@
-package co.in.divi.vms.common;
+package org.cocos2dx.cpp.common;
 
-import co.in.divi.vms.test.DiviConstants;
+import org.cocos2dx.cpp.DiviConstants;
 import android.database.Cursor;
 
 public class ChallengeAttempt {
