@@ -16,9 +16,12 @@ import android.widget.Toast;
 import org.cocos2dx.cpp.common.ChallengeAttempt;
 import org.cocos2dx.cpp.common.ChallengeXmlParser;
 import org.cocos2dx.cpp.common.VM;
-import in.co.divi.EighthStdScience.R;
 
-public abstract class BaseVMActivity extends Activity implements LoaderCallbacks<Cursor> {
+import org.xmlpull.v1.XmlPullParser;
+
+import org.cocos2dx.lib.Cocos2dxActivity;
+
+public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderCallbacks<Cursor> {
 	private static final String					TAG				= BaseVMActivity.class.getSimpleName();
 	private static final int					ATTEMPTS_LOADER	= 1;
 
@@ -101,6 +104,11 @@ public abstract class BaseVMActivity extends Activity implements LoaderCallbacks
 	 */
 	protected abstract void onAttemptsLoaded();
 
+    /*
+     * get the Location of the vmdetails xml file
+     */
+    protected abstract XmlPullParser getVMDetailsXml();
+
 	protected final String getVMId() {
 		return getClass().getName();
 	}
@@ -160,7 +168,7 @@ public abstract class BaseVMActivity extends Activity implements LoaderCallbacks
 
 		@Override
 		protected Integer doInBackground(Void... params) {
-			vm = new ChallengeXmlParser().getVMsFromXml(getResources().getXml(R.xml.challenges)).get(getVMId());
+			vm = new ChallengeXmlParser().getVMsFromXml(getVMDetailsXml()).get(getVMId());
 			return 0;
 		}
 

@@ -26,10 +26,11 @@ THE SOFTWARE.
 ****************************************************************************/
 package org.cocos2dx.cpp;
 
-import org.cocos2dx.lib.Cocos2dxActivity;
+import org.xmlpull.v1.XmlPullParser;
 import android.os.Bundle;
+import in.co.divi.EighthStdScience.R;
 
-public class AppActivity extends Cocos2dxActivity 
+public class AppActivity extends BaseVMActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,4 +38,20 @@ public class AppActivity extends Cocos2dxActivity
         super.onCreate(savedInstanceState);
         NativeHelper.setMainActivity(this);
     }
+
+	@Override
+	protected void onVMDetailsLoaded() {
+        //for (Challenge ch : vm.challenges)
+    }
+
+    @Override
+	protected void onAttemptsLoaded() {
+        //for (String challengeId : attempts.keySet())
+    }
+
+    @Override
+    protected XmlPullParser getVMDetailsXml() {
+        return getResources().getXml(R.xml.challenges);
+    }
+
 }
