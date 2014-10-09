@@ -16,6 +16,7 @@ import android.widget.Toast;
 import org.cocos2dx.cpp.common.ChallengeAttempt;
 import org.cocos2dx.cpp.common.ChallengeXmlParser;
 import org.cocos2dx.cpp.common.VM;
+import in.co.divi.EighthStdScience.R;
 
 public abstract class BaseVMActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private static final String					TAG				= BaseVMActivity.class.getSimpleName();
