@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<challenges>
+    <vm id="co.in.divi.vms.test.TestVMActivity" title="Test VM title">
+	    <challenge id="challenge1" >
+	        <title>Challenge 1</title>
+	        <description>Description for challenge 1</description>
+	    </challenge>
+	    <challenge id="challenge2" >
+	        <title>Difficult challenge</title>
+	        <description>blah blah blah</description>
+	    </challenge>
+	    <challenge id="challenge3" >
+	        <title>Easy challenge</title>
+	        <description>this is an easy challenge description blah blah blah blah blah</description>
+	    </challenge>
+    </vm>
+</challenges>
