@@ -9,8 +9,12 @@ LOCAL_MODULE := divivm_static
 LOCAL_MODULE_FILENAME := libdivivm
 
 LOCAL_SRC_FILES := NativeHelper.cpp \
+					co_in_divi_vms_CommonVMActivity.cpp \
 					../Classes/Util.cpp \
 					../Classes/PopUpScene.cpp \
+					../Classes/ChallengeMenuScene.cpp \
+					../Classes/ChallengeBase.cpp \
+					../Classes/VmBase.cpp \
 					../Classes/AdvanceSprite.cpp
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
