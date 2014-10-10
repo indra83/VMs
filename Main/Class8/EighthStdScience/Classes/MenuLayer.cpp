@@ -10,7 +10,6 @@ USING_NS_CC_EXT;
 static const int LAB_ZINDEX=0;
 static const int POP_ZINDEX=1;
 static const int SURF_ZINDEX=2;
-static const float PADDING = 10.0;
 
 class ControlSliderRollBack : public ControlSlider
 {
@@ -94,13 +93,6 @@ bool MenuLayer::init()
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    //////////////////////////////
-    // 2. common display controls
-    _topMenu = Menu::create();
-    _topMenu->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
-    _topMenu->setPosition(visibleSize.width, visibleSize.height);
-    this->addChild(_topMenu);
 
     return true;
 }
@@ -222,14 +214,13 @@ Menu* MenuLayer::selectSurfaceFriction(const std::string &surface_no , const Vec
 	return menu;
 }
 
-void MenuLayer::addToTopMenu(MenuItem * item, const std::function< void (Ref *)> &cb)
+void MenuLayer::setTopMenu(cocos2d::Menu * menu) 
 {
-    item->setCallback(cb);
-    item->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
-    _topMenuOffsetX -= PADDING;
-    item->setPosition(_topMenuOffsetX, -PADDING);
-    _topMenuOffsetX -= item->getContentSize().width * item->getScale();
-    _topMenu->addChild(item);
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    _topMenu = menu;
+    _topMenu->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
+    _topMenu->setPosition(visibleSize.width, visibleSize.height);
+    this->addChild(_topMenu);
 }
 
 void MenuLayer::setForceSliderValue(float force)

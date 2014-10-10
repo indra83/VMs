@@ -5,13 +5,14 @@
 #include "extensions/cocos-ext.h"
 
 #include "MenuLayer.h"
+#include "ChallengeBase.h"
 
 class BackGroundLayer;
 class SpriteLayer;
 
 
 template< class Derived >
-class Challenge: public cocos2d::Layer
+class Challenge: public ChallengeBase
 {
 public:
     Challenge() :
@@ -26,13 +27,11 @@ public:
     static cocos2d::Scene* createScene(bool showInfo);
 
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
-    virtual bool init(bool showInfo);
+    virtual bool init(bool showInfo) override;
 
     // implement the "static create()" method manually
     static Derived * create(bool showInfo);
 
-    virtual void showInfoPopup() = 0;
-    void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
     void addBaseSurface(MenuLayer::SurfaceType surf);
     void done(bool);
     virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
@@ -40,8 +39,6 @@ public:
     void countDownTimer(float dt);
     void setupTimer(float howLong, float warning);
     std::string getTimeString();
-    // back button exit
-    void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 
 protected:
 
@@ -60,7 +57,6 @@ public:
     Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
-    void showInfoPopup() override;
     void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
 private:
     bool _friendHelpShown;
@@ -79,7 +75,6 @@ public:
     Challenge2(): _trollies(){}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
-    void showInfoPopup() override;
 };
 
 class Challenge3: public Challenge<Challenge3>
@@ -89,7 +84,6 @@ public:
 
 	virtual bool init(bool showInfo) override;
 	static cocos2d::Scene * createScene(bool showInfo);
-	void showInfoPopup() override;
 };
 
 #endif // __CHALLENGE_H__

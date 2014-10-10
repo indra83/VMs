@@ -10,7 +10,6 @@ class MenuLayer : public cocos2d::Layer
 {
 private :    
     cocos2d::Menu * _topMenu;
-    float _topMenuOffsetX;
     cocos2d::Layer * _forceLayer;
     ControlSliderRollBack * _forceSlider;
 
@@ -27,7 +26,6 @@ public :
     static SurfInfo SURF_INFO[LAST];  
     MenuLayer() :
           _topMenu(nullptr),
-          _topMenuOffsetX(0.0),
           _forceLayer(nullptr),
           _forceSlider(nullptr)
     {}
@@ -38,10 +36,9 @@ public :
     void setForceSliderValue(float force);
     void showForceSlider(bool show);
     cocos2d::Menu* selectSurfaceFriction(const std::string &surface_no , const cocos2d::Vec2 &label_pos , const cocos2d::Vec2 &menu_pos, std::function<void(int)> cb);
+    void setTopMenu(cocos2d::Menu * menu);
 
     CREATE_FUNC(MenuLayer);
-
-    void addToTopMenu(cocos2d::MenuItem * item, const std::function< void (cocos2d::Ref *)> &cb);
 
     ~MenuLayer();
 };

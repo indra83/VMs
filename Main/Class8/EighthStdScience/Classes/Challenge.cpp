@@ -16,7 +16,6 @@ static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 
-static const std::string CHIME("audio/notification.mp3");
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -61,7 +60,7 @@ bool Challenge<Derived>::init(bool showInfo)
 {
     //////////////////////////////
     // 1. super init first
-    if ( !Layer::init() )
+    if ( !ChallengeBase::init(showInfo) )
     {
         return false;
     }
@@ -77,34 +76,7 @@ bool Challenge<Derived>::init(bool showInfo)
     /////////////////////////////
     // 2. add the menu layer
     _menuLayer = MenuLayer::create();
-
-    // add the reset button
-    auto restart_scene = MenuItemImage::create("reset_normal.png", "reset_normal.png");
-    restart_scene->setScale(0.8);
-    _menuLayer->addToTopMenu(restart_scene,
-                             [](Ref * sender) -> void
-                             {
-                                Director::getInstance()->replaceScene(Derived::createScene(false));
-                             });
-
-    // add the info button
-    auto info = MenuItemImage::create("info.png", "info.png");
-    info->setScale(0.8);
-    _menuLayer->addToTopMenu(info,
-                             [this](Ref * sender) -> void
-                             {
-                                showInfoPopup();
-                             });
-
-    // add the challenges menu
-    auto list = MenuItemImage::create("menu.png", "menu.png");
-    list->setScale(0.8);
-    _menuLayer->addToTopMenu(list,
-                             [](Ref * sender) -> void
-                             {
-                                Director::getInstance()->pushScene(ChallengeMenu::createScene(true, nullptr));
-                             });
-
+    _menuLayer->setTopMenu(getTopMenu());
     this->addChild(_menuLayer, MN_ZINDEX);
 
     /////////////////////////////
@@ -115,16 +87,6 @@ bool Challenge<Derived>::init(bool showInfo)
     // hack to make life easier
     _spriteLayer->setMenuLayer(_menuLayer);
     this->addChild(_spriteLayer, SP_ZINDEX);
-
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME.c_str());
-    CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(1.0);
-    // enable keypress cbs
-    this->setKeypadEnabled(true);
-
-    // show initial info popup
-    if (showInfo)
-        showInfoPopup();
-
     return true;
 }
 
@@ -135,32 +97,10 @@ void Challenge<Derived>::addBaseSurface(MenuLayer::SurfaceType surf)
 }
 
 template< class Derived >
-void Challenge<Derived>::addPopupMenu(const std::string & title, const std::string & caption, bool loud, bool vibrate, bool replace)
-{
-    if (loud)
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(CHIME.c_str());
-    if (vibrate)
-        NativeHelper::vibrate(500);
-
-    captureScreenAsSprite(
-                [=](Sprite * sprite) -> void
-                {
-                    auto scene = PopUp::createScene(title, caption, sprite);
-                    if (replace)
-                        Director::getInstance()->replaceScene(scene);
-                    else
-                        Director::getInstance()->pushScene(scene);
-                });
-}
-
-template< class Derived >
 void Challenge<Derived>::done(bool success)
 {
     _spriteLayer->pause();
-    if (success)
-        addPopupMenu("Challenge Complete", "Congrats!!", true, true, true);
-    else
-        addPopupMenu("Failed!!", "Try Again", true, true, true);
+    ChallengeBase::done(success);
 }
 
 template< class Derived >
@@ -228,12 +168,6 @@ std::string Challenge<Derived>::getTimeString()
     std::stringstream sstr;
     sstr << (int)_timeLeft;
     return sstr.str();
-}
-
-template< class Derived >
-void Challenge<Derived>::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
-{
-    Director::getInstance()->popScene();
 }
 
 //////////////////////////////
@@ -336,12 +270,6 @@ void Challenge1::forceValueChanged(Ref* sender, Control::EventType controlEvent)
         _friendHelpShown = true;
     }
     prevValue = _spriteLayer->getExternalForceValue();
-}
-
-void Challenge1::showInfoPopup()
-{
-	addPopupMenu("INSTRUCTION", "Move the box to the right by applying force on it. Drag and hold the slider in position to apply a specific amount of force."
-	    		" Help the box reach the house which is some distance away", false);
 }
 
 //////////////////////////////
@@ -542,11 +470,6 @@ bool Challenge2::init(bool showInfo)
     return true;
 }
 
-void Challenge2::showInfoPopup()
-{
-    addPopupMenu("INSTRUCTION", "This is a test message of challenge 2", false);
-}
-
 //////////////////////////////
 // challenge3
 //////////////////////////////
@@ -686,11 +609,4 @@ bool Challenge3::init(bool showInfo)
     });
 
     return true;	// return true of init()
-}
-
-void Challenge3::showInfoPopup()
-{
-	addPopupMenu("INSTRUCTION", "Start by selecting a surface type for the two segments (Friction depends on surface type). "
-			"Click on the play button to begin (Your time starts ticking!). "
-			"Move the box from point A and stop it precisely at point B (do not overshoot!)", false);
 }

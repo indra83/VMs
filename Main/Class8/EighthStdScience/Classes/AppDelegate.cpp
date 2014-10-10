@@ -4,7 +4,8 @@
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
-
+    //setStartingScene();
+    //populateChallenges();
 }
 
 AppDelegate::~AppDelegate() 
@@ -27,10 +28,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    auto scene = GameLoad::createScene();
+    //auto scene = getStartingScene();
 
     // run
-    director->runWithScene(scene);
+    //director->runWithScene(scene);
 
     return true;
 }
