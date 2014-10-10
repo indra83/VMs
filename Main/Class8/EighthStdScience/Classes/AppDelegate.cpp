@@ -1,11 +1,25 @@
 #include "AppDelegate.h"
 #include "GameLoadScene.h"
+#include "Challenge.h"
 
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
-    //setStartingScene();
-    //populateChallenges();
+
+    addChallengeGen( "1", [](bool showInfo) -> Scene *
+    {
+        return Challenge1::createScene(showInfo);
+    });
+    addChallengeGen( "2", [](bool showInfo) -> Scene *
+    {
+        return Challenge2::createScene(showInfo);
+    });
+    addChallengeGen( "3", [](bool showInfo) -> Scene *
+    {
+        return Challenge3::createScene(showInfo);
+    });
+
+    addStartingScenegen([]() -> Scene * { return GameLoad::createScene(); });
 }
 
 AppDelegate::~AppDelegate() 
@@ -28,10 +42,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    //auto scene = getStartingScene();
+    auto scene = getStartingScene();
 
     // run
-    //director->runWithScene(scene);
+    director->runWithScene(scene);
 
     return true;
 }

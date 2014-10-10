@@ -23,12 +23,15 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
 	                    $(LOCAL_PATH)/. \
 	                    $(LOCAL_PATH)/../Classes \
+	                    $(LOCAL_PATH)/../cocos2d \
 	                    $(LOCAL_PATH)/../cocos2d/cocos
 ifeq ($(USE_VIBRATE),1)
 	LOCAL_CPPFLAGS := -DUSE_VIBRATE=1
 endif
 
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
+LOCAL_WHOLE_STATIC_LIBRARIES += cocos2dx_extension_static
+LOCAL_WHOLE_STATIC_LIBRARIES += cocosdenshion_static
 
 include $(BUILD_STATIC_LIBRARY)
 

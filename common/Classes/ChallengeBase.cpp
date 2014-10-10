@@ -46,6 +46,7 @@ cocos2d::Menu * ChallengeBase::getTopMenu()
     addToMenu(restart_scene,
                 [](Ref * sender) -> void
                 {
+                    // TODO: fix this
                     //Director::getInstance()->replaceScene(Derived::createScene(false));
                 });
 
@@ -64,6 +65,7 @@ cocos2d::Menu * ChallengeBase::getTopMenu()
     addToMenu(list,
               [](Ref * sender) -> void
               {
+                    // TODO: fix this
                     //Director::getInstance()->pushScene(ChallengeMenu::createScene(true, nullptr));
               });
     return menu;

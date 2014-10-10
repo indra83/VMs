@@ -1,7 +1,6 @@
 #include "ChallengeMenuScene.h"
-#include "GameLoadScene.h"
-#include "Challenge.h"
 #include "Util.h"
+#include "VmBase.h"
 #include "SimpleAudioEngine.h"
 
 #include "extensions/cocos-ext.h"
@@ -62,37 +61,45 @@ bool ChallengeMenu::init()
     scrollContainer->setPosition(Vec2::ZERO);
     this->addChild(scrollContainer);
 
-
     auto wd = scrollContainer->getContentSize().width;
     auto ht = scrollContainer->getContentSize().height;
 
+    int n = 0;
     auto menu = Menu::create();
     // container item icons
     auto addChallenge =
-    [&](std::string fileName, int id, const std::string &objective) -> void
+    [&](std::string fileName, int id, const std::string & title, const std::string &objective) -> void
     {
         auto chal = MenuItemImage::create(fileName, fileName, CC_CALLBACK_1(ChallengeMenu::touchDownAction, this));
         chal->setTag(id);
-        chal->setPosition(wd/5, (4 - id) * ht/4);
+        chal->setPosition(wd/(n+1), (n - id) * ht/n);
         menu->addChild(chal);
 
-        std::stringstream sstr;
-        sstr << "challenge " << id;
-        auto label = LabelTTF::create(sstr.str(), "fonts/EraserDust.ttf" , 40);
+        auto label = LabelTTF::create(title, "fonts/EraserDust.ttf" , 40);
         label->setAnchorPoint(Vec2::ZERO);
-        label->setPosition(2*wd/5, (4 - id) * ht/4 + LABEL_OFFSET);
+        label->setPosition(2*wd/(n+1), (n - id) * ht/n + LABEL_OFFSET);
         menu->addChild(label);
         auto obj = LabelTTF::create( std::string("Objective: ") + objective,
                 "fonts/EraserDust.ttf" , 25 ,
                 Size(550,100) , TextHAlignment::LEFT);
         obj->setAnchorPoint(Vec2::ZERO);
-        obj->setPosition(Vec2(2*wd/5, (4 - id) * ht/4 - 2*LABEL_OFFSET));
+        obj->setPosition(Vec2(2*wd/(n+1), (n - id) * ht/n - 2*LABEL_OFFSET));
         scrollContainer->addChild(obj);
     };
 
-    addChallenge("chal_1.png", 1, "To move the box by applying force. Notice the behavior of friction as you apply force");
-    addChallenge("chal_2.png", 2, "dummy text");
-    addChallenge("chal_3.png", 3, "Moving a box from point A to B in given time. Selection of surfaces is key for completing this challenge." );
+    
+    auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
+    if (!base)
+        return false;
+
+    n = base->getChallengeInfo().size();
+    for (auto keyValue : base->getChallengeInfo())
+    {
+        // TODO: this should be in the xml
+        std::stringstream sstr;
+        sstr << "chal_" << keyValue.first << ".png";
+        addChallenge( sstr.str(), atoi(keyValue.first.c_str()), keyValue.second._title, keyValue.second._desc);
+    }
 
     menu->setPosition(Vec2::ZERO);
     scrollContainer->addChild(menu);
@@ -124,18 +131,17 @@ void ChallengeMenu::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , coco
 void ChallengeMenu::touchDownAction(Ref *sender)
 {
     int sceneId = dynamic_cast<Node *>(sender)->getTag();
-    Scene * scene = nullptr;
-    switch(sceneId) {
-        case 1 :
-            scene = Challenge1::createScene(true);
-            break;
-        case 2 :
-        	scene = Challenge2::createScene(true);
-        	break;
-        case 3 :    
-        	scene = Challenge3::createScene(true);
-        	break;
-    };
+    
+    auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
+    if (!base)
+        return;
+
+    std::stringstream sstr;
+    sstr << sceneId;
+    auto gen = base->getChallengeInitializers()[sstr.str()];
+    Scene * scene = gen ? gen(true) : nullptr;
+    if (!scene)
+        return;
 
     if (_fromChallenge)
     {
