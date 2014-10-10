@@ -25,7 +25,7 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	private static final String					TAG				= BaseVMActivity.class.getSimpleName();
 	private static final int					ATTEMPTS_LOADER	= 1;
 
-	protected String							uid, courseId, bookId, topicId, vmId, fragment;
+	protected String							uid, courseId, bookId, topicId, vmId, vmActivityName, fragment;
 	protected String[]							breadcrumbArray;
 	protected VM								vm				= null;
 	protected HashMap<String, ChallengeAttempt>	attempts		= new HashMap<String, ChallengeAttempt>();
@@ -45,6 +45,7 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 		bookId = getIntent().getStringExtra("BOOK_ID");
 		topicId = getIntent().getStringExtra("TOPIC_ID");
 		vmId = getIntent().getStringExtra("VM_ID");
+		vmActivityName = getIntent().getStringExtra("VM_ACTIVITY");
 		breadcrumbArray = getIntent().getStringArrayExtra("BREADCRUMB");
 		// fragment = getIntent().getStringExtra("FRAGMENT");
 		if (uid == null || courseId == null || bookId == null || topicId == null || vmId == null) {
@@ -52,7 +53,7 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 			Toast.makeText(this, "Missing params", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if (!getVMId().equals(vmId)) {
+		if (!getVMId().equals(vmActivityName)) {
 			finish();
 			Toast.makeText(this, "Id mismatch!", Toast.LENGTH_SHORT).show();
 			return;
@@ -105,9 +106,10 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	protected abstract void onAttemptsLoaded();
 
     /*
-     * get the Location of the vmdetails xml file
-     */
+    * get the Location of the vmdetails xml file
+    */
     protected abstract XmlPullParser getVMDetailsXml();
+
 
 	protected final String getVMId() {
 		return getClass().getName();
