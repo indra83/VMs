@@ -27,32 +27,12 @@ THE SOFTWARE.
 package co.in.divi.vms.friction;
 
 import org.xmlpull.v1.XmlPullParser;
-import android.os.Bundle;
-import co.in.divi.vms.BaseVMActivity;
-import co.in.divi.vms.NativeHelper;
+import co.in.divi.vms.CommonVMActivity;
 
-public class AppActivity extends BaseVMActivity
+public class AppActivity extends CommonVMActivity
 {
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        NativeHelper.setMainActivity(this);
-    }
-
-	@Override
-	protected void onVMDetailsLoaded() {
-        //for (Challenge ch : vm.challenges)
-    }
-
-    @Override
-	protected void onAttemptsLoaded() {
-        //for (String challengeId : attempts.keySet())
-    }
-
     @Override
     protected XmlPullParser getVMDetailsXml() {
         return getResources().getXml(R.xml.challenges);
     }
-
 }
