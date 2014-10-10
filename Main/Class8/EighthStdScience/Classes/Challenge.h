@@ -39,7 +39,7 @@ public:
     void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
     void countDownTimer(float dt);
     void setupTimer(float howLong, float warning);
-    std::string getTimeString(); 
+    std::string getTimeString();
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
 

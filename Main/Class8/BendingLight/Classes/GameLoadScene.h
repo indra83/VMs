@@ -15,6 +15,9 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(GameLoad);
 
+    // play button menu
+    void playSelected();
+
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event);
 };
