@@ -3,7 +3,7 @@
 #include "base/ccMacros.h" // CCAssert
 #include "base/CCPlatformMacros.h" // USING_NS_CC
 
-#define NATIVE_HELPER_CLASS "org/cocos2dx/cpp/NativeHelper"
+#define NATIVE_HELPER_CLASS "co/in/divi/vms/NativeHelper"
 
 USING_NS_CC;
 

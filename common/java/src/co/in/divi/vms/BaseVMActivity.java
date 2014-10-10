@@ -24,6 +24,7 @@ import org.cocos2dx.lib.Cocos2dxActivity;
 public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderCallbacks<Cursor> {
 	private static final String					TAG				= BaseVMActivity.class.getSimpleName();
 	private static final int					ATTEMPTS_LOADER	= 1;
+    private static BaseVMActivity               instance = null;
 
 	protected String							uid, courseId, bookId, topicId, vmId, vmActivityName, fragment;
 	protected String[]							breadcrumbArray;
@@ -34,6 +35,7 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
 		super.onCreate(savedInstanceState);
 	}
 
@@ -114,6 +116,11 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	protected final String getVMId() {
 		return getClass().getName();
 	}
+
+	public static void saveCurrentScore(String challengeId, int points, int subquestions, int correctAttempts, int wrongAttempts, String data) {
+        if (instance != null)
+            instance.saveScore(challengeId, points, subquestions, correctAttempts, wrongAttempts, data);
+    }
 
 	protected final void saveScore(String challengeId, int points, int subquestions, int correctAttempts, int wrongAttempts, String data) {
 		ContentValues values = new ContentValues();
