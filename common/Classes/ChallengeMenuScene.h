@@ -8,8 +8,10 @@
 class ChallengeMenu : public cocos2d::Layer, public VmBase::InfoListener
 {
     bool _fromChallenge;
+    cocos2d::extension::ScrollView * _scrollview;
 public:
-    ChallengeMenu() : _fromChallenge(false) {}
+    ChallengeMenu() : _fromChallenge(false), _scrollview(nullptr) {}
+
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static cocos2d::Scene* createScene(bool fromChallenge, cocos2d::Sprite * sprite);
 
@@ -22,6 +24,8 @@ public:
     // back button previous scene
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
     void touchDownAction(cocos2d::Ref *sender);
+    void onInfo(const ChallengeInfo &inf) override;
+    void populateWithInfo();
 };
 
 #endif // __CHALLENGE_SCENE_H__
