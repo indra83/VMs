@@ -96,9 +96,9 @@ bool SpriteLayer::init()
         return arrow;
     };
 
-    _forceFriction = addArrow("arrow_fric.png" , Rect(2,20,10,40));
-    _forceExternal = addArrow("arrow_force.png" , Rect(2,20,10,40));
-    _sumOfForces = addArrow("arrow_sof.png" , Rect(2,20,10,40));
+    _forceFriction = addArrow("arrow_fric.png" , Rect(0,20,1,30));
+    _forceExternal = addArrow("arrow_force.png" , Rect(0,20,1,30));
+    _sumOfForces = addArrow("arrow_sof.png" , Rect(0,20,1,30));
 
     //////////////////////////////
     // 6. add the speed related display
