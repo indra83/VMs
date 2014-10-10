@@ -4,7 +4,7 @@
 
 class ChallengeBase: public cocos2d::Layer
 {
-    std::string _challengeId;
+    std::string _id;
 
 public :
     // back button exit

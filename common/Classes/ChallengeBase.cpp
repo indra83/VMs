@@ -1,7 +1,9 @@
 #include "ChallengeBase.h"
+#include "ChallengeMenuScene.h"
 #include "Util.h"
 #include "PopUpScene.h"
 #include "NativeHelper.h"
+#include "VmBase.h"
 
 USING_NS_CC;
 
@@ -44,10 +46,13 @@ cocos2d::Menu * ChallengeBase::getTopMenu()
     auto restart_scene = MenuItemImage::create("reset_normal.png", "reset_normal.png");
     restart_scene->setScale(0.8);
     addToMenu(restart_scene,
-                [](Ref * sender) -> void
+                [=](Ref * sender) -> void
                 {
-                    // TODO: fix this
-                    //Director::getInstance()->replaceScene(Derived::createScene(false));
+                    auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
+                    if (!base)
+                        return;
+                    auto gen = base->getChallengeInitializers()[_id];
+                    Director::getInstance()->replaceScene(gen(false));
                 });
 
     // add the info button
@@ -65,8 +70,7 @@ cocos2d::Menu * ChallengeBase::getTopMenu()
     addToMenu(list,
               [](Ref * sender) -> void
               {
-                    // TODO: fix this
-                    //Director::getInstance()->pushScene(ChallengeMenu::createScene(true, nullptr));
+                    Director::getInstance()->pushScene(ChallengeMenu::createScene(true, nullptr));
               });
     return menu;
 }
