@@ -58,6 +58,7 @@ public :
     void addChallengeGen(const std::string &id, std::function< cocos2d::Scene * (bool)> gen);
     std::map<std::string, std::function< cocos2d::Scene * (bool) >> & getChallengeInitializers() { return _gens; }
     std::map<std::string, ChallengeInfo> & getChallengeInfo() { return _info; }
+    std::map<std::string, ChallengeAttempt> & getAttemptData() { return _state; }
     void addStartingScenegen( std::function< cocos2d::Scene * ()> gen ) { _startGen = gen; }
     cocos2d::Scene * getStartingScene() { return _startGen(); }
 

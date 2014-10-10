@@ -4,6 +4,7 @@
 #include "PopUpScene.h"
 #include "NativeHelper.h"
 #include "VmBase.h"
+#include "co_in_divi_vms_CommonVMActivity.h"
 
 USING_NS_CC;
 
@@ -15,7 +16,6 @@ bool ChallengeBase::init(bool showInfo)
     CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(1.0);
     // enable keypress cbs
     this->setKeypadEnabled(true);
-
 
     // show initial info popup
     if (showInfo)
@@ -97,14 +97,24 @@ void ChallengeBase::addPopupMenu(const std::string & title, const std::string & 
 
 void ChallengeBase::showInfoPopup()
 {
- // TODO: get data from Base and show here 
-	addPopupMenu("INSTRUCTION", "Move the box to the right by applying force on it. Drag and hold the slider in position to apply a specific amount of force."
-	    		" Help the box reach the house which is some distance away", false);
+    auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
+    if (!base)
+        return;
+	addPopupMenu("INSTRUCTION", base->getChallengeInfo()[_id]._desc, false);
 }
 
 void ChallengeBase::done(bool success)
 {
-    // TODO: call save score from here
+    auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
+    if (!base)
+        return;
+    auto attInfo = base->getAttemptData()[_id];
+    if (success)
+        attInfo._correctAttempts += 1;
+    else
+        attInfo._wrongAttempts += 1;
+
+    saveAttemptData(attInfo);
     if (success)
         addPopupMenu("Challenge Complete", "Congrats!!", true, true, true);
     else

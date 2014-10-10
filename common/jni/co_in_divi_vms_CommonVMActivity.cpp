@@ -35,4 +35,7 @@ JNIEXPORT void JNICALL Java_co_in_divi_vms_CommonVMActivity_setAttemptNative
         base->addAttemptDetails(attemptData);
 }
 
-// TODO: save score
+void saveAttemptData(const ChallengeAttempt &ch)
+{
+}
+

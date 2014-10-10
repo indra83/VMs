@@ -78,4 +78,6 @@ JNIEXPORT void JNICALL Java_co_in_divi_vms_CommonVMActivity_setAttemptNative
 #ifdef __cplusplus
 }
 #endif
+struct ChallengeAttempt;
+void saveAttemptData(const ChallengeAttempt &ch);
 #endif
