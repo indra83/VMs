@@ -109,7 +109,8 @@ def copy_files(src, dst):
             shutil.copy(path, dst)
         if os.path.isdir(path):
             new_dst = os.path.join(dst, item)
-            os.mkdir(new_dst)
+            if not os.path.exists(new_dst):
+                os.mkdir(new_dst)
             copy_files(path, new_dst)
 
 def copy_resources(app_android_root):
@@ -121,9 +122,10 @@ def copy_resources(app_android_root):
 
     # copy resources
     os.mkdir(assets_dir)
-    resources_dir = os.path.join(app_android_root, "../Resources")
-    if os.path.isdir(resources_dir):
-        copy_files(resources_dir, assets_dir)
+    for res_path in [ "../common/Resources", "../Resources" ]: 
+        resources_dir = os.path.join(app_android_root, res_path)
+        if os.path.isdir(resources_dir):
+            copy_files(resources_dir, assets_dir)
 
 def build(ndk_build_param,android_platform,build_mode):
 

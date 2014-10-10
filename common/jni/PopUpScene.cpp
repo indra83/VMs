@@ -2,7 +2,6 @@
 #include "Util.h"
 
 USING_NS_CC;
-USING_NS_CC_EXT;
 
 Scene* PopUp::createScene(const std::string &title, const std::string &caption, Sprite * sprite)
 {

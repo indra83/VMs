@@ -10,7 +10,9 @@
 
 //#define ALTITUDE 150
 
+static const std::string CHIME("audio/notification.mp3");
 std::string BOUNCE_SOUND("audio/cratefall.mp3");
+
 #define INITIAL_VOLUME 1.0
 #define DELTA_VOLUME 0.3
 

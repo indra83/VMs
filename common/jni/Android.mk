@@ -8,7 +8,10 @@ LOCAL_MODULE := divivm_static
 
 LOCAL_MODULE_FILENAME := libdivivm
 
-LOCAL_SRC_FILES := NativeHelper.cpp
+LOCAL_SRC_FILES := NativeHelper.cpp \
+					Util.cpp \
+					PopUpScene.cpp \
+					AdvanceSprite.cpp
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH) \
 	                    $(LOCAL_PATH)/.

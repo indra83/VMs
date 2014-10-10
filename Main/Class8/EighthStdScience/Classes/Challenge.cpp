@@ -16,6 +16,7 @@ static const int BG_ZINDEX=0;
 static const int SP_ZINDEX=1;
 static const int MN_ZINDEX=2;
 
+static const std::string CHIME("audio/notification.mp3");
 
 USING_NS_CC;
 USING_NS_CC_EXT;

@@ -2,7 +2,6 @@
 #define __POPUP_SCENE_H__
 
 #include "cocos2d.h"
-#include "extensions/cocos-ext.h"
 
 class PopUp: public cocos2d::Layer
 {

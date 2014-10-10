@@ -11,6 +11,8 @@
 USING_NS_CC;
 USING_NS_CC_EXT;
 
+static const std::string CHIME("audio/notification.mp3");
+
 Scene* ChallengeMenu::createScene(bool fromChallenge, Sprite * sprite)
 {
     // 'scene' is an autorelease object
