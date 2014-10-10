@@ -6,9 +6,9 @@
 USING_NS_CC;
 
 // forward declaration of classes
-class BackGroundLayer;
-class SpriteLayer;
-class MenuLayer;
+//class BackGroundLayer;
+//class SpriteLayer;
+//class MenuLayer;
 
 template < class Derived >
 class Challenge : public cocos2d::Layer
@@ -33,9 +33,9 @@ public:
     void done(bool);
 
 protected:
-    SpriteLayer * _spriteLayer;
-    BackGroundLayer * _bgLayer;
-    MenuLayer * _menuLayer;
+//    SpriteLayer * _spriteLayer;
+//    BackGroundLayer * _bgLayer;
+//    MenuLayer * _menuLayer;
 };
 
 class Challenge1: public Challenge<Challenge1>

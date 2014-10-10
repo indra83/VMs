@@ -99,7 +99,6 @@ bool ChallengeMenu::init()
 	scrollContainer->addChild(label);
 
 	// scroll view
-	// TODO: investigate random crashes in srollview update
 	auto scrollview = ScrollView::create(visibleSize, scrollContainer);
 	scrollview->setDirection(ScrollView::Direction::VERTICAL);
 	scrollview->setPosition(Vec2::ZERO);
