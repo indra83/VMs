@@ -25,6 +25,7 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../common/jni
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../common/Classes
 
 ifeq ($(USE_VIBRATE),1)
 	LOCAL_CPPFLAGS := -DUSE_VIBRATE=1
