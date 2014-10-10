@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="in.co.divi.EighthStdScience"
+      package="co.in.divi.vms.friction"
       android:versionCode="1"
       android:versionName="1.0"
       android:installLocation="auto">
@@ -15,7 +15,7 @@
         <meta-data android:name="android.app.lib_name"
 	              android:value="cocos2dcpp" />
 
-        <activity android:name="org.cocos2dx.cpp.AppActivity"
+        <activity android:name="co.in.divi.vms.friction.AppActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="landscape"
                   android:theme="@android:style/Theme.NoTitleBar.Fullscreen"

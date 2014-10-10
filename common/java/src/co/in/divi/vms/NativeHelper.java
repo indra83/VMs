@@ -1,5 +1,5 @@
 
-package org.cocos2dx.cpp;
+package co.in.divi.vms;
 
 import android.os.Vibrator;
 import android.media.ToneGenerator;

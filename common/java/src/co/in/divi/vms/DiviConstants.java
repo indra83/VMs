@@ -1,4 +1,4 @@
-package org.cocos2dx.cpp;
+package co.in.divi.vms;
 
 import android.net.Uri;
 

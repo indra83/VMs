@@ -1,4 +1,4 @@
-package org.cocos2dx.cpp;
+package co.in.divi.vms;
 
 import java.util.HashMap;
 
@@ -13,9 +13,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import org.cocos2dx.cpp.common.ChallengeAttempt;
-import org.cocos2dx.cpp.common.ChallengeXmlParser;
-import org.cocos2dx.cpp.common.VM;
+import co.in.divi.vms.common.ChallengeAttempt;
+import co.in.divi.vms.common.ChallengeXmlParser;
+import co.in.divi.vms.common.VM;
 
 import org.xmlpull.v1.XmlPullParser;
 

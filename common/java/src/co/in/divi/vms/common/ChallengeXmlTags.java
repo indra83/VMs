@@ -1,4 +1,4 @@
-package org.cocos2dx.cpp.common;
+package co.in.divi.vms.common;
 
 public final class ChallengeXmlTags {
 	public static final String	ID_ATTRIBUTE				= "id";

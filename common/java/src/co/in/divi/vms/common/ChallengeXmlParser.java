@@ -1,4 +1,4 @@
-package org.cocos2dx.cpp.common;
+package co.in.divi.vms.common;
 
 import java.io.IOException;
 import java.util.ArrayList;

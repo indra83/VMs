@@ -24,11 +24,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-package org.cocos2dx.cpp;
+package co.in.divi.vms.friction;
 
 import org.xmlpull.v1.XmlPullParser;
 import android.os.Bundle;
-import in.co.divi.EighthStdScience.R;
+import co.in.divi.vms.BaseVMActivity;
+import co.in.divi.vms.NativeHelper;
 
 public class AppActivity extends BaseVMActivity
 {
