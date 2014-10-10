@@ -1,8 +1,9 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "VmBase.h"
 
-class ChallengeBase: public cocos2d::Layer
+class ChallengeBase: public cocos2d::Layer, public VmBase::AttemptListener 
 {
     std::string _id;
 
@@ -14,4 +15,6 @@ public :
     void addPopupMenu(const std::string & title, const std::string & caption, bool loud = true, bool vibrate = false, bool replace = false );
     cocos2d::Menu * getTopMenu();
     void done(bool success);
+    void onAttempt(const ChallengeAttempt & att) override;
+    void showScore();
 };

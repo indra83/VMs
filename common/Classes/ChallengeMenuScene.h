@@ -3,8 +3,9 @@
 
 #include "cocos2d.h"
 #include "extensions/cocos-ext.h"
+#include "VmBase.h"
 
-class ChallengeMenu : public cocos2d::Layer
+class ChallengeMenu : public cocos2d::Layer, public VmBase::InfoListener
 {
     bool _fromChallenge;
 public:

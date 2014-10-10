@@ -16,6 +16,7 @@ bool ChallengeBase::init(bool showInfo)
     // enable keypress cbs
     this->setKeypadEnabled(true);
 
+
     // show initial info popup
     if (showInfo)
         showInfoPopup();
@@ -108,6 +109,18 @@ void ChallengeBase::done(bool success)
         addPopupMenu("Challenge Complete", "Congrats!!", true, true, true);
     else
         addPopupMenu("Failed!!", "Try Again", true, true, true);
+}
+
+void ChallengeBase::showScore()
+{
+    //TODO: show scores as a seperate widget
+    
+}
+
+void ChallengeBase::onAttempt(const ChallengeAttempt & att)
+{
+    if ( _id == att._challengeId )
+        showScore();
 }
 
 

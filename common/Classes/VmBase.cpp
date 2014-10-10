@@ -2,14 +2,16 @@
 
 void VmBase::addChallengeDetails(const ChallengeInfo & challengeInfo)
 {
-    //TODO: trigger all the listeners
     _info[challengeInfo._id] = challengeInfo;
+    for(auto lis : _infoListeners)
+        lis->onInfo(challengeInfo);
 }
 
 void VmBase::addAttemptDetails(const ChallengeAttempt & attemptInfo)
 {
-    //TODO: trigger all the listeners
     _state[attemptInfo._challengeId] = attemptInfo;
+    for(auto lis : _attemptListeners)
+        lis->onAttempt(attemptInfo);
 }
 
 void VmBase::addChallengeGen(const std::string &id, std::function< cocos2d::Scene * (bool)> gen)
