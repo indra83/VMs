@@ -136,6 +136,7 @@ void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactP
     }
     else
     {
+        // TODO: this is getting called twice
         captureScreenAsSprite(
                 [](Sprite * sprite) -> void
                 {

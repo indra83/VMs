@@ -124,7 +124,7 @@ void ChallengeMenu::populateWithInfo()
         auto label = LabelTTF::create(title, "fonts/EraserDust.ttf" , 40);
         label->setAnchorPoint(Vec2::ZERO);
         label->setPosition(2*wd/(n+1), (n - id) * ht/n + LABEL_OFFSET);
-        menu->addChild(label);
+        scrollContainer->addChild(label);
         auto obj = LabelTTF::create( std::string("Objective: ") + objective,
                 "fonts/EraserDust.ttf" , 25 ,
                 Size(550,100) , TextHAlignment::LEFT);
@@ -132,7 +132,6 @@ void ChallengeMenu::populateWithInfo()
         obj->setPosition(Vec2(2*wd/(n+1), (n - id) * ht/n - 2*LABEL_OFFSET));
         scrollContainer->addChild(obj);
     };
-
     
     auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
     if (!base)
