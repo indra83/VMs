@@ -58,14 +58,14 @@ Scene* Challenge<Derived>::createScene(bool showInfo)
 template< class Derived >
 bool Challenge<Derived>::init(bool showInfo)
 {
+    _id = Derived::getId();
+
     //////////////////////////////
     // 1. super init first
     if ( !ChallengeBase::init(showInfo) )
     {
         return false;
     }
-
-    _id = Derived::getId();
 
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
