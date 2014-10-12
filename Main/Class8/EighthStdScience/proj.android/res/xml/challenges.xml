@@ -2,16 +2,16 @@
 <challenges>
     <vm id="co.in.divi.vms.test.TestVMActivity" title="Test VM title">
 	    <challenge id="challenge1" >
-	        <title>Challenge 1</title>
-	        <description>Description for challenge 1</description>
+	        <title>Frictional Force</title>
+	        <description>To move the box by applying force. Notice the behavior of friction as you apply force</description>
 	    </challenge>
 	    <challenge id="challenge2" >
-	        <title>Difficult challenge</title>
-	        <description>blah blah blah</description>
+	        <title>Constant Speed</title>
+	        <description>To maintain the box at constant speed, to allow it to be picked up by the trolley</description>
 	    </challenge>
 	    <challenge id="challenge3" >
-	        <title>Easy challenge</title>
-	        <description>this is an easy challenge description blah blah blah blah blah</description>
+	        <title>Surface Change</title>
+	        <description>Moving a box from point A to B in given time. Selection of surfaces is key for completing this challenge</description>
 	    </challenge>
     </vm>
 </challenges>
