@@ -112,7 +112,10 @@ bool GameLoad::onContactPreSolve(cocos2d::PhysicsContact &contact, cocos2d::Phys
         _current_restitution -= DELTA_RESTITUTION;
     }
     else
+    {
         solve.setRestitution(0.0);
+        _current_restitution = 0.0;
+    }
     return true;
 }
 

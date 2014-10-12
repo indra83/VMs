@@ -79,5 +79,10 @@ JNIEXPORT void JNICALL Java_co_in_divi_vms_CommonVMActivity_setAttemptNative
 }
 #endif
 struct ChallengeAttempt;
+struct ChallengeInfo;
+#include <vector>
 void saveAttemptData(const ChallengeAttempt &ch);
+const std::vector<ChallengeAttempt> & getCachedAttempts();
+const std::vector<ChallengeInfo> & getCachedInfos();
+void clearCachedData();
 #endif

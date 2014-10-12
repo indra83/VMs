@@ -5,6 +5,7 @@
 
 class ChallengeBase: public cocos2d::Layer, public VmBase::AttemptListener 
 {
+protected :    
     std::string _id;
 
 public :

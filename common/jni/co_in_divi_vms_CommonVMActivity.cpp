@@ -2,9 +2,13 @@
 #include "ChallengeData.h"
 #include "VmBase.h"
 #include "cocos2d.h"
+#include <vector>
 #include "platform/android/jni/JniHelper.h"
 
 USING_NS_CC;
+
+static std::vector<ChallengeInfo> sInfos;
+static std::vector<ChallengeAttempt> sAttempts;
 
 std::string getString(JNIEnv *jenv, jstring str)
 {
@@ -26,6 +30,8 @@ JNIEXPORT void JNICALL Java_co_in_divi_vms_CommonVMActivity_setChallengeDetailsN
     auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
     if (base)
         base->addChallengeDetails(challengeDetails);
+    else
+        sInfos.push_back(challengeDetails);
 }
 
 JNIEXPORT void JNICALL Java_co_in_divi_vms_CommonVMActivity_setAttemptNative
@@ -35,7 +41,18 @@ JNIEXPORT void JNICALL Java_co_in_divi_vms_CommonVMActivity_setAttemptNative
     auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
     if (base)
         base->addAttemptDetails(attemptData);
+    else
+        sAttempts.push_back(attemptData);
 }
+
+void clearCachedData()
+{
+    sInfos.clear();
+    sAttempts.clear();
+}
+
+const std::vector<ChallengeAttempt> & getCachedAttempts() { return sAttempts; }
+const std::vector<ChallengeInfo> & getCachedInfos() { return sInfos; }
 
 #define CLASS_NAME "co/in/divi/vms/BaseVMActivity"
 

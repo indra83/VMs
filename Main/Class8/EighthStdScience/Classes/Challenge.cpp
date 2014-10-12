@@ -65,6 +65,8 @@ bool Challenge<Derived>::init(bool showInfo)
         return false;
     }
 
+    _id = Derived::getId();
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -76,7 +78,11 @@ bool Challenge<Derived>::init(bool showInfo)
     /////////////////////////////
     // 2. add the menu layer
     _menuLayer = MenuLayer::create();
+
+    // add common toplayer
+    // TODO: this has gone wrong
     _menuLayer->setTopMenu(getTopMenu());
+
     this->addChild(_menuLayer, MN_ZINDEX);
 
     /////////////////////////////

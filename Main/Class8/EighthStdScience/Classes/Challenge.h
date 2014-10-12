@@ -23,6 +23,14 @@ public:
         _timeLeft(0.0),
         _warningTime(0.0) {}
 
+    static void addGenerator( VmBase * base )
+    {
+        base->addChallengeGen( Derived::getId(), [](bool showInfo) -> cocos2d::Scene *
+        {
+            return Derived::createScene(showInfo);
+        });
+    }
+
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static cocos2d::Scene* createScene(bool showInfo);
 
@@ -54,6 +62,7 @@ private :
 class Challenge1: public Challenge<Challenge1>
 {
 public:
+    static std::string getId() { return "challenge1"; }
     Challenge1() : _friendHelpShown(false), _numMaxHits(0) {}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
@@ -72,6 +81,7 @@ class Challenge2: public Challenge<Challenge2>
 
     std::map<Node *, TrolleyInfo> _trollies;
 public:
+    static std::string getId() { return "challenge2"; }
     Challenge2(): _trollies(){}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
@@ -80,6 +90,7 @@ public:
 class Challenge3: public Challenge<Challenge3>
 {
 public:
+    static std::string getId() { return "challenge3"; }
 	Challenge3() {}
 
 	virtual bool init(bool showInfo) override;

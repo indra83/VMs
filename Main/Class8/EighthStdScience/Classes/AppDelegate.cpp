@@ -6,20 +6,14 @@ USING_NS_CC;
 
 AppDelegate::AppDelegate() {
 
-    addChallengeGen( "1", [](bool showInfo) -> Scene *
-    {
-        return Challenge1::createScene(showInfo);
-    });
-    addChallengeGen( "2", [](bool showInfo) -> Scene *
-    {
-        return Challenge2::createScene(showInfo);
-    });
-    addChallengeGen( "3", [](bool showInfo) -> Scene *
-    {
-        return Challenge3::createScene(showInfo);
-    });
+    Challenge1::addGenerator(this);
+    Challenge2::addGenerator(this);
+    Challenge3::addGenerator(this);
 
-    addStartingScenegen([]() -> Scene * { return GameLoad::createScene(); });
+    addStartingScenegen([]() -> Scene * 
+    { 
+        return GameLoad::createScene(); 
+    });
 }
 
 AppDelegate::~AppDelegate() 

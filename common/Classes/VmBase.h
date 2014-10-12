@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 #include <map>
-class VmBase
+
+class VmBase : public cocos2d::Application
 {
 public :    
     class InfoListener
@@ -53,6 +54,7 @@ private :
     std::vector<InfoListener*> _infoListeners;
     std::vector<AttemptListener*> _attemptListeners;
 public :
+    VmBase();
     void addChallengeDetails(const ChallengeInfo & challengeInfo);
     void addAttemptDetails(const ChallengeAttempt & attemptInfo);
     void addChallengeGen(const std::string &id, std::function< cocos2d::Scene * (bool)> gen);
@@ -78,4 +80,10 @@ public :
         if (found != _attemptListeners.end()) 
             _attemptListeners.erase(found);
     }
+
+    virtual bool applicationDidFinishLaunching() = 0;
+
+    virtual void applicationDidEnterBackground() = 0;
+
+    virtual void applicationWillEnterForeground() = 0;
 };

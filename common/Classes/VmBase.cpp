@@ -1,4 +1,14 @@
 #include "VmBase.h"
+#include "co_in_divi_vms_CommonVMActivity.h"
+
+VmBase::VmBase()
+{
+   for ( auto at : getCachedAttempts() ) 
+       addAttemptDetails(at);
+   for ( auto nf : getCachedInfos() ) 
+       addChallengeDetails(nf);
+   clearCachedData();
+}
 
 void VmBase::addChallengeDetails(const ChallengeInfo & challengeInfo)
 {

@@ -67,15 +67,13 @@ void ChallengeMenu::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , coco
 
 void ChallengeMenu::touchDownAction(Ref *sender)
 {
-    int sceneId = dynamic_cast<Node *>(sender)->getTag();
+    std::string challengeId = reinterpret_cast<char *>(dynamic_cast<Node *>(sender)->getUserData());
     
     auto base = dynamic_cast<VmBase *>(cocos2d::Application::getInstance());
     if (!base)
         return;
 
-    std::stringstream sstr;
-    sstr << sceneId;
-    auto gen = base->getChallengeInitializers()[sstr.str()];
+    auto gen = base->getChallengeInitializers()[challengeId];
     Scene * scene = gen ? gen(true) : nullptr;
     if (!scene)
         return;
@@ -115,10 +113,11 @@ void ChallengeMenu::populateWithInfo()
     auto menu = Menu::create();
     // container item icons
     auto addChallenge =
-    [&](std::string fileName, int id, const std::string & title, const std::string &objective) -> void
+    [&](std::string fileName, const std::string & challengeId, int id, const std::string & title, const std::string &objective) -> void
     {
         auto chal = MenuItemImage::create(fileName, fileName, CC_CALLBACK_1(ChallengeMenu::touchDownAction, this));
-        chal->setTag(id);
+        char * chid = strdup(challengeId.c_str()); 
+        chal->setUserData(chid);
         chal->setPosition(wd/(n+1), (n - id) * ht/n);
         menu->addChild(chal);
 
@@ -140,13 +139,20 @@ void ChallengeMenu::populateWithInfo()
         return;
 
     n = base->getChallengeInitializers().size() + 1;
-    for (auto keyValue : base->getChallengeInitializers())
+
+    std::vector<std::string> keySet;
+    for (auto keyValue : base->getChallengeInitializers()) 
+        keySet.push_back(keyValue.first);
+    std::sort(keySet.begin(), keySet.end());
+
+    int i = 0;
+    for (auto key : keySet) 
     {
         // TODO: this should be in the xml
         std::stringstream sstr;
-        sstr << "chal_" << keyValue.first << ".png";
-        ChallengeInfo & ch = base->getChallengeInfo()[keyValue.first];
-        addChallenge(sstr.str(), atoi(keyValue.first.c_str()), ch._title, ch._desc);
+        sstr << "chal_" << (++i) << ".png";
+        ChallengeInfo & ch = base->getChallengeInfo()[key];
+        addChallenge(sstr.str(), key, i, ch._title, ch._desc);
     }
 
     menu->setPosition(Vec2::ZERO);
@@ -161,7 +167,7 @@ void ChallengeMenu::populateWithInfo()
     _scrollview = ScrollView::create(visibleSize, scrollContainer);
     _scrollview->setDirection(ScrollView::Direction::VERTICAL);
     _scrollview->setPosition(Vec2::ZERO);
-    _scrollview->setContentOffset(Vec2(0 , - visibleSize.height/2), true);
+    _scrollview->setContentOffset(Vec2(0 , -visibleSize.height/2), true);
 
     this->addChild(_scrollview);
 }
