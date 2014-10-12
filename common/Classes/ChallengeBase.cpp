@@ -32,7 +32,7 @@ cocos2d::Menu * ChallengeBase::getTopMenu()
 {
     static const float PADDING = 10.0;
     cocos2d::Menu * menu =  Menu::create();
-    float topMenuOffsetX;
+    float topMenuOffsetX = 0.0;
     auto addToMenu = [&](MenuItem * item, const std::function< void (Ref *)> &cb) -> void
     {
         item->setCallback(cb);
