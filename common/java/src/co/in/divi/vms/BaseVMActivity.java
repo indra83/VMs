@@ -24,7 +24,7 @@ import org.cocos2dx.lib.Cocos2dxActivity;
 public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderCallbacks<Cursor> {
 	private static final String					TAG				= BaseVMActivity.class.getSimpleName();
 	private static final int					ATTEMPTS_LOADER	= 1;
-    private static BaseVMActivity               instance = null;
+	private static BaseVMActivity 				instance = null;
 
 	protected String							uid, courseId, bookId, topicId, vmId, vmActivityName, fragment;
 	protected String[]							breadcrumbArray;
@@ -32,6 +32,8 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	protected HashMap<String, ChallengeAttempt>	attempts		= new HashMap<String, ChallengeAttempt>();
 
 	private LoadVMTask							loadVMTask		= null;
+
+	private boolean 							amnesiaMode 	= false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +53,10 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 		breadcrumbArray = getIntent().getStringArrayExtra("BREADCRUMB");
 		// fragment = getIntent().getStringExtra("FRAGMENT");
 		if (uid == null || courseId == null || bookId == null || topicId == null || vmId == null) {
-			finish();
-			Toast.makeText(this, "Missing params", Toast.LENGTH_SHORT).show();
-			return;
+			amnesiaMode = true;
+			Log.d(TAG, "launched standalone.. going into amnesia mode");	
 		}
-		if (!getVMId().equals(vmActivityName)) {
+		if (!amnesiaMode && !getVMId().equals(vmActivityName)) {
 			finish();
 			Toast.makeText(this, "Id mismatch!", Toast.LENGTH_SHORT).show();
 			return;
@@ -71,6 +72,9 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	protected void onResume() {
 		super.onResume();
 		// set location to current VM
+		// toDO: 
+		if (amnesiaMode)
+			return;
 		Intent intent = new Intent("co.in.divi.intent.LOCATION_BROADCAST");
 		intent.putExtra("COURSE_ID", courseId);
 		intent.putExtra("BOOK_ID", bookId);
@@ -83,6 +87,8 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (amnesiaMode)
+			return;
 		// clear location
 		Intent intent = new Intent("co.in.divi.intent.LOCATION_BROADCAST");
 		sendBroadcast(intent);
@@ -107,10 +113,10 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	 */
 	protected abstract void onAttemptsLoaded();
 
-    /*
-    * get the Location of the vmdetails xml file
-    */
-    protected abstract XmlPullParser getVMDetailsXml();
+	/*
+	 * get the Location of the vmdetails xml file
+	 */
+	protected abstract XmlPullParser getVMDetailsXml();
 
 
 	protected final String getVMId() {
@@ -118,11 +124,33 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	}
 
 	public static void saveCurrentScore(String challengeId, int points, int subquestions, int correctAttempts, int wrongAttempts, String data) {
-        if (instance != null)
-            instance.saveScore(challengeId, points, subquestions, correctAttempts, wrongAttempts, data);
-    }
+		if (instance != null)
+			instance.saveScore(challengeId, points, subquestions, correctAttempts, wrongAttempts, data);
+	}
 
 	protected final void saveScore(String challengeId, int points, int subquestions, int correctAttempts, int wrongAttempts, String data) {
+		if (amnesiaMode) {
+			// populate attempts with the new data
+			ChallengeAttempt c = new ChallengeAttempt(); 
+			c.courseId 			= courseId;
+			c.bookId 			= bookId;
+			c.assessmentId  	= getAssessmentId();
+			c.questionId 		= challengeId;
+			c.totalPoints 		= points;
+			c.subquestions 		= subquestions;
+			c.correctAttempts 	= correctAttempts;
+			c.wrongAttempts 	= wrongAttempts;
+			c.data 				= data;
+			c.lastUpdatedAt 	= System.currentTimeMillis();
+			if (correctAttempts == subquestions)
+				c.solvedAt = c.lastUpdatedAt;
+			attempts.put(c.questionId, c);
+
+			// trigger onAttemptsLoaded
+			onAttemptsLoaded();
+			return;
+		}
+
 		ContentValues values = new ContentValues();
 		values.put(DiviConstants.Attempt.UID, uid);
 		values.put(DiviConstants.Attempt.COURSE_ID, courseId);
@@ -188,7 +216,8 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 				BaseVMActivity.this.vm = vm;
 				onVMDetailsLoaded();
 				// now load the attempts
-				getLoaderManager().restartLoader(ATTEMPTS_LOADER, null, BaseVMActivity.this);
+				if (!amnesiaMode)
+					getLoaderManager().restartLoader(ATTEMPTS_LOADER, null, BaseVMActivity.this);
 			} else {
 				finish();
 				Toast.makeText(BaseVMActivity.this, "VM description missing!", Toast.LENGTH_SHORT).show();
