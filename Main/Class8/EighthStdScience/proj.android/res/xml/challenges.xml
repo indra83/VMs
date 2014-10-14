@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <challenges>
-    <vm id="co.in.divi.vms.test.TestVMActivity" title="Test VM title">
+    <vm id="co.in.divi.vms.friction.AppActivity" title="Friction VM">
 	    <challenge id="challenge1" >
 	        <title>Frictional Force</title>
 	        <description>To move the box by applying force. Notice the behavior of friction as you apply force</description>
