@@ -2,10 +2,10 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-$(call import-add-path,$(LOCAL_PATH)/../../cocos2d)
-$(call import-add-path,$(LOCAL_PATH)/../../cocos2d/external)
-$(call import-add-path,$(LOCAL_PATH)/../../cocos2d/cocos)
-$(call import-add-path,$(LOCAL_PATH)/../../common)
+$(call import-add-path,$(LOCAL_PATH)/../../../../../../common/cocos2d)
+$(call import-add-path,$(LOCAL_PATH)/../../../../../../common/cocos2d/external)
+$(call import-add-path,$(LOCAL_PATH)/../../../../../../common/cocos2d/cocos)
+$(call import-add-path,$(LOCAL_PATH)/../../../../../../common)
 
 LOCAL_MODULE := cocos2dcpp_shared
 
@@ -23,8 +23,8 @@ LOCAL_SRC_FILES := eighthstdscience/main.cpp \
                
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../common/jni
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../common/Classes
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../../common/jni
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../../common/Classes
 
 ifeq ($(USE_VIBRATE),1)
 	LOCAL_CPPFLAGS := -DUSE_VIBRATE=1
