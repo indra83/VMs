@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>EighthStdScience</name>
+	<name>demo</name>
 	<comment></comment>
 	<projects>
+		<project>divivm</project>
 		<project>libcocos2dx</project>
 	</projects>
 	<buildSpec>
@@ -116,12 +117,12 @@
 		<link>
 			<name>cocos2d</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/cocos2d</locationURI>
+			<locationURI>PARENT-5-PROJECT_LOC/common/cocos2d</locationURI>
 		</link>
 		<link>
 			<name>libcocos2d</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/cocos2d/cocos/2d/platform/android/java/src</locationURI>
+			<locationURI>PARENT-5-PROJECT_LOC/common/cocos2d/cocos/2d/platform/android/java/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
