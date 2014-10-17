@@ -129,6 +129,7 @@ public abstract class BaseVMActivity extends Cocos2dxActivity implements LoaderC
 	}
 
 	protected final void saveScore(String challengeId, int points, int subquestions, int correctAttempts, int wrongAttempts, String data) {
+		Log.d(TAG, "save score called with: " + challengeId + ", " + points + ", " +  subquestions + ", " +  correctAttempts + ", " +  wrongAttempts + ", " + data );
 		if (amnesiaMode) {
 			// populate attempts with the new data
 			ChallengeAttempt c = new ChallengeAttempt(); 
