@@ -67,7 +67,6 @@ bool GameLayer::init()
     return true;
 }
 
-
 void GameLayer::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
 	Director::getInstance()->end();
