@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include "NativeHelper.h"
-#include "ValueArrow.h"
 #include "Util.h"
 
 USING_NS_CC;

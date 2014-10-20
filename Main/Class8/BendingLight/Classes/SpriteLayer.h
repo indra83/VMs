@@ -92,7 +92,7 @@ private :
     // float _posX;
 
 public :  
-    SpriteLayer() 
+    SpriteLayer() {}
     // : 
        // _forceFriction(nullptr),
        // _forceExternal(nullptr),

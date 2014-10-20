@@ -5,7 +5,6 @@
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
-
     Challenge1::addGenerator(this);
     Challenge2::addGenerator(this);
     Challenge3::addGenerator(this);

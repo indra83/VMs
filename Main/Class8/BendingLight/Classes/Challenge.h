@@ -79,7 +79,7 @@ class Challenge2: public Challenge<Challenge2>
     // std::map<Node *, TrolleyInfo> _trollies;
 public:
     static std::string getId() { return "challenge2"; }
-    Challenge2(): {}
+    Challenge2() {}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
 };
