@@ -1,27 +1,40 @@
 #include "GameLoadScene.h"
-
+#include "BackGroundLayer.h"
+#include "SimpleAudioEngine.h"
 #include "ChallengeMenuScene.h"
-//#include "BackGroundLayer.h"
-//#include "SpriteLayer.h"
-//#include "MenuLayer.h"
+#include "NativeHelper.h"
+#include "Util.h"
+
+#define BG_ZINDEX 0
+#define SP_ZINDEX 1
+
+//#define ALTITUDE 150
+
+static const std::string CHIME("audio/notification.mp3");
+// std::string BOUNCE_SOUND("audio/cratefall.mp3");
+
+// #define INITIAL_VOLUME 1.0
+// #define DELTA_VOLUME 0.3
+
+// #define INITIAL_RESTITUTION 0.5
+// #define DELTA_RESTITUTION 0.1
+
+// #define INITIAL_VIBRATION 1000
+// #define DELTA_VIBRATION 200
 
 USING_NS_CC;
-
-// z-index of game layers
-#define BG_ZINDEX 1
-#define SP_ZINDEX 2
-#define MN_ZINDEX 3
-
 
 Scene* GameLoad::createScene()
 {
     // 'scene' is an autorelease object
     auto scene = Scene::create();
+    //scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //scene->getPhysicsWorld()->setGravity(Vect(0, -400));
     
     // 'layer' is an autorelease object
     auto layer = GameLoad::create();
-
     // add layer as a child to scene
+    // attaches all the children to the existing physics world as well
     scene->addChild(layer);
 
     // return the scene
@@ -38,60 +51,99 @@ bool GameLoad::init()
         return false;
     }
     
+    // _current_restitution = INITIAL_RESTITUTION;
+    // _vibration_length = INITIAL_VIBRATION;
+    // _effects_volume = INITIAL_VOLUME;
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    //////////////////////////////
-	// 2. Main Screen
 
-    // splash screen image
-    auto splashScrImg = Sprite::create("splash.png");
-    splashScrImg->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/2));
-    this->addChild(splashScrImg, -1);
+    // /////////////////////////////
+    // // 2. add the background layer
+    // auto bgLayer = BackGroundLayer::create();
+    // this->addChild(bgLayer, BG_ZINDEX);
 
-    // play button image
-    auto play = MenuItemImage::create("play_normal.png", "play_selected.png", CC_CALLBACK_0(GameLoad::playSelected , this));
-    play->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height/4));
+    // // crate with physics properties
+    // auto crate = Sprite::create("crate.png");
+    // crate->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + visibleSize.height + crate->getContentSize().height/2));
 
-    auto scale_1 = ScaleBy::create(0.5, 1.3);
-    auto scale_2 = ScaleTo::create(0.5, 1);
-    auto seq = Sequence::create(scale_1, scale_2, nullptr);
-    auto action = RepeatForever::create(seq);
-    play->runAction(action);
+    // auto crate_body = PhysicsBody::createBox(crate->getContentSize(), PhysicsMaterial(0.8, INITIAL_RESTITUTION, 0.5));
+    // crate_body->setContactTestBitmask(0x1); // enable callbacks
+    // crate->setPhysicsBody(crate_body);
+    // this->addChild(crate, SP_ZINDEX);
 
-    auto menu = Menu::create(play, nullptr);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu);
+    // // ground layer with physics properties
+    // auto ground_node = Node::create();
+    // ground_node->setAnchorPoint(Vec2::ZERO);
+    // ground_node->setPosition(Vec2(origin.x + visibleSize.width/2, origin.y + 5*visibleSize.height/6 + 12));
 
-//    //////////////////////////////
-//	// 2. BackGroundLayer
-//    auto bgLayer = BackGroundLayer::create();
-//    this->addChild(bgLayer, BG_ZINDEX);
-//
-//    //////////////////////////////
-//	// 3. SpriteLayer
-//    auto spLayer = SpriteLayer::create();
-//    this->addChild(spLayer, SP_ZINDEX);
-//
-//    //////////////////////////////
-//	// 4. MenuLayer
-//    auto mnLayer = MenuLayer::create();
-//    this->addChild(mnLayer, MN_ZINDEX);
+    // auto ground_body = PhysicsBody::createEdgeBox(visibleSize, PhysicsMaterial(1, INITIAL_RESTITUTION, 0.5), 3);
+    // ground_body->setContactTestBitmask(0x1); // enable callbacks
+    // ground_node->setPhysicsBody(ground_body);
+    // this->addChild(ground_node);
 
-    // trigger to active key events
+    // // collision detection listener
+    // auto contactListener = EventListenerPhysicsContact::create();
+    // contactListener->onContactPreSolve = CC_CALLBACK_2(GameLoad::onContactPreSolve, this);
+    // contactListener->onContactPostSolve = CC_CALLBACK_2(GameLoad::onContactPostSolve, this);
+    // this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
+
+    // // preloading sound effects
+    // CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(BOUNCE_SOUND.c_str());
+    // CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(CHIME.c_str());
+
     this->setKeypadEnabled(true);
 
     return true;
 }
 
-void GameLoad::playSelected()
-{
-	// replacing the splash screen with the challenge scene
-	auto challengeScene = ChallengeMenu::createScene();
-	Director::getInstance()->replaceScene(challengeScene);
-}
 
-void GameLoad::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode, cocos2d::Event *event)
+void GameLoad::onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event)
 {
 	Director::getInstance()->end();
 }
+
+// bool GameLoad::onContactPreSolve(cocos2d::PhysicsContact &contact, cocos2d::PhysicsContactPreSolve &solve)
+// {
+//     if (_current_restitution > 0.0)
+//     {
+//         solve.setRestitution(_current_restitution);
+//         _current_restitution -= DELTA_RESTITUTION;
+//     }
+//     else
+//     {
+//         solve.setRestitution(0.0);
+//         _current_restitution = 0.0;
+//     }
+//     return true;
+// }
+
+// void GameLoad::onContactPostSolve(PhysicsContact& contact, const PhysicsContactPostSolve& solve)
+// {
+//     if (solve.getRestitution() > 0.0)
+//     {
+//         CocosDenshion::SimpleAudioEngine::getInstance()->setEffectsVolume(_effects_volume);
+//         _effects_volume -= DELTA_VOLUME;
+//         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(BOUNCE_SOUND.c_str());
+
+//         // TODO: this should ideally have been based on the current impulse
+//         if (_vibration_length > 0)
+//         {
+//             NativeHelper::vibrate(_vibration_length);
+//             _vibration_length -= DELTA_VIBRATION;
+//         }
+//     }
+//     else
+//     {
+//         // TODO: this is getting called twice
+//         captureScreenAsSprite(
+//                 [](Sprite * sprite) -> void
+//                 {
+//                     auto scene = ChallengeMenu::createScene(false, sprite);
+//                     auto transition = TransitionMoveInT::create(0.2 , scene);
+//                     Director::getInstance()->replaceScene(transition);
+//                 });
+//     }
+// }
+

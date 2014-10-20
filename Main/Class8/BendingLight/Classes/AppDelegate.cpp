@@ -1,10 +1,19 @@
 #include "AppDelegate.h"
 #include "GameLoadScene.h"
+#include "Challenge.h"
 
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
 
+    Challenge1::addGenerator(this);
+    Challenge2::addGenerator(this);
+    Challenge3::addGenerator(this);
+
+    addStartingScenegen([]() -> Scene * 
+    { 
+        return GameLoad::createScene(); 
+    });
 }
 
 AppDelegate::~AppDelegate() 
@@ -21,13 +30,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // turn on display FPS
-    director->setDisplayStats(true);
+    director->setDisplayStats(false);
 
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    auto scene = GameLoad::createScene();
+    auto scene = getStartingScene();
 
     // run
     director->runWithScene(scene);
