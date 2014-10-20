@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<challenges>
+    <vm id="co.in.divi.vms.bendinglight.AppActivity" title="BendingLight VM">
+	    <challenge id="challenge1" >
+	        <title>Ray splitting</title>
+	        <description>this is a placeholder</description>
+	    </challenge>
+    </vm>
+</challenges>

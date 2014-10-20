@@ -68,7 +68,7 @@ def select_toolchain_version():
         print "Couldn't find the gcc toolchain."
         exit(1)
 
-def do_build(cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,android_platform,build_mode):
+def do_build(common_root, cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,android_platform,build_mode):
 
     ndk_path = os.path.join(ndk_root, "ndk-build")
 
@@ -83,12 +83,19 @@ def do_build(cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,and
     elif android_platform is not None:
     	  sdk_tool_path = os.path.join(sdk_root, "tools/android")
     	  cocoslib_path = os.path.join(cocos_root, "cocos/platform/android/java")
-    	  command = '%s update lib-project -t %s -p %s' % (sdk_tool_path,android_platform,cocoslib_path) 
-    	  if os.system(command) != 0:
-    	  	  raise Exception("update cocos lib-project [ " + cocoslib_path + " ] fails!")  	  
+    	  commonlib_path = os.path.join(common_root, "java")
+          lib_paths = [ cocoslib_path, commonlib_path ]
+          # TODO: because the android build system is retarded
+          #for lib_path in lib_paths:
+          #    command = '%s update lib-project -t %s -p %s' % (sdk_tool_path,android_platform,lib_path) 
+          #    if os.system(command) != 0:
+          #          raise Exception("update cocos lib-project [ " + lib_path + " ] fails!")  	  
     	  command = '%s update project -t %s -p %s -s' % (sdk_tool_path,android_platform,app_android_root)
+          #for lib_path in lib_paths:
+          #    command += ' --library %s'%lib_path
     	  if os.system(command) != 0:
     	  	  raise Exception("update project [ " + app_android_root + " ] fails!")    	  	  
+
     	  buildfile_path = os.path.join(app_android_root, "build.xml")
     	  command = 'ant clean %s -f %s -Dsdk.dir=%s' % (build_mode,buildfile_path,sdk_root)
     	  os.system(command)
@@ -102,7 +109,8 @@ def copy_files(src, dst):
             shutil.copy(path, dst)
         if os.path.isdir(path):
             new_dst = os.path.join(dst, item)
-            os.mkdir(new_dst)
+            if not os.path.exists(new_dst):
+                os.mkdir(new_dst)
             copy_files(path, new_dst)
 
 def copy_resources(app_android_root):
@@ -114,9 +122,10 @@ def copy_resources(app_android_root):
 
     # copy resources
     os.mkdir(assets_dir)
-    resources_dir = os.path.join(app_android_root, "../Resources")
-    if os.path.isdir(resources_dir):
-        copy_files(resources_dir, assets_dir)
+    for res_path in [ "../../../../../common/Resources", "../Resources" ]: 
+        resources_dir = os.path.join(app_android_root, res_path)
+        if os.path.isdir(resources_dir):
+            copy_files(resources_dir, assets_dir)
 
 def build(ndk_build_param,android_platform,build_mode):
 
@@ -125,7 +134,8 @@ def build(ndk_build_param,android_platform,build_mode):
     select_toolchain_version()
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    cocos_root = os.path.join(current_dir, "../cocos2d")
+    cocos_root = os.path.join(current_dir, "../../../../../common/cocos2d")
+    common_root = os.path.join(current_dir, "../../../../../common")
 
     app_android_root = current_dir
     copy_resources(app_android_root)
@@ -143,7 +153,7 @@ def build(ndk_build_param,android_platform,build_mode):
     elif build_mode != 'release':
         build_mode = 'debug'
     
-    do_build(cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,android_platform,build_mode)
+    do_build(common_root, cocos_root, ndk_root, app_android_root,ndk_build_param,sdk_root,android_platform,build_mode)
 
 # -------------- main --------------
 if __name__ == '__main__':

@@ -24,9 +24,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-package org.cocos2dx.cpp;
+package co.in.divi.vms.bendinglight;
 
-import org.cocos2dx.lib.Cocos2dxActivity;
+import org.xmlpull.v1.XmlPullParser;
+import co.in.divi.vms.CommonVMActivity;
 
-public class AppActivity extends Cocos2dxActivity {
+public class AppActivity extends CommonVMActivity
+{
+    @Override
+    protected XmlPullParser getVMDetailsXml() {
+        return getResources().getXml(R.xml.challenges);
+    }
 }
