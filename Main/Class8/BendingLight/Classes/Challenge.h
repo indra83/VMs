@@ -16,8 +16,6 @@ class Challenge: public ChallengeBase
 {
 public:
     Challenge() :
-        _spriteLayer(nullptr),
-        _bgLayer(nullptr),
         _menuLayer(nullptr) {}
 
     static void addGenerator( VmBase * base )
@@ -37,23 +35,8 @@ public:
     // implement the "static create()" method manually
     static Derived * create(bool showInfo);
 
-    // void addBaseSurface(MenuLayer::SurfaceType surf);
-    void done(bool);
-    // virtual void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
-    // void frictionValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent);
-    // void countDownTimer(float dt);
-    // void setupTimer(float howLong, float warning);
-    // std::string getTimeString();
-
 protected:
-
-    SpriteLayer * _spriteLayer;
-    BackGroundLayer * _bgLayer;
     MenuLayer * _menuLayer;
-private :
-    // float _timeLeft;
-    // cocos2d::LabelTTF * _timeLabel;
-    // float _warningTime;
 };
 
 class Challenge1: public Challenge<Challenge1>
@@ -63,34 +46,6 @@ public:
     Challenge1() {}
     virtual bool init(bool showInfo) override;
     static cocos2d::Scene* createScene(bool showInfo);
-    // void forceValueChanged(cocos2d::Ref* sender, cocos2d::extension::Control::EventType controlEvent) override;
-private:
-    // bool _friendHelpShown;
-    // int _numMaxHits;
-};
-
-class Challenge2: public Challenge<Challenge2>
-{
-    // struct TrolleyInfo
-    // {
-    //     int direction;
-    // };
-
-    // std::map<Node *, TrolleyInfo> _trollies;
-public:
-    static std::string getId() { return "challenge2"; }
-    Challenge2() {}
-    virtual bool init(bool showInfo) override;
-    static cocos2d::Scene* createScene(bool showInfo);
-};
-
-class Challenge3: public Challenge<Challenge3>
-{
-public:
-    static std::string getId() { return "challenge3"; }
-	Challenge3() {}
-	virtual bool init(bool showInfo) override;
-	static cocos2d::Scene * createScene(bool showInfo);
 };
 
 #endif // __CHALLENGE_H__

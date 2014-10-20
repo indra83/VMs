@@ -15,9 +15,6 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/GameLoadScene.cpp \
                    ../../Classes/Challenge.cpp \
-                   ../../Classes/GameLayerScene.cpp \
-                   ../../Classes/BackGroundLayer.cpp \
-                   ../../Classes/SpriteLayer.cpp \
                    ../../Classes/MenuLayer.cpp
                    
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
@@ -31,6 +28,7 @@ endif
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocosdenshion_static
 LOCAL_WHOLE_STATIC_LIBRARIES += cocos_extension_static
+LOCAL_WHOLE_STATIC_LIBRARIES += divivm_static
 
 # LOCAL_WHOLE_STATIC_LIBRARIES += box2d_static
 # LOCAL_WHOLE_STATIC_LIBRARIES += cocosbuilder_static

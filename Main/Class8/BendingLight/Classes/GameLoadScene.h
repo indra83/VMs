@@ -17,13 +17,6 @@ public:
 
     // back button exit
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
-private:
-    // bool onContactPreSolve(cocos2d::PhysicsContact &contact, cocos2d::PhysicsContactPreSolve &solve);
-    // void onContactPostSolve(cocos2d::PhysicsContact &contact, const cocos2d::PhysicsContactPostSolve &solve);
-
-    // float _current_restitution;
-    // ssize_t _vibration_length;
-    // float _effects_volume;
 };
 
 #endif // __GAMELOAD_SCENE_H__
