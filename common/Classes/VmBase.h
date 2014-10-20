@@ -81,9 +81,9 @@ public :
             _attemptListeners.erase(found);
     }
 
-    virtual bool applicationDidFinishLaunching() = 0;
+    virtual bool applicationDidFinishLaunching();
 
-    virtual void applicationDidEnterBackground() = 0;
+    virtual void applicationDidEnterBackground();
 
-    virtual void applicationWillEnterForeground() = 0;
+    virtual void applicationWillEnterForeground();
 };
