@@ -117,12 +117,12 @@
 		<link>
 			<name>cocos2d</name>
 			<type>2</type>
-			<locationURI>PARENT-4-PROJECT_LOC/common/cocos2d</locationURI>
+			<locationURI>PARENT-5-PROJECT_LOC/common/cocos2d</locationURI>
 		</link>
 		<link>
 			<name>libcocos2d</name>
 			<type>2</type>
-			<locationURI>PARENT-4-PROJECT_LOC/common/cocos2d/cocos/platform/android/java/src</locationURI>
+			<locationURI>PARENT-5-PROJECT_LOC/common/cocos2d/cocos/platform/android/java/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
