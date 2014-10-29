@@ -150,7 +150,7 @@ bool Challenge1::init(bool showInfo)
    return true;
 }
 
-//void HelloWorld::sliderEvent(cocos2d::Ref *pSender, cocos2d::ui::SliderEventType type)
+//void Challenge1::sliderEvent(cocos2d::Ref *pSender, cocos2d::ui::SliderEventType type)
 //{
 //	if(type == Slider::EventType::ON_PERCENTAGE_CHANGED)
 //	{
