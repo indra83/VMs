@@ -30,6 +30,7 @@ bool GameLoad::init()
     {
         return false;
     }
+
     this->setKeypadEnabled(true);
 
     return true;

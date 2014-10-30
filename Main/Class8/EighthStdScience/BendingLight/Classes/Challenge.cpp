@@ -119,7 +119,7 @@ bool Challenge1::init(bool showInfo)
 	joint->setCollisionEnable(false);
 //	joint->setDistance(50);
 //	sceneWorld->addJoint(joint);	// TODO solve the problem here, it crashes
-	this->getScene()->getPhysicsWorld()->addJoint(joint);
+//	this->getScene()->getPhysicsWorld()->addJoint(joint);
 
 
 

@@ -4,12 +4,13 @@
 
 USING_NS_CC;
 
-AppDelegate::AppDelegate() {
+AppDelegate::AppDelegate()
+{
     Challenge1::addGenerator(this);
 
     addStartingScenegen([]() -> Scene * 
     { 
-        return ChallengeMenu::createScene(false, nullptr); 
+        return ChallengeMenu::createScene(true, nullptr);
     });
 }
 
