@@ -38,7 +38,9 @@ Scene* Challenge<Derived>::createScene(bool showInfo)
 {
     // 'scene' is an autorelease object
     auto scene = Scene::createWithPhysics();
-    
+    scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	scene->getPhysicsWorld()->setGravity(Vec2(0,0));
+
     // 'layer' is an autorelease object
     auto layer = Challenge<Derived>::create(showInfo);
     // add layer as a child to scene
@@ -119,7 +121,7 @@ bool Challenge1::init(bool showInfo)
 	joint->setCollisionEnable(false);
 //	joint->setDistance(50);
 //	sceneWorld->addJoint(joint);	// TODO solve the problem here, it crashes
-//	this->getScene()->getPhysicsWorld()->addJoint(joint);
+	this->getScene()->getPhysicsWorld()->addJoint(joint);
 
 
 

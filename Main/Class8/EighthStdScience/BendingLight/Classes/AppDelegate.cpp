@@ -10,7 +10,7 @@ AppDelegate::AppDelegate()
 
     addStartingScenegen([]() -> Scene * 
     { 
-        return ChallengeMenu::createScene(true, nullptr);
+        return ChallengeMenu::createScene(false, nullptr);
     });
 }
 
