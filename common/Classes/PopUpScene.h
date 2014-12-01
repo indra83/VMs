@@ -17,6 +17,15 @@ public :
     // implement the "static create()" method manually
     CREATE_FUNC(PopUp);
 
+    bool _flag = true;
+
+    cocos2d::LayerColor *_bgLayer;
+
+    //touch functions
+    bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event);
+    void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event);
+    void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event);
+
     // back button previous scene
     void onKeyReleased(cocos2d::EventKeyboard::KeyCode keycode , cocos2d::Event *event);
  
